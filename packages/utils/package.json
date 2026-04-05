@@ -14,5 +14,11 @@
     "type": "git",
     "url": "https://github.com/music-lyric/music-lyric-player-web.git",
     "directory": "packages/utils"
+  },
+  "dependencies": {
+    "lodash-es": "^4.17.22"
+  },
+  "devDependencies": {
+    "@types/lodash-es": "^4.17.12"
   }
 }
