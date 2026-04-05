@@ -1,4 +1,5 @@
 export * from './manager'
+export * from './event'
 
 export * from './object'
 
