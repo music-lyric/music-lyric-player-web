@@ -32,7 +32,14 @@ importers:
 
   main: {}
 
-  packages/base: {}
+  packages/base:
+    dependencies:
+      '@music-lyric-kit/lyric':
+        specifier: ^0.4.0
+        version: 0.4.0
+      '@music-lyric-player/utils':
+        specifier: workspace:^
+        version: link:../utils
 
   packages/dom: {}
 
@@ -45,6 +52,12 @@ importers:
       '@types/lodash-es':
         specifier: ^4.17.12
         version: 4.17.12
+
+  private/playground:
+    dependencies:
+      '@music-lyric-player/base':
+        specifier: workspace:*
+        version: link:../../packages/base
 
 packages:
 
@@ -236,6 +249,12 @@ packages:
 
   '@microsoft/tsdoc@0.16.0':
     resolution: {integrity: sha512-xgAyonlVVS+q7Vc7qLW0UrJU7rSFcETRWsqdXZtjzRU8dF+6CkozTK4V4y1LwOX7j8r/vHphjDeMeGI4tNGeGA==}
+
+  '@music-lyric-kit/lyric@0.4.0':
+    resolution: {integrity: sha512-CkVptJdGl6gFRSs1N+Yb+xn7YvTlw9qJZ6exfYBUU4fpnQoL02vxYBblUPgnKymMOKvaS6fRh7DAxSSq+yXPNg==}
+
+  '@music-lyric-kit/utils@0.5.0':
+    resolution: {integrity: sha512-ktlDWXvwbclmzQYZlCsw6SBUfOdp4MbsL2afg3tBYYg/+ggYA2VMe4vpVXo+52axMUJnywsSSL6/1vyKo6fNXw==}
 
   '@rollup/pluginutils@5.3.0':
     resolution: {integrity: sha512-5EdhGZtnu3V88ces7s53hhfK5KSASnJZv8Lulpc04cWO3REESroJXg73DFsOmgbU2BhwV0E20bu2IDZb3VKW4Q==}
@@ -977,6 +996,14 @@ snapshots:
       resolve: 1.22.11
 
   '@microsoft/tsdoc@0.16.0': {}
+
+  '@music-lyric-kit/lyric@0.4.0':
+    dependencies:
+      '@music-lyric-kit/utils': 0.5.0
+
+  '@music-lyric-kit/utils@0.5.0':
+    dependencies:
+      lodash-es: 4.18.1
 
   '@rollup/pluginutils@5.3.0(rollup@4.60.1)':
     dependencies:
