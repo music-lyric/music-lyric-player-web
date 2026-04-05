@@ -16,5 +16,19 @@
     "type": "git",
     "url": "https://github.com/music-lyric/music-lyric-player-web.git",
     "directory": "packages/base"
-  }
+  },
+  "main": "./dist/index.comm.js",
+  "module": "./dist/index.ecma.js",
+  "types": "./dist/index.ecma.d.ts",
+  "exports": {
+    ".": {
+      "dev": "./src/index.ts",
+      "types": "./dist/index.ecma.d.ts",
+      "import": "./dist/index.ecma.js",
+      "require": "./dist/index.comm.js"
+    }
+  },
+  "files": [
+    "dist"
+  ]
 }
