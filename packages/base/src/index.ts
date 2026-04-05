@@ -5,10 +5,14 @@ import type { Options } from './options'
 import { DEFAULT_OPTIONS } from './options'
 
 import { Info } from '@music-lyric-kit/lyric'
-import { ConfigManager } from '@music-lyric-player/utils'
-import { BaseLyricPlayerEvent } from './event'
+import { ConfigManager, Event } from '@music-lyric-player/utils'
 
-export class BaseLyricPlayer extends BaseLyricPlayerEvent {
+export interface BaseLyricPlayerEventMap {
+  'lyric-update': (info: Info) => void
+  'lines-update': (lines: Line[]) => void
+}
+
+export class BaseLyricPlayer extends Event<BaseLyricPlayerEventMap> {
   readonly config: ConfigManager<Options, DeepPartial<Options>> = new ConfigManager(DEFAULT_OPTIONS)
 
   private state: {
