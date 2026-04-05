@@ -1,0 +1,30 @@
+{
+  "version": "0.0.0",
+  "author": "folltoshe",
+  "type": "module",
+  "description": "Lyric player",
+  "license": "MIT",
+  "scripts": {
+    "dev": "turbo watch dev",
+    "build": "turbo run build",
+    "build:force": "turbo run build --force"
+  },
+  "homepage": "https://github.com/music-lyric/music-lyric-player-web#readme",
+  "bugs": {
+    "url": "https://github.com/music-lyric/music-lyric-player-web/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/music-lyric/music-lyric-player-web.git"
+  },
+  "engines": {
+    "node": ">=24.12.0"
+  },
+  "packageManager": "pnpm@10.25.0",
+  "devDependencies": {
+    "@types/node": "^25.0.3",
+    "tsx": "^4.21.0",
+    "turbo": "^2.7.1",
+    "typescript": "5.8.2"
+  }
+}

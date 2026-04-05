@@ -1,0 +1,23 @@
+{
+  "name": "music-lyric-player",
+  "version": "0.0.0",
+  "author": "folltoshe",
+  "type": "module",
+  "description": "Music Lyric Player",
+  "license": "MIT",
+  "scripts": {},
+  "homepage": "https://github.com/music-lyric/music-lyric-player-web#readme",
+  "bugs": {
+    "url": "https://github.com/music-lyric/music-lyric-player-web/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/music-lyric/music-lyric-player-web.git",
+    "directory": "main"
+  },
+  "keywords": [
+    "music",
+    "lyric",
+    "player"
+  ]
+}

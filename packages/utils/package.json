@@ -1,0 +1,18 @@
+{
+  "name": "@music-lyric-player/utils",
+  "version": "0.0.0",
+  "author": "folltoshe",
+  "type": "module",
+  "description": "Music Lyric Player - Utils",
+  "license": "MIT",
+  "scripts": {},
+  "homepage": "https://github.com/music-lyric/music-lyric-player-web#readme",
+  "bugs": {
+    "url": "https://github.com/music-lyric/music-lyric-player-web/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/music-lyric/music-lyric-player-web.git",
+    "directory": "packages/utils"
+  }
+}
