@@ -1,0 +1,20 @@
+.wrapper {
+  --lyric-line-postion: left;
+
+  display: flex;
+  position: absolute;
+  width: var(--lyric-container-width);
+
+  transition:
+    transform 1s ease,
+    opacity 0.6s ease,
+    filter 0.6s ease;
+  will-change: transform;
+  opacity: 1;
+
+  justify-content: var(--lyric-line-postion);
+  text-align: var(--lyric-line-postion);
+  transform-origin: var(--lyric-line-postion) center;
+
+  pointer-events: none;
+}

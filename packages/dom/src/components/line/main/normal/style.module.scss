@@ -1,0 +1,84 @@
+.normal {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  pointer-events: auto;
+
+  transition: opacity 0.6s ease;
+
+  &::before {
+    content: '';
+    display: block;
+    position: absolute;
+    left: -14px;
+    top: -14px;
+    right: -14px;
+    bottom: -14px;
+    transform: scale(1);
+    border-radius: 12px;
+    background-color: currentColor;
+    opacity: 0;
+    z-index: 0;
+    transition:
+      opacity 0.2s ease,
+      left 0.15s ease,
+      top 0.15s ease,
+      right 0.15s ease,
+      bottom 0.15s ease,
+      transform 0.2s ease;
+    pointer-events: none;
+  }
+  &:hover::before {
+    transform: scale(1);
+    opacity: 0.08;
+  }
+  &:active::before {
+    transform: scale(1);
+    left: -8px;
+    top: -10px;
+    right: -10px;
+    bottom: -8px;
+    opacity: 0.16;
+  }
+
+  &:not(.baseLine[active]) {
+    opacity: 0.6 !important;
+  }
+
+  &:where(.baseLine[active]) {
+    .syllable {
+      .word {
+        opacity: 1;
+        transform: translateY(-2px);
+      }
+    }
+  }
+}
+
+.syllable {
+  .word {
+    display: inline-block;
+    opacity: 0.4;
+    transform: translateY(0);
+    transition-property: opacity, transform;
+    transition-timing-function: ease, ease-in-out;
+  }
+  .space {
+    width: 1em;
+  }
+}
+
+.extended {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 8px;
+  .translate {
+    display: inline-block;
+  }
+  .roman {
+    display: inline-block;
+  }
+}
+.extended > :first-child {
+  margin-top: 10px;
+}

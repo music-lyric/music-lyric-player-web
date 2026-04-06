@@ -1,0 +1,15 @@
+.container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  overflow: visible;
+  display: flex;
+
+  --mlp-container-width: 0;
+  --mlp-container-height: 0;
+}
+
+.enableRotate {
+  padding-left: calc(8% + 26px);
+}

@@ -30,5 +30,15 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "peerDependencies": {
+    "@music-lyric-kit/lyric": "^0.4.0"
+  },
+  "dependencies": {
+    "@music-lyric-player/base": "workspace:^",
+    "@music-lyric-player/utils": "workspace:^"
+  },
+  "devDependencies": {
+    "sass": "^1.86.0"
+  }
 }
