@@ -78,8 +78,8 @@ export abstract class BaseLine {
     }
   }
 
-  set postion(value: string) {
-    this.current.element.setAttribute('postion', value)
+  set position(value: string) {
+    this.current.element.setAttribute('position', value)
   }
 
   get index() {

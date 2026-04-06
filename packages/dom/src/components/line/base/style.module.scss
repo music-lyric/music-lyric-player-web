@@ -1,5 +1,5 @@
 .wrapper {
-  --lyric-line-postion: left;
+  --lyric-line-position: left;
 
   display: flex;
   position: absolute;
@@ -12,9 +12,9 @@
   will-change: transform;
   opacity: 1;
 
-  justify-content: var(--lyric-line-postion);
-  text-align: var(--lyric-line-postion);
-  transform-origin: var(--lyric-line-postion) center;
+  justify-content: var(--lyric-line-position);
+  text-align: var(--lyric-line-position);
+  transform-origin: var(--lyric-line-position) center;
 
   pointer-events: none;
 }
