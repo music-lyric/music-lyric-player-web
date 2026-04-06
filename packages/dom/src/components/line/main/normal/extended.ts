@@ -27,14 +27,14 @@ export class Extended {
       element: document.createElement('div'),
     }
 
-    const classNames = [Style.extended, context.config.current.line.extended.wrapper.className]
+    const classNames = [Style.extended, context.config.style.className.line.normal.extended]
     applyClassName(this.current.element, classNames)
 
     this.handleInit()
   }
 
   private handleInit() {
-    const config = this.context.config.current.line.extended
+    const config = this.context.config.line.normal.extended
 
     for (const item of this.current.info.content.extended) {
       if (!item.content?.trim()) {
@@ -42,7 +42,7 @@ export class Extended {
       }
       switch (item.type) {
         case ExtendedType.Translate: {
-          if (!config.translate.enable) {
+          if (!config.translate) {
             break
           }
           const element = document.createElement('div')
@@ -52,7 +52,7 @@ export class Extended {
           break
         }
         case ExtendedType.Roman: {
-          if (!config.roman.enable) {
+          if (!config.roman) {
             break
           }
           const element = document.createElement('div')

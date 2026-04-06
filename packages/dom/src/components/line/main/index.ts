@@ -1,6 +1,7 @@
-import { Context } from '@root/context'
-import { BaseLine } from '../base'
 import { Line, LineType } from '@music-lyric-kit/lyric'
+import { Context } from '@root/context'
+
+import { BaseLine } from '../base'
 import { NormalLine } from './normal'
 
 export interface MainLineParams {

@@ -11,6 +11,9 @@ export const createStyleKey = (key: string) => {
 }
 
 export const applyClassName = (element: HTMLDivElement, names: string[]) => {
+  for (const item of element.classList.values()) {
+    element.classList.remove(item)
+  }
   for (const name of names) {
     if (!name) {
       continue

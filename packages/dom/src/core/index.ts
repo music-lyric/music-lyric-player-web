@@ -1,12 +1,13 @@
 import { Info, Line } from '@music-lyric-kit/lyric'
 import { BaseLyricPlayer } from '@music-lyric-player/base'
+import { ConfigManager } from '@music-lyric-player/utils'
 import { Container, MainLine } from '@root/components'
 import { BaseLine, BaseLineStyle, DEFAULT_BASE_LINE_STYLE } from '@root/components/line/base'
-import { ConfigInstance } from '@root/config'
+import { ConfigClient, DEFAULT_CONFIG } from '@root/config'
 import { Context } from '@root/context'
 
 export class DomLyricPlayer {
-  public config = ConfigInstance
+  public config: ConfigClient = new ConfigManager(DEFAULT_CONFIG, {})
 
   private context: Context
   private player: BaseLyricPlayer
@@ -17,9 +18,7 @@ export class DomLyricPlayer {
   private onDestroy: Array<() => void> = []
 
   constructor(player: BaseLyricPlayer) {
-    this.context = {
-      config: this.config,
-    }
+    this.context = new Context(this.config)
     this.player = player
 
     this.container = new Container(this.context)
@@ -34,6 +33,12 @@ export class DomLyricPlayer {
       this.player.event.remove('lyric-update', onLyricUpadte)
       this.player.event.remove('lines-update', onLinesUpdate)
     })
+
+    this.config.on(this.onConfigUpdate.bind(this))
+  }
+
+  private onConfigUpdate() {
+    this.container.updateConfig()
   }
 
   private onLyricUpadte(info: Info) {
@@ -83,7 +88,7 @@ export class DomLyricPlayer {
       return
     }
 
-    const currentSpace = this.config.current.container.fontSize * 1.2
+    const currentSpace = this.config.current.style.fontSize * 1.2
 
     const styles: BaseLineStyle[] = this.lines.map(() => ({ ...DEFAULT_BASE_LINE_STYLE }))
 
@@ -101,7 +106,7 @@ export class DomLyricPlayer {
     }
 
     const containerHeight = this.container.height
-    const anchorRatio = this.config.current.line.wrapper.postion * 0.01
+    const anchorRatio = this.config.current.scroll.activePosition * 0.01
 
     let activeGroupHeight = 0
     for (let k = 0; k < activeIndices.length; k++) {

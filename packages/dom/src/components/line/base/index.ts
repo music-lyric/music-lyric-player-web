@@ -43,7 +43,7 @@ export abstract class BaseLine {
       element: document.createElement('div'),
     }
 
-    const classNames = [Style.wrapper, context.config.current.line.wrapper.className]
+    const classNames = [Style.wrapper, this.context.config.style.className.line.wrapper]
     applyClassName(this.current.element, classNames)
   }
 

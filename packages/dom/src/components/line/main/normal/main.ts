@@ -25,7 +25,7 @@ export class Main {
       element: document.createElement('div'),
     }
 
-    const classNames = [Style.syllable]
+    const classNames = [Style.original, this.context.config.style.className.line.normal.original]
     applyClassName(this.current.element, classNames)
 
     this.handleInit()

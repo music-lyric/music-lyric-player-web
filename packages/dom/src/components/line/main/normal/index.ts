@@ -31,7 +31,7 @@ export class NormalLine {
       element: document.createElement('div'),
     }
 
-    const classNames = [Style.normal]
+    const classNames = [Style.normal, context.config.style.className.line.normal.wrapper]
     applyClassName(this.current.element, classNames)
 
     this.handleInit()
