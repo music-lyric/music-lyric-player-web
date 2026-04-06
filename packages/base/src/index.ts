@@ -168,7 +168,15 @@ export class BaseLyricPlayer extends Event<BaseLyricPlayerEventMap> {
     this.info = new Info()
   }
 
-  get current(): Line[] {
+  get currentLines() {
     return [...this.state.lines]
+  }
+
+  get currentInfo() {
+    return this.info
+  }
+
+  get currentTime() {
+    return this.handleGetCurrentTime()
   }
 }
