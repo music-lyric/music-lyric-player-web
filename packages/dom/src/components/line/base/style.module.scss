@@ -1,9 +1,9 @@
 .wrapper {
-  --lyric-line-position: left;
+  --lyric-player-player-line-position: left;
 
   display: flex;
   position: absolute;
-  width: var(--lyric-container-width);
+  width: var(--lyric-player-container-width);
 
   transition:
     transform 1s ease,
@@ -12,9 +12,9 @@
   will-change: transform;
   opacity: 1;
 
-  justify-content: var(--lyric-line-position);
-  text-align: var(--lyric-line-position);
-  transform-origin: var(--lyric-line-position) center;
+  justify-content: var(--lyric-player-line-position);
+  text-align: var(--lyric-player-line-position);
+  transform-origin: var(--lyric-player-line-position) center;
 
   pointer-events: none;
 }

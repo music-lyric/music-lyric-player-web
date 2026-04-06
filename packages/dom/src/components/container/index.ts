@@ -63,6 +63,9 @@ export class Container {
     this.current.height = height
 
     this.event.emit('change-size', width, height)
+
+    this.current.element.style.setProperty('--lyric-player-container-width', `${width}`)
+    this.current.element.style.setProperty('--lyric-player-container-height', `${height}`)
   }
 
   private onScroll(e: globalThis.Event) {
@@ -90,7 +93,7 @@ export class Container {
   }
 
   clearChild() {
-    this.current.element.innerHTML = ''
+    this.current.element.replaceChildren()
   }
 
   destroy() {

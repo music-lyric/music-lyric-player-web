@@ -88,7 +88,7 @@ export class DomLyricPlayer {
       return
     }
 
-    const currentSpace = this.config.current.style.fontSize * 1.2
+    const currentSpace = this.config.current.style.fontSize * 0.6
 
     const styles: BaseLineStyle[] = this.lines.map(() => ({ ...DEFAULT_BASE_LINE_STYLE }))
 

@@ -38,7 +38,7 @@ export class NormalLine {
   }
 
   private handleInit() {
-    this.current.element.innerHTML = ''
+    this.current.element.replaceChildren()
 
     this.main = new Main({
       context: this.context,
