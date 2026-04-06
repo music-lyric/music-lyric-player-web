@@ -4,7 +4,7 @@ import { applyClassName, createCssText } from '@root/utils'
 
 import Style from './style.module.scss'
 
-export interface BaseLineStyles {
+export interface BaseLineStyle {
   top: number
   left: number
   scale: number
@@ -15,11 +15,11 @@ export interface BaseLineStyles {
   transitionDuration: number
 }
 
-export const DEFAULT_BASE_LINE_TRANSFORMS: BaseLineStyles = {
+export const DEFAULT_BASE_LINE_STYLE: BaseLineStyle = {
   top: 0,
   left: 0,
   scale: 1,
-  opacity: 0,
+  opacity: 1,
   blur: 0,
   hide: false,
   transitionDelay: 0,
@@ -47,15 +47,15 @@ export abstract class BaseLine {
     applyClassName(this.current.element, classNames)
   }
 
-  updateTransforms(transforms: BaseLineStyles) {
+  updateStyle(styles: BaseLineStyle) {
     const style: Partial<CSSStyleDeclaration> = {}
 
-    style.transform = [`translateX(${transforms.left}px)`, `translateY(${transforms.top}px)`, `scale(${transforms.scale})`].join(' ')
+    style.transform = [`translateX(${styles.left}px)`, `translateY(${styles.top}px)`, `scale(${styles.scale})`].join(' ')
 
-    style.transitionDuration = `${transforms.transitionDuration}ms`
-    style.transitionDelay = `${transforms.transitionDelay}ms`
-    style.filter = `blur(${transforms.blur}px)`
-    style.opacity = transforms.hide ? '0 !important' : `${transforms.opacity}`
+    style.transitionDuration = `${styles.transitionDuration}ms`
+    style.transitionDelay = `${styles.transitionDelay}ms`
+    style.filter = `blur(${styles.blur}px)`
+    style.opacity = styles.hide ? '0 !important' : `${styles.opacity}`
 
     this.current.element.setAttribute('style', createCssText(style))
   }
