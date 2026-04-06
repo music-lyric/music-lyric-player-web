@@ -12,8 +12,10 @@ export interface BaseLyricPlayerEventMap {
   'lines-update': (lines: Line[]) => void
 }
 
-export class BaseLyricPlayer extends Event<BaseLyricPlayerEventMap> {
+export class BaseLyricPlayer {
   readonly config: ConfigManager<Options, DeepPartial<Options>> = new ConfigManager(DEFAULT_OPTIONS)
+
+  readonly event: Event<BaseLyricPlayerEventMap> = new Event()
 
   private state: {
     playing: boolean
@@ -28,7 +30,6 @@ export class BaseLyricPlayer extends Event<BaseLyricPlayerEventMap> {
   private info: Info
 
   constructor() {
-    super()
     this.state = {
       playing: false,
       frameId: null,
@@ -71,7 +72,7 @@ export class BaseLyricPlayer extends Event<BaseLyricPlayerEventMap> {
     this.state.lines = result
     this.state.index = firstIndex
 
-    this.handleEmitEvent('lines-update', result)
+    this.event.emit('lines-update', result)
   }
 
   private handleUpdateActiveLines(now: number) {
@@ -111,7 +112,7 @@ export class BaseLyricPlayer extends Event<BaseLyricPlayerEventMap> {
       return
     }
 
-    this.handleEmitEvent('lines-update', this.state.lines)
+    this.event.emit('lines-update', this.state.lines)
   }
 
   private onTick = () => {
@@ -133,8 +134,8 @@ export class BaseLyricPlayer extends Event<BaseLyricPlayerEventMap> {
     this.state.lines = []
     this.time.seek = 0
 
-    this.handleEmitEvent('lyric-update', info)
-    this.handleEmitEvent('lines-update', [])
+    this.event.emit('lyric-update', info)
+    this.event.emit('lines-update', [])
   }
 
   play(time?: number) {
@@ -163,7 +164,7 @@ export class BaseLyricPlayer extends Event<BaseLyricPlayerEventMap> {
 
   dispose(): void {
     this.pause()
-    this.handleClearEvent()
+    this.event.clear()
     this.state.lines = []
     this.info = new Info()
   }
