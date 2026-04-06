@@ -1,0 +1,26 @@
+{
+  "name": "@music-lyric-player/playground",
+  "version": "0.0.0",
+  "author": "folltoshe",
+  "type": "module",
+  "private": true,
+  "description": "Music Lyric Player - Playground",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite dev"
+  },
+  "homepage": "https://github.com/music-lyric/music-lyric-player-web#readme",
+  "bugs": {
+    "url": "https://github.com/music-lyric/music-lyric-player-web/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/music-lyric/music-lyric-player-web.git",
+    "directory": "private/playground"
+  },
+  "dependencies": {
+    "@music-lyric-player/base": "workspace:*",
+    "@music-lyric-player/dom": "workspace:*",
+    "music-lyric-kit": "^0.11.0"
+  }
+}
