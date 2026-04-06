@@ -3,7 +3,7 @@ export class Event<M extends { [K in keyof M]: (...args: any[]) => any }> {
     [K in keyof M]?: Array<M[K]>
   } = {}
 
-  addEventListener<K extends keyof M>(event: K, listener: M[K]): void {
+  add<K extends keyof M>(event: K, listener: M[K]): void {
     let callbacks = this.currentListeners[event]
     if (!callbacks) {
       callbacks = this.currentListeners[event] = []
@@ -11,7 +11,7 @@ export class Event<M extends { [K in keyof M]: (...args: any[]) => any }> {
     callbacks.push(listener)
   }
 
-  removeEventListener<K extends keyof M>(event: K, listener: M[K]): void {
+  remove<K extends keyof M>(event: K, listener: M[K]): void {
     const callbacks = this.currentListeners[event]
     if (!callbacks) {
       return
@@ -23,7 +23,7 @@ export class Event<M extends { [K in keyof M]: (...args: any[]) => any }> {
     }
   }
 
-  protected handleEmitEvent<K extends keyof M>(event: K, ...args: Parameters<M[K]>): void {
+  emit<K extends keyof M>(event: K, ...args: Parameters<M[K]>): void {
     const callbacks = this.currentListeners[event]
     if (!callbacks?.length) {
       return
@@ -35,7 +35,7 @@ export class Event<M extends { [K in keyof M]: (...args: any[]) => any }> {
     }
   }
 
-  protected handleClearEvent(): void {
+  clear(): void {
     this.currentListeners = {}
   }
 }
