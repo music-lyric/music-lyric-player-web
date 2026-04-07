@@ -1,3 +1,3 @@
-export { BaseLine } from './base'
+export * from './wrapper'
 
-export { MainLine } from './main'
+export * from './normal'

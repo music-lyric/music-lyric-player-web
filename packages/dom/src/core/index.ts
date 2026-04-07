@@ -1,10 +1,16 @@
-import { Info, Line } from '@music-lyric-kit/lyric'
+import type { Line } from '@music-lyric-kit/lyric'
+import type { LineElementStyle } from '@root/components'
+
+import { DEFAULT_LINE_ELEMENT_STYLE } from '@root/components'
+import { DEFAULT_CONFIG } from '@root/config'
+
+import { Info, LineType } from '@music-lyric-kit/lyric'
 import { BaseLyricPlayer } from '@music-lyric-player/base'
 import { ConfigManager } from '@music-lyric-player/utils'
-import { Container, MainLine } from '@root/components'
-import { BaseLine, BaseLineStyle, DEFAULT_BASE_LINE_STYLE } from '@root/components/line/base'
-import { ConfigClient, DEFAULT_CONFIG } from '@root/config'
+
 import { Context } from '@root/context'
+import { ConfigClient } from '@root/config'
+import { Container, LineElementWrapper, LineElementNormal } from '@root/components'
 
 export class DomLyricPlayer {
   public config: ConfigClient = new ConfigManager(DEFAULT_CONFIG, {})
@@ -13,7 +19,7 @@ export class DomLyricPlayer {
   private player: BaseLyricPlayer
 
   private container: Container
-  private lines: BaseLine[]
+  private lines: LineElementWrapper[]
 
   private onDestroy: Array<() => void> = []
 
@@ -48,7 +54,9 @@ export class DomLyricPlayer {
     })
   }
   private onLinesUpdate(lines: Line[]) {
-    this.handleUpdateLines()
+    requestAnimationFrame(() => {
+      this.handleUpdateLines()
+    })
   }
 
   private handleClearLines() {
@@ -61,12 +69,13 @@ export class DomLyricPlayer {
     const result = []
 
     for (const line of this.player.currentInfo.lines) {
-      const element = new MainLine({
-        context: this.context,
-        line,
-        index: 0,
-      })
-      result.push(element)
+      switch (line.type) {
+        case LineType.Normal: {
+          const element = new LineElementNormal(this.context, line)
+          result.push(element)
+          break
+        }
+      }
     }
 
     this.handleClearLines()
@@ -90,7 +99,7 @@ export class DomLyricPlayer {
 
     const currentSpace = this.config.current.style.fontSize * 0.6
 
-    const styles: BaseLineStyle[] = this.lines.map(() => ({ ...DEFAULT_BASE_LINE_STYLE }))
+    const styles: LineElementStyle[] = this.lines.map(() => ({ ...DEFAULT_LINE_ELEMENT_STYLE }))
 
     const activeIndices: number[] = []
     for (const line of currentActiveLines) {
@@ -143,7 +152,24 @@ export class DomLyricPlayer {
     }
 
     for (let i = 0; i < this.lines.length; i++) {
-      this.lines[i].updateStyle(styles[i])
+      this.lines[i].style = styles[i]
+    }
+
+    // Update line active state and call play/reset
+    const currentTime = this.player.currentTime
+    const activeSet = new Set(activeIndices)
+
+    for (let i = 0; i < this.lines.length; i++) {
+      const line = this.lines[i]
+      const isActive = activeSet.has(i)
+
+      if (isActive) {
+        line.active = true
+        line.play(currentTime, true)
+      } else {
+        line.active = false
+        line.reset()
+      }
     }
   }
 

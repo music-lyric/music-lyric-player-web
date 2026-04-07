@@ -1,34 +1,25 @@
 import type { LineNormal } from '@music-lyric-kit/lyric'
+import type { Context } from '@root/context'
 
 import { ExtendedType } from '@music-lyric-kit/lyric'
-import { Context } from '@root/context'
 
-import Style from './style.module.scss'
 import { applyClassName } from '@root/utils'
 
-export interface ExtendedParams {
-  context: Context
-  info: LineNormal
-}
+import Style from './style.module.scss'
 
-export class Extended {
+export class ExtendedContent {
   private context: Context
 
-  private current: {
-    info: LineNormal
-    element: HTMLDivElement
-  }
+  private info: LineNormal
+  private content: HTMLDivElement
 
-  constructor({ context, info }: ExtendedParams) {
+  constructor(context: Context, info: LineNormal) {
     this.context = context
-
-    this.current = {
-      info,
-      element: document.createElement('div'),
-    }
+    this.info = info
+    this.content = document.createElement('div')
 
     const classNames = [Style.extended, context.config.style.className.line.normal.extended]
-    applyClassName(this.current.element, classNames)
+    applyClassName(this.content, classNames)
 
     this.handleInit()
   }
@@ -36,7 +27,7 @@ export class Extended {
   private handleInit() {
     const config = this.context.config.line.normal.extended
 
-    for (const item of this.current.info.content.extended) {
+    for (const item of this.info.content.extended) {
       if (!item.content?.trim()) {
         continue
       }
@@ -48,7 +39,7 @@ export class Extended {
           const element = document.createElement('div')
           element.innerText = item.content
           element.classList.add(Style.translate)
-          this.current.element.appendChild(element)
+          this.content.appendChild(element)
           break
         }
         case ExtendedType.Roman: {
@@ -58,7 +49,7 @@ export class Extended {
           const element = document.createElement('div')
           element.innerText = item.content
           element.classList.add(Style.roman)
-          this.current.element.appendChild(element)
+          this.content.appendChild(element)
           break
         }
       }
@@ -66,6 +57,6 @@ export class Extended {
   }
 
   get element() {
-    return this.current.element
+    return this.content
   }
 }

@@ -1,38 +1,29 @@
 import type { LineNormal } from '@music-lyric-kit/lyric'
 import type { Context } from '@root/context'
 
-import Style from './style.module.scss'
 import { applyClassName } from '@root/utils'
 
-export interface MainParams {
-  context: Context
-  info: LineNormal
-}
+import Style from './style.module.scss'
 
-export class Main {
+export class MainContent {
   private context: Context
 
-  private current: {
-    info: LineNormal
-    element: HTMLDivElement
-  }
+  private info: LineNormal
+  private content: HTMLDivElement
 
-  constructor({ context, info }: MainParams) {
+  constructor(context: Context, info: LineNormal) {
     this.context = context
-
-    this.current = {
-      info,
-      element: document.createElement('div'),
-    }
+    this.info = info
+    this.content = document.createElement('div')
 
     const classNames = [Style.original, this.context.config.style.className.line.normal.original]
-    applyClassName(this.current.element, classNames)
+    applyClassName(this.content, classNames)
 
     this.handleInit()
   }
 
   private handleInit() {
-    this.current.element.innerText = this.current.info.content.original
+    this.content.innerText = this.info.content.original
   }
 
   play(currentTime: number, isActive: boolean) {}
@@ -42,6 +33,6 @@ export class Main {
   reset() {}
 
   get element() {
-    return this.current.element
+    return this.content
   }
 }
