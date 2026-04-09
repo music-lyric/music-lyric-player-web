@@ -13,17 +13,40 @@ interface StoredState {
   volume?: number
 }
 
+interface SliderOptions {
+  wrapper: HTMLElement
+  track: HTMLElement
+  fill: HTMLElement
+  thumb: HTMLElement
+  onSeek: (ratio: number) => void
+}
+
+const $ = (id: string): HTMLElement => document.getElementById(id)!
+
 const formatTime = (seconds: number): string => {
-  if (isNaN(seconds)) return '0:00'
+  if (Number.isNaN(seconds)) return '0:00'
   const mins = Math.floor(seconds / 60)
   const secs = Math.floor(seconds % 60)
   return `${mins}:${secs.toString().padStart(2, '0')}`
 }
 
+const clamp = (value: number, min = 0, max = 1): number => Math.max(min, Math.min(max, value))
+
+const getSliderRatio = (track: HTMLElement, clientX: number): number => {
+  const rect = track.getBoundingClientRect()
+  return clamp((clientX - rect.left) / rect.width)
+}
+
+const getClientX = (e: MouseEvent | TouchEvent): number => ('touches' in e ? e.touches[0].clientX : e.clientX)
+
+const toggleDisplay = (shown: HTMLElement, hidden: HTMLElement, condition: boolean): void => {
+  shown.style.display = condition ? 'block' : 'none'
+  hidden.style.display = condition ? 'none' : 'block'
+}
+
 const loadState = (): StoredState => {
   try {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    return stored ? JSON.parse(stored) : {}
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}')
   } catch {
     return {}
   }
@@ -33,16 +56,13 @@ const saveState = (state: StoredState): void => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
 }
 
-const openDB = (): Promise<IDBDatabase> => {
-  return new Promise((resolve, reject) => {
+const openDB = async (): Promise<IDBDatabase> =>
+  new Promise((resolve, reject) => {
     const req = indexedDB.open(DB_NAME, 1)
-    req.onupgradeneeded = () => {
-      req.result.createObjectStore(STORE_NAME)
-    }
+    req.onupgradeneeded = () => req.result.createObjectStore(STORE_NAME)
     req.onsuccess = () => resolve(req.result)
     req.onerror = () => reject(req.error)
   })
-}
 
 const saveAudioToDB = async (file: File): Promise<void> => {
   const db = await openDB()
@@ -64,177 +84,204 @@ const loadAudioFromDB = async (): Promise<File | undefined> => {
   })
 }
 
+const createSlider = ({ wrapper, track, fill, thumb, onSeek }: SliderOptions) => {
+  let dragging = false
+
+  const update = (ratio: number): void => {
+    const pct = `${ratio * 100}%`
+    fill.style.width = pct
+    thumb.style.left = pct
+  }
+
+  const seek = (e: MouseEvent | TouchEvent): void => {
+    onSeek(getSliderRatio(track, getClientX(e)))
+  }
+
+  const onStart = (e: MouseEvent | TouchEvent): void => {
+    dragging = true
+    wrapper.classList.add('dragging')
+    seek(e)
+  }
+
+  const onMove = (e: MouseEvent | TouchEvent): void => {
+    if (dragging) seek(e)
+  }
+
+  const onEnd = (): void => {
+    if (!dragging) return
+    dragging = false
+    wrapper.classList.remove('dragging')
+  }
+
+  wrapper.addEventListener('mousedown', onStart)
+  wrapper.addEventListener('touchstart', onStart, { passive: true })
+  document.addEventListener('mousemove', onMove)
+  document.addEventListener('touchmove', onMove, { passive: true })
+  document.addEventListener('mouseup', onEnd)
+  document.addEventListener('touchend', onEnd)
+
+  return { update, isDragging: () => dragging }
+}
+
+const parseLyricContent = (content: string) => {
+  const format = content.includes('<tt') || content.includes('<TTML') ? 'ttml-amll' : 'lrc'
+  return new ParserPipeline({ content, format })
+    .parse()
+    .pureClean()
+    .pureExtract()
+    .agentExtract()
+    .backgroundExtract()
+    .backgroundClean()
+    .spaceInsert()
+    .stressMark()
+    .final()
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-  const audioChip = document.getElementById('audio-chip') as HTMLDivElement
-  const lyricChip = document.getElementById('lyric-chip') as HTMLDivElement
-  const audioInput = document.getElementById('audio-input') as HTMLInputElement
-  const lyricInput = document.getElementById('lyric-input') as HTMLInputElement
-  const audioName = document.getElementById('audio-name') as HTMLSpanElement
-  const lyricName = document.getElementById('lyric-name') as HTMLSpanElement
-  const lyricContainer = document.getElementById('lyric-container') as HTMLDivElement
-  const emptyState = document.getElementById('empty-state') as HTMLDivElement
-  const playBtn = document.getElementById('play-btn') as HTMLButtonElement
-  // @ts-expect-error
-  const playIcon = document.getElementById('play-icon') as SVGElement
-  // @ts-expect-error
-  const pauseIcon = document.getElementById('pause-icon') as SVGElement
-  const progressWrapper = document.getElementById('progress-wrapper') as HTMLDivElement
-  const progressTrack = document.getElementById('progress-track') as HTMLDivElement
-  const progressFill = document.getElementById('progress-fill') as HTMLDivElement
-  const progressThumb = document.getElementById('progress-thumb') as HTMLDivElement
-  const timeDisplay = document.getElementById('time-display') as HTMLDivElement
-  const volumeBtn = document.getElementById('volume-btn') as HTMLButtonElement
-  // @ts-expect-error
-  const volumeIcon = document.getElementById('volume-icon') as SVGElement
-  // @ts-expect-error
-  const volumeMutedIcon = document.getElementById('volume-muted-icon') as SVGElement
-  const volumeSliderWrapper = document.getElementById('volume-slider-wrapper') as HTMLDivElement
-  const volumeTrack = document.getElementById('volume-track') as HTMLDivElement
-  const volumeFill = document.getElementById('volume-fill') as HTMLDivElement
-  const volumeThumb = document.getElementById('volume-thumb') as HTMLDivElement
-  const audio = document.getElementById('audio') as HTMLAudioElement
+  const audioChip = $('audio-chip') as HTMLDivElement
+  const lyricChip = $('lyric-chip') as HTMLDivElement
+  const audioInput = $('audio-input') as HTMLInputElement
+  const lyricInput = $('lyric-input') as HTMLInputElement
+  const audioNameEl = $('audio-name') as HTMLSpanElement
+  const lyricNameEl = $('lyric-name') as HTMLSpanElement
+  const lyricContainer = $('lyric-container') as HTMLDivElement
+  const emptyState = $('empty-state') as HTMLDivElement
+  const playBtn = $('play-btn') as HTMLButtonElement
+  const playIcon = $('play-icon')
+  const pauseIcon = $('pause-icon')
+  const timeDisplay = $('time-display') as HTMLDivElement
+  const volumeBtn = $('volume-btn') as HTMLButtonElement
+  const volumeIcon = $('volume-icon')
+  const volumeMutedIcon = $('volume-muted-icon')
+  const audio = $('audio') as HTMLAudioElement
 
   const base = new BaseLyricPlayer()
   const dom = new DomLyricPlayer(base)
+
+  const state = loadState()
   let isPlaying = false
   let hasAudio = false
-  let isDragging = false
-  let isVolumeDragging = false
   let isMuted = false
   let volumeBeforeMute = 1
   let animationFrame: number | null = null
 
-  const state = loadState()
+  const progress = createSlider({
+    wrapper: $('progress-wrapper') as HTMLDivElement,
+    track: $('progress-track') as HTMLDivElement,
+    fill: $('progress-fill') as HTMLDivElement,
+    thumb: $('progress-thumb') as HTMLDivElement,
+    onSeek: (ratio) => {
+      if (!hasAudio || !audio.duration) return
+      audio.currentTime = ratio * audio.duration
+      progress.update(ratio)
+      updateTimeDisplay()
+      base.play(audio.currentTime * 1000)
+    },
+  })
+
+  const volume = createSlider({
+    wrapper: $('volume-slider-wrapper') as HTMLDivElement,
+    track: $('volume-track') as HTMLDivElement,
+    fill: $('volume-fill') as HTMLDivElement,
+    thumb: $('volume-thumb') as HTMLDivElement,
+    onSeek: (ratio) => {
+      if (ratio > 0) volumeBeforeMute = ratio
+      setVolume(ratio)
+    },
+  })
 
   const updatePlayButton = (): void => {
     playBtn.disabled = !hasAudio
-    playIcon.style.display = isPlaying ? 'none' : 'block'
-    pauseIcon.style.display = isPlaying ? 'block' : 'none'
-  }
-
-  const updateProgressBar = (ratio?: number): void => {
-    const r = ratio ?? (audio.duration ? audio.currentTime / audio.duration : 0)
-    const pct = `${r * 100}%`
-    progressFill.style.width = pct
-    progressThumb.style.left = pct
+    toggleDisplay(pauseIcon, playIcon, isPlaying)
   }
 
   const updateTimeDisplay = (): void => {
-    const current = audio.currentTime || 0
-    const duration = audio.duration || 0
-    timeDisplay.textContent = `${formatTime(current)} / ${formatTime(duration)}`
-    if (!isDragging) {
-      updateProgressBar()
+    timeDisplay.textContent = `${formatTime(audio.currentTime || 0)} / ${formatTime(audio.duration || 0)}`
+    if (!progress.isDragging()) {
+      progress.update(audio.duration ? audio.currentTime / audio.duration : 0)
     }
+  }
+
+  const setVolume = (val: number): void => {
+    const v = clamp(val)
+    audio.volume = v
+    isMuted = v === 0
+    volume.update(v)
+    toggleDisplay(volumeMutedIcon, volumeIcon, v === 0)
+    state.volume = v
+    saveState(state)
   }
 
   const tick = (): void => {
     if (!isPlaying) return
-    base.play(audio.currentTime * 1000)
     updateTimeDisplay()
     animationFrame = requestAnimationFrame(tick)
   }
 
-  const parseLyric = (content: string): void => {
-    let format: 'ttml-amll' | 'lrc' = 'ttml-amll'
-    if (!content.includes('<tt') && !content.includes('<TTML')) {
-      format = 'lrc'
+  const stopAnimation = (): void => {
+    if (animationFrame != null) {
+      cancelAnimationFrame(animationFrame)
+      animationFrame = null
     }
+  }
 
-    const parser = new ParserPipeline({ content, format })
-    const result = parser
-      .parse()
-      .pureClean()
-      .pureExtract()
-      .agentExtract()
-      .backgroundExtract()
-      .backgroundClean()
-      .spaceInsert()
-      .interludeInsert()
-      .stressMark()
-      .final()
+  const togglePlayback = (): void => {
+    if (!hasAudio) return
 
+    if (isPlaying) {
+      audio.pause()
+      base.pause()
+      isPlaying = false
+      stopAnimation()
+    } else {
+      audio.play()
+      base.play(audio.currentTime * 1000)
+      isPlaying = true
+      tick()
+    }
+    updatePlayButton()
+  }
+
+  const setupAudioFile = (file: File | Blob, name: string): void => {
+    audio.src = URL.createObjectURL(file)
+    audioNameEl.textContent = name
+    audioNameEl.classList.add('selected')
+    hasAudio = true
+    updatePlayButton()
+    audio.addEventListener('loadedmetadata', updateTimeDisplay, { once: true })
+  }
+
+  const mountPlayer = (): void => {
+    if (lyricContainer.contains(dom.element)) return
+    lyricContainer.appendChild(dom.element)
+    dom.element.style.width = '100%'
+    dom.element.style.height = '100%'
+  }
+
+  const loadLyric = (content: string): void => {
+    const result = parseLyricContent(content)
     if (result) {
       base.updateLyric(result.result)
       emptyState.style.display = 'none'
     }
   }
 
-  const mountPlayer = (): void => {
-    if (!lyricContainer.contains(dom.element)) {
-      lyricContainer.appendChild(dom.element)
-      dom.element.style.width = '100%'
-      dom.element.style.height = '100%'
-    }
-  }
-
-  const setupAudioFile = (file: File | Blob, name: string): void => {
-    const url = URL.createObjectURL(file)
-    audio.src = url
-    audioName.textContent = name
-    audioName.classList.add('selected')
-    hasAudio = true
-    updatePlayButton()
-
-    audio.addEventListener(
-      'loadedmetadata',
-      () => {
-        updateTimeDisplay()
-      },
-      { once: true },
-    )
-  }
-
-  const seekToPosition = (clientX: number): void => {
-    if (!hasAudio || !audio.duration) return
-    const rect = progressTrack.getBoundingClientRect()
-    const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width))
-    audio.currentTime = ratio * audio.duration
-    updateProgressBar(ratio)
-    updateTimeDisplay()
-    base.play(audio.currentTime * 1000)
-  }
-
-  const updateVolumeUI = (vol: number): void => {
-    const pct = `${vol * 100}%`
-    volumeFill.style.width = pct
-    volumeThumb.style.left = pct
-    volumeIcon.style.display = vol === 0 ? 'none' : 'block'
-    volumeMutedIcon.style.display = vol === 0 ? 'block' : 'none'
-  }
-
-  const setVolume = (vol: number): void => {
-    const v = Math.max(0, Math.min(1, vol))
-    audio.volume = v
-    isMuted = v === 0
-    updateVolumeUI(v)
-    state.volume = v
-    saveState(state)
-  }
-
-  const seekVolumePosition = (clientX: number): void => {
-    const rect = volumeTrack.getBoundingClientRect()
-    const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width))
-    volumeBeforeMute = ratio > 0 ? ratio : volumeBeforeMute
-    setVolume(ratio)
+  const markFileSelected = (el: HTMLSpanElement, name: string): void => {
+    el.textContent = name
+    el.classList.add('selected')
   }
 
   audioChip.addEventListener('click', (e) => {
-    if ((e.target as HTMLElement).tagName !== 'INPUT') {
-      audioInput.click()
-    }
+    if ((e.target as HTMLElement).tagName !== 'INPUT') audioInput.click()
   })
 
   lyricChip.addEventListener('click', (e) => {
-    if ((e.target as HTMLElement).tagName !== 'INPUT') {
-      lyricInput.click()
-    }
+    if ((e.target as HTMLElement).tagName !== 'INPUT') lyricInput.click()
   })
 
   audioInput.addEventListener('change', async (e) => {
     const file = (e.target as HTMLInputElement).files?.[0]
     if (!file) return
-
     setupAudioFile(file, file.name)
     state.audioName = file.name
     saveState(state)
@@ -244,54 +291,16 @@ document.addEventListener('DOMContentLoaded', () => {
   lyricInput.addEventListener('change', async (e) => {
     const file = (e.target as HTMLInputElement).files?.[0]
     if (!file) return
-
     const content = await file.text()
-    lyricName.textContent = file.name
-    lyricName.classList.add('selected')
-    parseLyric(content)
+    markFileSelected(lyricNameEl, file.name)
+    loadLyric(content)
     mountPlayer()
-
     state.lyricName = file.name
     state.lyricContent = content
     saveState(state)
   })
 
-  playBtn.addEventListener('click', () => {
-    if (!hasAudio) return
-
-    if (isPlaying) {
-      audio.pause()
-      base.pause()
-      isPlaying = false
-      if (animationFrame) {
-        cancelAnimationFrame(animationFrame)
-        animationFrame = null
-      }
-    } else {
-      audio.play()
-      isPlaying = true
-      tick()
-    }
-    updatePlayButton()
-  })
-
-  progressWrapper.addEventListener('mousedown', (e) => {
-    if (!hasAudio || !audio.duration) return
-    isDragging = true
-    progressWrapper.classList.add('dragging')
-    seekToPosition(e.clientX)
-  })
-
-  progressWrapper.addEventListener(
-    'touchstart',
-    (e) => {
-      if (!hasAudio || !audio.duration) return
-      isDragging = true
-      progressWrapper.classList.add('dragging')
-      seekToPosition(e.touches[0].clientX)
-    },
-    { passive: true },
-  )
+  playBtn.addEventListener('click', togglePlayback)
 
   volumeBtn.addEventListener('click', () => {
     if (isMuted) {
@@ -302,93 +311,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   })
 
-  volumeSliderWrapper.addEventListener('mousedown', (e) => {
-    isVolumeDragging = true
-    volumeSliderWrapper.classList.add('dragging')
-    seekVolumePosition(e.clientX)
-  })
-
-  volumeSliderWrapper.addEventListener(
-    'touchstart',
-    (e) => {
-      isVolumeDragging = true
-      volumeSliderWrapper.classList.add('dragging')
-      seekVolumePosition(e.touches[0].clientX)
-    },
-    { passive: true },
-  )
-
-  document.addEventListener('mousemove', (e) => {
-    if (isDragging) seekToPosition(e.clientX)
-    if (isVolumeDragging) seekVolumePosition(e.clientX)
-  })
-
-  document.addEventListener('mouseup', () => {
-    if (isDragging) {
-      isDragging = false
-      progressWrapper.classList.remove('dragging')
-    }
-    if (isVolumeDragging) {
-      isVolumeDragging = false
-      volumeSliderWrapper.classList.remove('dragging')
-    }
-  })
-
-  document.addEventListener(
-    'touchmove',
-    (e) => {
-      if (isDragging) seekToPosition(e.touches[0].clientX)
-      if (isVolumeDragging) seekVolumePosition(e.touches[0].clientX)
-    },
-    { passive: true },
-  )
-
-  document.addEventListener('touchend', () => {
-    if (isDragging) {
-      isDragging = false
-      progressWrapper.classList.remove('dragging')
-    }
-    if (isVolumeDragging) {
-      isVolumeDragging = false
-      volumeSliderWrapper.classList.remove('dragging')
-    }
-  })
-
   audio.addEventListener('ended', () => {
     isPlaying = false
     base.pause()
     updatePlayButton()
-    if (animationFrame) {
-      cancelAnimationFrame(animationFrame)
-      animationFrame = null
-    }
+    stopAnimation()
   })
 
   if (state.lyricName && state.lyricContent) {
-    lyricName.textContent = state.lyricName
-    lyricName.classList.add('selected')
-    parseLyric(state.lyricContent)
+    markFileSelected(lyricNameEl, state.lyricName)
+    loadLyric(state.lyricContent)
     mountPlayer()
   }
 
   if (state.audioName) {
-    audioName.textContent = state.audioName
-    audioName.classList.add('selected')
+    markFileSelected(audioNameEl, state.audioName)
     loadAudioFromDB()
       .then((file) => {
-        if (file) {
-          setupAudioFile(file, state.audioName!)
-        }
+        if (file) setupAudioFile(file, state.audioName!)
       })
       .catch(console.error)
   }
-
-  updatePlayButton()
-  updateTimeDisplay()
 
   const savedVolume = state.volume ?? 1
   audio.volume = savedVolume
   volumeBeforeMute = savedVolume > 0 ? savedVolume : 1
   isMuted = savedVolume === 0
-  updateVolumeUI(savedVolume)
+  volume.update(savedVolume)
+  toggleDisplay(volumeMutedIcon, volumeIcon, savedVolume === 0)
+
+  updatePlayButton()
+  updateTimeDisplay()
 })
