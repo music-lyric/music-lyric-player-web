@@ -8,8 +8,29 @@ import { Info } from '@music-lyric-kit/lyric'
 import { ConfigManager, Event } from '@music-lyric-player/utils'
 
 export interface BaseLyricPlayerEventMap {
-  'lyric-update': (info: Info) => void
-  'lines-update': (lines: Line[]) => void
+  /**
+   * When the player starts or resumes playback.
+   * @param currentTime The current playback time.
+   */
+  play: (currentTime: number) => void
+
+  /**
+   * When the player pauses playback.
+   * @param currentTime The current playback time.
+   */
+  pause: (currentTime: number) => void
+
+  /**
+   * When the entire lyric information is updated (e.g., loading a new lyric/song).
+   * @param info The newly loaded lyric information object.
+   */
+  lyricUpdate: (info: Info) => void
+
+  /**
+   * When the currently active lyric lines change during playback.
+   * @param lines An array of the currently active lyric lines.
+   */
+  linesUpdate: (lines: Line[]) => void
 }
 
 export class BaseLyricPlayer {
@@ -83,7 +104,7 @@ export class BaseLyricPlayer {
     this.state.lines = result
     this.state.index = firstIndex
 
-    this.event.emit('lines-update', [...this.state.lines])
+    this.event.emit('linesUpdate', [...this.state.lines])
   }
 
   private handleUpdateActiveLines(now: number) {
@@ -114,7 +135,7 @@ export class BaseLyricPlayer {
 
     if (hasChanged) {
       this.state.lines = activeLines
-      this.event.emit('lines-update', [...this.state.lines])
+      this.event.emit('linesUpdate', [...this.state.lines])
     }
   }
 
@@ -137,8 +158,8 @@ export class BaseLyricPlayer {
     this.state.lines = []
     this.time.seek = 0
 
-    this.event.emit('lyric-update', info)
-    this.event.emit('lines-update', [])
+    this.event.emit('lyricUpdate', info)
+    this.event.emit('linesUpdate', [])
   }
 
   play(time?: number) {
@@ -152,6 +173,8 @@ export class BaseLyricPlayer {
     this.time.start = performance.now()
     this.state.playing = true
     this.onTick()
+
+    this.event.emit('play', this.handleGetCurrentTime())
   }
 
   pause() {
@@ -163,9 +186,11 @@ export class BaseLyricPlayer {
       cancelAnimationFrame(this.state.frameId)
       this.state.frameId = null
     }
+
+    this.event.emit('pause', this.handleGetCurrentTime())
   }
 
-  dispose(): void {
+  dispose() {
     this.pause()
     this.event.clear()
     this.state.lines = []
