@@ -15,107 +15,111 @@ export interface ContainerEventMap {
 export class Container {
   readonly event: Event<ContainerEventMap> = new Event()
 
-  private context: Context
+  private readonly element: HTMLDivElement
+  private readonly resizeObserver: ResizeObserver
+  private readonly intersectionObserver: IntersectionObserver
 
-  private watcher: { resize: ResizeObserver; intersection: IntersectionObserver }
-  private current: {
-    element: HTMLDivElement
-    visible: boolean
-    width: number
-    height: number
-  }
+  private width = 0
+  private height = 0
+  private isVisible = false
 
-  constructor(context: Context) {
-    this.context = context
+  constructor(private readonly context: Context) {
+    this.element = document.createElement('div')
 
-    this.current = {
-      element: document.createElement('div'),
-      visible: false,
-      width: 0,
-      height: 0,
-    }
+    this.resizeObserver = new ResizeObserver(this.handleResize)
+    this.intersectionObserver = new IntersectionObserver(this.handleIntersection)
 
-    this.watcher = {
-      resize: new ResizeObserver(this.onResize.bind(this)),
-      intersection: new IntersectionObserver(this.onIntersection.bind(this)),
-    }
+    this.resizeObserver.observe(this.element)
+    this.intersectionObserver.observe(this.element)
 
-    this.watcher.resize.observe(this.current.element)
-    this.watcher.intersection.observe(this.current.element)
-
-    this.current.element.addEventListener('scroll', this.onScroll.bind(this), { passive: false })
-    this.current.element.addEventListener('wheel', this.onWheel.bind(this), { passive: false })
+    this.element.addEventListener('scroll', this.handleScroll, { passive: false })
+    this.element.addEventListener('wheel', this.handleWheel, { passive: false })
 
     this.updateConfig()
   }
 
-  private onIntersection(entries: IntersectionObserverEntry[]) {
+  private handleIntersection = (entries: IntersectionObserverEntry[]) => {
     const visible = entries[0]?.isIntersecting ?? false
-    this.current.visible = visible
+    if (this.isVisible === visible) {
+      return
+    }
+
+    this.isVisible = visible
     this.event.emit('change-visible', visible)
   }
 
-  private onResize(entries: ResizeObserverEntry[]) {
-    const width = this.current.element.clientWidth
-    const height = this.current.element.clientHeight
+  private handleResize = (entries: ResizeObserverEntry[]) => {
+    const entry = entries[0]
+    if (!entry) {
+      return
+    }
 
-    this.current.width = width
-    this.current.height = height
+    const { width, height } = entry.contentRect
+    if (this.width === width && this.height === height) {
+      return
+    }
+
+    this.width = width
+    this.height = height
 
     this.event.emit('change-size', width, height)
 
-    this.current.element.style.setProperty('--lyric-player-container-width', `${width}`)
-    this.current.element.style.setProperty('--lyric-player-container-height', `${height}`)
+    const domStyle = this.element.style
+    domStyle.setProperty('--lyric-player-container-width', `${width}px`)
+    domStyle.setProperty('--lyric-player-container-height', `${height}px`)
   }
 
-  private onScroll(e: globalThis.Event) {
+  private handleScroll = (e: globalThis.Event) => {
     this.event.emit('scroll', e)
   }
 
-  private onWheel(e: WheelEvent) {
+  private handleWheel = (e: WheelEvent) => {
     this.event.emit('wheel', e)
   }
 
   updateConfig() {
-    const classNames = [Style.container, this.context.config.style.className.container]
-    applyClassName(this.current.element, classNames)
+    const { style } = this.context.config
+    applyClassName(this.element, [Style.container, style.className.container])
 
-    const fontSize = this.context.config.style.fontSize
-    this.current.element.style.setProperty(createStyleKey('font-size'), `${fontSize}px`)
-    const fontWeight = this.context.config.style.fontWeight
-    this.current.element.style.setProperty(createStyleKey('font-weight'), `${fontWeight}`)
-    const fontFamily = this.context.config.style.fontFamily
-    this.current.element.style.setProperty(createStyleKey('font-family'), `${fontFamily}`)
+    const domStyle = this.element.style
+    domStyle.setProperty(createStyleKey('font-size'), `${style.fontSize}px`)
+    domStyle.setProperty(createStyleKey('font-weight'), `${style.fontWeight}`)
+    domStyle.setProperty(createStyleKey('font-family'), `${style.fontFamily}`)
   }
 
-  appendChild(element: HTMLDivElement) {
-    this.current.element.appendChild(element)
+  appendChild(child: HTMLDivElement) {
+    this.element.appendChild(child)
   }
 
   clearChild() {
-    this.current.element.replaceChildren()
+    this.element.replaceChildren()
   }
 
   destroy() {
     this.event.clear()
-    this.watcher.resize.disconnect()
-    this.watcher.intersection.disconnect()
-    this.current.element.remove()
+
+    this.resizeObserver.disconnect()
+    this.intersectionObserver.disconnect()
+
+    this.element.removeEventListener('scroll', this.handleScroll)
+    this.element.removeEventListener('wheel', this.handleWheel)
+
+    this.element.remove()
   }
 
-  get width() {
-    return this.current.width
+  get clientWidth() {
+    return this.width
   }
 
-  get height() {
-    return this.current.height
+  get clientHeight() {
+    return this.height
   }
 
   get visible() {
-    return this.current.visible
+    return this.isVisible
   }
 
-  get element() {
-    return this.current.element
+  get domElement() {
+    return this.element
   }
 }

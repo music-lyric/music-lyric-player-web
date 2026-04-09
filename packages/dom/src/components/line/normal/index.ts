@@ -1,61 +1,62 @@
 import type { LineNormal } from '@music-lyric-kit/lyric'
 import type { Context } from '@root/context'
 
-import { LineElementWrapper, LineElementType } from '../wrapper'
+import { BaseLineElement, LineElementType } from '../wrapper'
 
-import { MainContent } from './main'
-import { ExtendedContent } from './extended'
+import { MainNode } from './main'
+import { ExtendedNode } from './extended'
 
 import { applyClassName } from '@root/utils'
 
 import Style from './style.module.scss'
 
-export class LineElementNormal extends LineElementWrapper {
+export class NormalLineElement extends BaseLineElement {
   override get type(): LineElementType {
     return LineElementType.Normal
   }
 
-  private info: LineNormal
-  private content: HTMLDivElement
+  private container: HTMLDivElement
 
-  private main: MainContent | null = null
-  private extended: ExtendedContent | null = null
+  private main!: MainNode
+  private extended!: ExtendedNode
 
-  constructor(context: Context, line: LineNormal) {
+  constructor(
+    context: Context,
+    private readonly info: LineNormal,
+  ) {
     super(context)
 
-    this.context = context
+    this.container = document.createElement('div')
+    this.wrapper.appendChild(this.container)
 
-    this.info = line
-    this.content = document.createElement('div')
-
-    this.wrapper.appendChild(this.content)
-
-    const classNames = [Style.normal, context.config.style.className.line.normal.wrapper]
-    applyClassName(this.content, classNames)
-
-    this.handleInit()
+    this.init()
+    this.updateConfig()
   }
 
-  private handleInit() {
-    this.content.replaceChildren()
+  private init() {
+    this.main = new MainNode(this.context, this.info)
+    this.container.appendChild(this.main.element)
 
-    this.main = new MainContent(this.context, this.info)
-    this.content.appendChild(this.main.element)
-
-    this.extended = new ExtendedContent(this.context, this.info)
-    this.content.appendChild(this.extended.element)
+    if (this.info.content.extended.length) {
+      this.extended = new ExtendedNode(this.context, this.info)
+      this.container.appendChild(this.extended.element)
+    }
   }
 
-  play(time: number) {
-    this.main?.play(time, true)
+  override updateConfig() {
+    super.updateConfig()
+    applyClassName(this.container, [Style.normal, this.context.config.style.className.line.normal.wrapper])
   }
 
-  pause(time: number) {
-    this.main?.pause(time, true)
+  override play(time: number, isActive: boolean) {
+    this.main.play(time, isActive)
   }
 
-  reset() {
-    this.main?.reset()
+  override pause(time: number, isActive: boolean) {
+    this.main.pause(time, isActive)
+  }
+
+  override reset() {
+    this.main.reset()
   }
 }

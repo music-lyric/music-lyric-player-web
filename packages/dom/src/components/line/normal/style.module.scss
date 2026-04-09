@@ -47,29 +47,28 @@
   }
 }
 
-.original {
-  :global([active]) & {
-    opacity: 1;
-  }
-}
-
 .syllable {
   .word {
     display: inline-block;
     opacity: 0.4;
     transform: translateY(0);
+
     transition-property: opacity, transform;
-    transition-timing-function: ease, ease-in-out;
-  }
-  .space {
-    width: 1em;
+    transition-timing-function: cubic-bezier(0.33, 1, 0.68, 1), cubic-bezier(0.215, 0.61, 0.355, 1);
   }
 
-  :global([active]) & {
-    .word {
-      opacity: 1;
-      transform: translateY(-2px);
-    }
+  .space {
+    display: inline-block;
+    width: 0.3em;
+    white-space: pre;
+    user-select: none;
+  }
+}
+
+:global([active]) .syllable {
+  .word {
+    opacity: 1;
+    transform: translateY(-2px);
   }
 }
 

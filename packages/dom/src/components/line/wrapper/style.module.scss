@@ -17,4 +17,8 @@
   transform-origin: var(--lyric-player-line-position) center;
 
   pointer-events: none;
+
+  font-size: var(--lyric-player-font-size, 30px);
+  font-weight: var(--lyric-player-font-weight, 500);
+  font-family: var(--lyric-player-font-family);
 }

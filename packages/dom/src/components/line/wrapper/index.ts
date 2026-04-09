@@ -1,6 +1,6 @@
 import { Context } from '@root/context'
 
-import { applyClassName, createCssText } from '@root/utils'
+import { applyClassName } from '@root/utils'
 
 import Style from './style.module.scss'
 
@@ -32,46 +32,17 @@ export const DEFAULT_LINE_ELEMENT_STYLE: LineElementStyle = {
   transitionDuration: 500,
 }
 
-export abstract class LineElementWrapper {
+export abstract class BaseLineElement {
   abstract get type(): LineElementType
 
-  protected context: Context
+  protected readonly wrapper: HTMLDivElement
 
-  protected wrapper: HTMLDivElement
-
-  constructor(context: Context) {
-    this.context = context
+  constructor(protected readonly context: Context) {
     this.wrapper = document.createElement('div')
-
-    const classNames = [Style.wrapper, this.context.config.style.className.line.wrapper]
-    applyClassName(this.wrapper, classNames)
   }
 
-  abstract play(time: number, isActive: boolean): void
-
-  abstract pause(time: number, isActive: boolean): void
-
-  abstract reset(): void
-
-  destroy() {
-    this.wrapper.remove()
-  }
-
-  set style(current: LineElementStyle) {
-    const style: Partial<CSSStyleDeclaration> = {}
-
-    style.transform = [`translateX(${current.left}px)`, `translateY(${current.top}px)`, `scale(${current.scale})`].join(' ')
-
-    style.transitionDuration = `${current.transitionDuration}ms`
-    style.transitionDelay = `${current.transitionDelay}ms`
-    style.filter = `blur(${current.blur}px)`
-    style.opacity = current.hide ? '0 !important' : `${current.opacity}`
-
-    this.wrapper.setAttribute('style', createCssText(style))
-  }
-
-  set active(isActive: boolean) {
-    if (isActive) {
+  set active(value: boolean) {
+    if (value) {
       this.wrapper.setAttribute('active', '')
     } else {
       this.wrapper.removeAttribute('active')
@@ -92,5 +63,32 @@ export abstract class LineElementWrapper {
 
   get element() {
     return this.wrapper
+  }
+
+  updateConfig() {
+    applyClassName(this.wrapper, [Style.wrapper, this.context.config.style.className.line.wrapper])
+  }
+
+  updateStyle(current: LineElementStyle) {
+    const domStyle = this.wrapper.style
+
+    domStyle.transform = `translate(${current.left}px, ${current.top}px) scale(${current.scale})`
+
+    domStyle.transitionDuration = `${current.transitionDuration}ms`
+    domStyle.transitionDelay = `${current.transitionDelay}ms`
+
+    domStyle.filter = `blur(${current.blur}px)`
+    domStyle.opacity = current.hide ? '0' : `${current.opacity}`
+  }
+
+  abstract play(time: number, isActive: boolean): void
+
+  abstract pause(time: number, isActive: boolean): void
+
+  abstract reset(): void
+
+  destroy(): void {
+    this.wrapper.replaceChildren()
+    this.wrapper.remove()
   }
 }

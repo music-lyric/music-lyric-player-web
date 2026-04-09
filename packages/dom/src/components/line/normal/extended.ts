@@ -7,7 +7,7 @@ import { applyClassName } from '@root/utils'
 
 import Style from './style.module.scss'
 
-export class ExtendedContent {
+export class ExtendedNode {
   private context: Context
 
   private info: LineNormal

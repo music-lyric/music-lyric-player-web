@@ -10,7 +10,7 @@ import { ConfigManager } from '@music-lyric-player/utils'
 
 import { Context } from '@root/context'
 import { ConfigClient } from '@root/config'
-import { Container, LineElementWrapper, LineElementNormal } from '@root/components'
+import { Container, BaseLineElement, NormalLineElement } from '@root/components'
 
 export class DomLyricPlayer {
   public config: ConfigClient = new ConfigManager(DEFAULT_CONFIG, {})
@@ -19,7 +19,7 @@ export class DomLyricPlayer {
   private player: BaseLyricPlayer
 
   private container: Container
-  private lines: LineElementWrapper[]
+  private lines: BaseLineElement[]
 
   private onDestroy: Array<() => void> = []
 
@@ -71,7 +71,7 @@ export class DomLyricPlayer {
     for (const line of this.player.currentInfo.lines) {
       switch (line.type) {
         case LineType.Normal: {
-          const element = new LineElementNormal(this.context, line)
+          const element = new NormalLineElement(this.context, line)
           result.push(element)
           break
         }
@@ -152,7 +152,7 @@ export class DomLyricPlayer {
     }
 
     for (let i = 0; i < this.lines.length; i++) {
-      this.lines[i].style = styles[i]
+      this.lines[i].updateStyle(styles[i])
     }
 
     // Update line active state and call play/reset
