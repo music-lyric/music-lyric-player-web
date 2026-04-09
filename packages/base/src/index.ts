@@ -50,6 +50,20 @@ export class BaseLyricPlayer {
     return this.time.seek + (performance.now() - this.time.start)
   }
 
+  private handleGetLineTime(index: number): number {
+    if (index < 0 || index >= this.info.lines.length) {
+      return 0
+    }
+
+    if (index === this.info.lines.length - 1) {
+      return Infinity
+    }
+
+    const line = this.info.lines[index]
+    const nextLine = this.info.lines[index + 1]
+    return Math.max(line.time.end, nextLine.time.start)
+  }
+
   private handleSyncTime(time: number) {
     const result: Line[] = []
 
@@ -61,10 +75,7 @@ export class BaseLyricPlayer {
         break
       }
 
-      const nextLine = this.info.lines[i + 1]
-      const effectiveEnd = nextLine ? Math.max(line.time.end, nextLine.time.start) : line.time.end
-
-      if (effectiveEnd > time) {
+      if (this.handleGetLineTime(i) > time) {
         result.push(line)
       }
     }
@@ -72,34 +83,27 @@ export class BaseLyricPlayer {
     this.state.lines = result
     this.state.index = firstIndex
 
-    this.event.emit('lines-update', result)
+    this.event.emit('lines-update', [...this.state.lines])
   }
 
   private handleUpdateActiveLines(now: number) {
     let hasChanged = false
 
-    for (let i = this.state.lines.length - 1; i >= 0; i--) {
-      const line = this.state.lines[i]
+    const activeLines = this.state.lines.filter((line) => {
       const infoIndex = this.info.lines.indexOf(line)
-
-      const nextLineInInfo = infoIndex !== -1 ? this.info.lines[infoIndex + 1] : undefined
-      const effectiveEnd = nextLineInInfo ? Math.max(line.time.end, nextLineInInfo.time.start) : line.time.end
-
-      if (now >= effectiveEnd) {
-        this.state.lines.splice(i, 1)
+      if (now >= this.handleGetLineTime(infoIndex)) {
         hasChanged = true
+        return false
       }
-    }
+      return true
+    })
 
     while (this.state.index < this.info.lines.length) {
       const nextLine = this.info.lines[this.state.index]
 
       if (now >= nextLine.time.start) {
-        const nextNextLine = this.info.lines[this.state.index + 1]
-        const effectiveEnd = nextNextLine ? Math.max(nextLine.time.end, nextNextLine.time.start) : nextLine.time.end
-
-        if (now < effectiveEnd) {
-          this.state.lines.push(nextLine)
+        if (now < this.handleGetLineTime(this.state.index)) {
+          activeLines.push(nextLine)
           hasChanged = true
         }
         this.state.index++
@@ -108,11 +112,10 @@ export class BaseLyricPlayer {
       }
     }
 
-    if (!hasChanged) {
-      return
+    if (hasChanged) {
+      this.state.lines = activeLines
+      this.event.emit('lines-update', [...this.state.lines])
     }
-
-    this.event.emit('lines-update', this.state.lines)
   }
 
   private onTick = () => {
@@ -123,7 +126,7 @@ export class BaseLyricPlayer {
     const now = this.handleGetCurrentTime()
     this.handleUpdateActiveLines(now)
 
-    this.state.frameId = requestAnimationFrame(() => this.onTick())
+    this.state.frameId = requestAnimationFrame(this.onTick)
   }
 
   updateLyric(info: Info) {
