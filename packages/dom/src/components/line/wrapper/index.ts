@@ -37,8 +37,11 @@ export abstract class BaseLineElement {
 
   protected readonly wrapper: HTMLDivElement
 
+  protected readonly size: { width: number; height: number }
+
   constructor(protected readonly context: Context) {
     this.wrapper = document.createElement('div')
+    this.size = { width: 0, height: 0 }
   }
 
   set active(value: boolean) {
@@ -53,16 +56,21 @@ export abstract class BaseLineElement {
     this.wrapper.setAttribute('position', value)
   }
 
-  get width() {
-    return this.wrapper.clientWidth
+  get element() {
+    return this.wrapper
   }
 
   get height() {
-    return this.wrapper.clientHeight
+    return this.size.height
   }
 
-  get element() {
-    return this.wrapper
+  get width() {
+    return this.size.width
+  }
+
+  updateSize() {
+    this.size.width = this.wrapper.clientWidth
+    this.size.height = this.wrapper.clientHeight
   }
 
   updateConfig() {

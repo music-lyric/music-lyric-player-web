@@ -15,7 +15,7 @@ export interface ContainerEventMap {
 export class Container {
   readonly event: Event<ContainerEventMap> = new Event()
 
-  private readonly element: HTMLDivElement
+  private readonly dom: HTMLDivElement
   private readonly resizeObserver: ResizeObserver
   private readonly intersectionObserver: IntersectionObserver
 
@@ -24,16 +24,16 @@ export class Container {
   private isVisible = false
 
   constructor(private readonly context: Context) {
-    this.element = document.createElement('div')
+    this.dom = document.createElement('div')
 
     this.resizeObserver = new ResizeObserver(this.handleResize)
     this.intersectionObserver = new IntersectionObserver(this.handleIntersection)
 
-    this.resizeObserver.observe(this.element)
-    this.intersectionObserver.observe(this.element)
+    this.resizeObserver.observe(this.dom)
+    this.intersectionObserver.observe(this.dom)
 
-    this.element.addEventListener('scroll', this.handleScroll, { passive: false })
-    this.element.addEventListener('wheel', this.handleWheel, { passive: false })
+    this.dom.addEventListener('scroll', this.handleScroll, { passive: false })
+    this.dom.addEventListener('wheel', this.handleWheel, { passive: false })
 
     this.updateConfig()
   }
@@ -64,7 +64,7 @@ export class Container {
 
     this.event.emit('change-size', width, height)
 
-    const domStyle = this.element.style
+    const domStyle = this.dom.style
     domStyle.setProperty('--lyric-player-container-width', `${width}px`)
     domStyle.setProperty('--lyric-player-container-height', `${height}px`)
   }
@@ -79,20 +79,20 @@ export class Container {
 
   updateConfig() {
     const { style } = this.context.config
-    applyClassName(this.element, [Style.container, style.className.container])
+    applyClassName(this.dom, [Style.container, style.className.container])
 
-    const domStyle = this.element.style
+    const domStyle = this.dom.style
     domStyle.setProperty(createStyleKey('font-size'), `${style.fontSize}px`)
     domStyle.setProperty(createStyleKey('font-weight'), `${style.fontWeight}`)
     domStyle.setProperty(createStyleKey('font-family'), `${style.fontFamily}`)
   }
 
   appendChild(child: HTMLDivElement) {
-    this.element.appendChild(child)
+    this.dom.appendChild(child)
   }
 
   clearChild() {
-    this.element.replaceChildren()
+    this.dom.replaceChildren()
   }
 
   destroy() {
@@ -101,10 +101,10 @@ export class Container {
     this.resizeObserver.disconnect()
     this.intersectionObserver.disconnect()
 
-    this.element.removeEventListener('scroll', this.handleScroll)
-    this.element.removeEventListener('wheel', this.handleWheel)
+    this.dom.removeEventListener('scroll', this.handleScroll)
+    this.dom.removeEventListener('wheel', this.handleWheel)
 
-    this.element.remove()
+    this.dom.remove()
   }
 
   get clientWidth() {
@@ -119,7 +119,7 @@ export class Container {
     return this.isVisible
   }
 
-  get domElement() {
-    return this.element
+  get element() {
+    return this.dom
   }
 }

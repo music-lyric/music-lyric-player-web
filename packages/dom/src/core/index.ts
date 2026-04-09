@@ -1,5 +1,4 @@
 import type { Line } from '@music-lyric-kit/lyric'
-import type { LineElementStyle } from '@root/components'
 
 import { DEFAULT_LINE_ELEMENT_STYLE } from '@root/components'
 import { DEFAULT_CONFIG } from '@root/config'
@@ -21,8 +20,6 @@ export class DomLyricPlayer {
   private container: Container
   private lines: BaseLineElement[]
 
-  private onDestroy: Array<() => void> = []
-
   constructor(player: BaseLyricPlayer) {
     this.context = new Context(this.config)
     this.player = player
@@ -30,30 +27,56 @@ export class DomLyricPlayer {
     this.container = new Container(this.context)
     this.lines = []
 
-    const onLyricUpadte = this.onLyricUpadte.bind(this)
-    const onLinesUpdate = this.onLinesUpdate.bind(this)
+    this.player.event.add('play', this.onPlay)
+    this.player.event.add('pause', this.onPause)
+    this.player.event.add('lyricUpdate', this.onLyricUpadte)
+    this.player.event.add('linesUpdate', this.onLinesUpdate)
 
-    this.player.event.add('lyric-update', onLyricUpadte)
-    this.player.event.add('lines-update', onLinesUpdate)
-    this.onDestroy.push(() => {
-      this.player.event.remove('lyric-update', onLyricUpadte)
-      this.player.event.remove('lines-update', onLinesUpdate)
+    this.container.event.add('change-size', this.onSizeUpdate)
+
+    this.config.on(this.onConfigUpdate)
+  }
+
+  private onSizeUpdate = () => {
+    requestAnimationFrame(() => {
+      this.handleRefreshLineSize()
     })
-
-    this.config.on(this.onConfigUpdate.bind(this))
   }
 
-  private onConfigUpdate() {
+  private onConfigUpdate = () => {
     this.container.updateConfig()
+    for (const line of this.lines) {
+      line.updateConfig()
+    }
+    requestAnimationFrame(() => {
+      this.handleRefreshLineSize()
+    })
   }
 
-  private onLyricUpadte(info: Info) {
+  private onPlay = (currentTime: number) => {
+    this.handleUpdateLines()
+  }
+
+  private onPause = (currentTime: number) => {
+    for (let i = 0; i < this.lines.length; i++) {
+      const line = this.lines[i]
+      if (!line) {
+        continue
+      }
+      const isActive = this.handleGetLineIsActive(i)
+      line.pause(currentTime, isActive)
+    }
+  }
+
+  private onLyricUpadte = (info: Info) => {
     this.handleInitLines()
     requestAnimationFrame(() => {
+      this.handleRefreshLineSize()
       this.handleUpdateLines()
     })
   }
-  private onLinesUpdate(lines: Line[]) {
+
+  private onLinesUpdate = (lines: Line[]) => {
     requestAnimationFrame(() => {
       this.handleUpdateLines()
     })
@@ -65,6 +88,7 @@ export class DomLyricPlayer {
     }
     this.lines = []
   }
+
   private handleInitLines() {
     const result = []
 
@@ -86,82 +110,68 @@ export class DomLyricPlayer {
     this.lines = result
   }
 
+  private handleRefreshLineSize() {
+    for (const line of this.lines) {
+      line.updateSize()
+    }
+  }
+
+  private handleGetLineIsActive(index: number) {
+    const target = this.player.currentInfo.lines[index]
+    if (!target) {
+      return false
+    }
+    return this.player.currentLines.includes(target)
+  }
+
   private handleUpdateLines() {
-    console.log('handleUpdateLines')
+    const allLinesInfo = this.player.currentInfo.lines
+    const lineElements = this.lines
 
-    const currentLines = this.player.currentInfo.lines
-    const currentActiveLines = this.player.currentLines
-    const currentLineElements = this.lines
-
-    if (!currentLineElements.length || !currentLines.length) {
+    if (!lineElements.length || !allLinesInfo.length) {
       return
     }
 
-    const currentSpace = this.config.current.style.fontSize * 0.6
+    const lineGap = this.config.current.style.fontSize * 0.6
+    const containerHeight = this.container.clientHeight
+    const anchorY = containerHeight * (this.config.current.scroll.activePosition / 100)
 
-    const styles: LineElementStyle[] = this.lines.map(() => ({ ...DEFAULT_LINE_ELEMENT_STYLE }))
-
-    const activeIndices: number[] = []
-    for (const line of currentActiveLines) {
-      const index = currentLines.indexOf(line)
-      if (index !== -1) {
-        activeIndices.push(index)
-      }
-    }
-    activeIndices.sort((a, b) => a - b)
-
-    if (!activeIndices.length) {
-      activeIndices.push(0)
-    }
-
-    const containerHeight = this.container.height
-    const anchorRatio = this.config.current.scroll.activePosition * 0.01
-
-    let activeGroupHeight = 0
-    for (let k = 0; k < activeIndices.length; k++) {
-      const idx = activeIndices[k]
-      activeGroupHeight += this.lines[idx]?.height ?? 0
-      if (k < activeIndices.length - 1) {
-        activeGroupHeight += currentSpace
+    let activeIndices: number[] = []
+    for (let i = 0; i < lineElements.length; i++) {
+      if (this.handleGetLineIsActive(i)) {
+        activeIndices.push(i)
       }
     }
 
-    let activeGroupTop = containerHeight * anchorRatio - activeGroupHeight / 2
-
-    for (let k = 0; k < activeIndices.length; k++) {
-      const idx = activeIndices[k]
-      styles[idx].top = activeGroupTop
-      activeGroupTop += (this.lines[idx]?.height ?? 0) + currentSpace
+    if (activeIndices.length === 0) {
+      activeIndices = [0]
     }
 
-    const firstActiveIndex = activeIndices[0]
-    let nextTop = styles[firstActiveIndex].top
-    for (let i = firstActiveIndex - 1; i >= 0; i--) {
-      const lineHeight = this.lines[i]?.height ?? 0
-      nextTop = nextTop - lineHeight - currentSpace
-      styles[i].top = nextTop
+    const topPositions: number[] = new Array(lineElements.length).fill(0)
+    let y = 0
+    for (let i = 0; i < lineElements.length; i++) {
+      topPositions[i] = y
+      y += lineElements[i].height + lineGap
     }
 
-    const lastActiveIndex = activeIndices[activeIndices.length - 1]
-    let prevTop = styles[lastActiveIndex].top
-    let prevHeight = this.lines[lastActiveIndex]?.height ?? 0
-    for (let i = lastActiveIndex + 1; i < this.lines.length; i++) {
-      prevTop = prevTop + prevHeight + currentSpace
-      styles[i].top = prevTop
-      prevHeight = this.lines[i]?.height ?? 0
-    }
+    const firstActiveIdx = activeIndices[0]
+    const lastActiveIdx = activeIndices[activeIndices.length - 1]
+    const activeGroupTop = topPositions[firstActiveIdx]
+    const activeGroupBottom = topPositions[lastActiveIdx] + lineElements[lastActiveIdx].height
+    const activeGroupCenter = (activeGroupTop + activeGroupBottom) / 2
 
-    for (let i = 0; i < this.lines.length; i++) {
-      this.lines[i].updateStyle(styles[i])
-    }
+    const offset = anchorY - activeGroupCenter
 
-    // Update line active state and call play/reset
     const currentTime = this.player.currentTime
-    const activeSet = new Set(activeIndices)
 
-    for (let i = 0; i < this.lines.length; i++) {
-      const line = this.lines[i]
-      const isActive = activeSet.has(i)
+    for (let i = 0; i < lineElements.length; i++) {
+      const line = lineElements[i]
+      const isActive = this.handleGetLineIsActive(i)
+
+      line.updateStyle({
+        ...DEFAULT_LINE_ELEMENT_STYLE,
+        top: topPositions[i] + offset,
+      })
 
       if (isActive) {
         line.active = true
@@ -175,5 +185,18 @@ export class DomLyricPlayer {
 
   get element() {
     return this.container.element
+  }
+
+  destroy() {
+    this.player.event.remove('play', this.onPlay)
+    this.player.event.remove('pause', this.onPause)
+    this.player.event.remove('lyricUpdate', this.onLyricUpadte)
+    this.player.event.remove('linesUpdate', this.onLinesUpdate)
+
+    this.container.event.remove('change-size', this.onSizeUpdate)
+
+    this.config.off(this.onConfigUpdate)
+
+    this.handleClearLines()
   }
 }
