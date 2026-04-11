@@ -29,8 +29,10 @@ export interface BaseLyricPlayerEventMap {
   /**
    * When the currently active lyric lines change during playback.
    * @param lines An array of the currently active lyric lines.
+   * @param indexs An array of the currently active lyric lines' indexes.
+   * @param firstIndex The index of the first currently active lyric line (-1 if none).
    */
-  linesUpdate: (lines: Line[]) => void
+  linesUpdate: (lines: Line[], indexs: number[], index: number) => void
 }
 
 export class BaseLyricPlayer {
@@ -41,8 +43,11 @@ export class BaseLyricPlayer {
   private state: {
     playing: boolean
     frameId: number | null
-    index: number
+    scanIndex: number
+  }
+  private active: {
     lines: Line[]
+    index: number[]
   }
   private time: {
     start: number
@@ -54,8 +59,11 @@ export class BaseLyricPlayer {
     this.state = {
       playing: false,
       frameId: null,
-      index: 0,
+      scanIndex: 0,
+    }
+    this.active = {
       lines: [],
+      index: [],
     }
     this.time = {
       start: 0,
@@ -85,8 +93,13 @@ export class BaseLyricPlayer {
     return Math.max(line.time.end, nextLine.time.start)
   }
 
+  private handleGetActiveIndex() {
+    return this.active.index.length > 0 ? this.active.index[0] : -1
+  }
+
   private handleSyncTime(time: number) {
-    const result: Line[] = []
+    const lines: Line[] = []
+    const index: number[] = []
 
     let firstIndex = this.info.lines.length
     for (let i = 0; i < this.info.lines.length; i++) {
@@ -97,46 +110,58 @@ export class BaseLyricPlayer {
       }
 
       if (this.handleGetLineTime(i) > time) {
-        result.push(line)
+        lines.push(line)
+        index.push(i) // 保证 lines 和 index 同步推入
       }
     }
 
-    this.state.lines = result
-    this.state.index = firstIndex
+    this.state.scanIndex = firstIndex
 
-    this.event.emit('linesUpdate', [...this.state.lines])
+    this.active.lines = lines
+    this.active.index = index
+
+    this.event.emit('linesUpdate', [...this.active.lines], [...this.active.index], this.handleGetActiveIndex())
   }
 
   private handleUpdateActiveLines(now: number) {
     let hasChanged = false
 
-    const activeLines = this.state.lines.filter((line) => {
-      const infoIndex = this.info.lines.indexOf(line)
+    const newActiveLines: Line[] = []
+    const newActiveIndex: number[] = []
+
+    for (let i = 0; i < this.active.lines.length; i++) {
+      const line = this.active.lines[i]
+      const infoIndex = this.active.index[i]
+
       if (now >= this.handleGetLineTime(infoIndex)) {
         hasChanged = true
-        return false
+      } else {
+        newActiveLines.push(line)
+        newActiveIndex.push(infoIndex)
       }
-      return true
-    })
+    }
 
-    while (this.state.index < this.info.lines.length) {
-      const nextLine = this.info.lines[this.state.index]
-
+    while (this.state.scanIndex < this.info.lines.length) {
+      const nextLine = this.info.lines[this.state.scanIndex]
       if (now >= nextLine.time.start) {
-        if (now < this.handleGetLineTime(this.state.index)) {
-          activeLines.push(nextLine)
+        if (now < this.handleGetLineTime(this.state.scanIndex)) {
+          newActiveLines.push(nextLine)
+          newActiveIndex.push(this.state.scanIndex)
           hasChanged = true
         }
-        this.state.index++
+        this.state.scanIndex++
       } else {
         break
       }
     }
 
-    if (hasChanged) {
-      this.state.lines = activeLines
-      this.event.emit('linesUpdate', [...this.state.lines])
+    if (!hasChanged) {
+      return
     }
+
+    this.active.lines = newActiveLines
+    this.active.index = newActiveIndex
+    this.event.emit('linesUpdate', [...this.active.lines], [...this.active.index], this.handleGetActiveIndex())
   }
 
   private onTick = () => {
@@ -151,15 +176,21 @@ export class BaseLyricPlayer {
   }
 
   updateLyric(info: Info) {
+    if (!info) {
+      return
+    }
+
     this.pause()
     this.info = info
 
-    this.state.index = 0
-    this.state.lines = []
+    this.active.lines = []
+    this.active.index = []
+
+    this.state.scanIndex = 0
     this.time.seek = 0
 
     this.event.emit('lyricUpdate', info)
-    this.event.emit('linesUpdate', [])
+    this.event.emit('linesUpdate', [], [], -1)
   }
 
   play(time?: number) {
@@ -193,12 +224,23 @@ export class BaseLyricPlayer {
   dispose() {
     this.pause()
     this.event.clear()
-    this.state.lines = []
+
+    this.active.lines = []
+    this.active.index = []
+
     this.info = new Info()
   }
 
   get currentLines() {
-    return [...this.state.lines]
+    return [...this.active.lines]
+  }
+
+  get currentIndex() {
+    return [...this.active.index]
+  }
+
+  get currentActive() {
+    return this.handleGetActiveIndex()
   }
 
   get currentInfo() {
