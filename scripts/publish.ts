@@ -1,11 +1,11 @@
 import { exec } from './utils'
-import { rootVersion, targets } from './target'
+import { mainVersion, targets } from './target'
 
 const main = async () => {
   let releaseTag: string | null = null
-  if (rootVersion.includes('alpha')) {
+  if (mainVersion.includes('alpha')) {
     releaseTag = 'alpha'
-  } else if (rootVersion.includes('beta')) {
+  } else if (mainVersion.includes('beta')) {
     releaseTag = 'beta'
   }
 

@@ -11,6 +11,12 @@ importers:
       '@types/node':
         specifier: ^25.0.3
         version: 25.5.2
+      '@types/semver':
+        specifier: ^7.7.1
+        version: 7.7.1
+      semver:
+        specifier: ^7.7.4
+        version: 7.7.4
       tsx:
         specifier: ^4.21.0
         version: 4.21.0
@@ -601,6 +607,9 @@ packages:
   '@types/node@25.5.2':
     resolution: {integrity: sha512-tO4ZIRKNC+MDWV4qKVZe3Ql/woTnmHDr5JD8UI5hn2pwBrHEwOEMZK7WlNb5RKB6EoJ02gwmQS9OrjuFnZYdpg==}
 
+  '@types/semver@7.7.1':
+    resolution: {integrity: sha512-FmgJfu+MOcQ370SD0ev7EI8TlCAfKYU+B4m5T3yXc1CiRN94g/SZPtsCkk506aUDtlMnFZvasDwHHUcZUEaYuA==}
+
   '@volar/language-core@2.4.28':
     resolution: {integrity: sha512-w4qhIJ8ZSitgLAkVay6AbcnC7gP3glYM3fYwKV3srj8m494E3xtrCv6E+bWviiK/8hs6e6t1ij1s2Endql7vzQ==}
 
@@ -903,6 +912,11 @@ packages:
 
   semver@7.5.4:
     resolution: {integrity: sha512-1bCSESV6Pv+i21Hvpxp3Dx+pSD8lIPt8uVjRrxAUt/nbswYc+tK6Y2btiULjd4+fnq15PX+nqQDC7Oft7WkwcA==}
+    engines: {node: '>=10'}
+    hasBin: true
+
+  semver@7.7.4:
+    resolution: {integrity: sha512-vFKC2IEtQnVhpT78h1Yp8wzwrf8CM+MzKMHGJZfBtzhZNycRFnXsHk6E5TxIkkMsgNS7mdX3AGB7x2QM2di4lA==}
     engines: {node: '>=10'}
     hasBin: true
 
@@ -1443,6 +1457,8 @@ snapshots:
     dependencies:
       undici-types: 7.18.2
 
+  '@types/semver@7.7.1': {}
+
   '@volar/language-core@2.4.28':
     dependencies:
       '@volar/source-map': 2.4.28
@@ -1782,6 +1798,8 @@ snapshots:
   semver@7.5.4:
     dependencies:
       lru-cache: 6.0.0
+
+  semver@7.7.4: {}
 
   source-map-js@1.2.1: {}
 

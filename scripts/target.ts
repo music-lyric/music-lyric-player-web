@@ -10,9 +10,6 @@ export interface Target {
 
 export const root = process.cwd()
 
-const rootPkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf-8'))
-export const rootVersion: string = rootPkg.version
-
 const handleFindTarget = (dir: string): Target | null => {
   if (!existsSync(dir)) {
     return null
@@ -45,6 +42,13 @@ const handleFindTargets = (root: string): Target[] => {
 }
 
 const mainRoot = join(root, 'main')
-const packagesRoot = join(root, 'packages')
+const mainPackge = handleFindTarget(mainRoot)
 
-export const targets: Target[] = [handleFindTarget(mainRoot), ...handleFindTargets(packagesRoot)].filter((item) => !!item)
+if (!mainPackge) {
+  console.log('main package not found')
+  process.exit(1)
+}
+
+export const mainVersion = mainPackge.version
+
+export const targets: Target[] = [mainPackge, ...handleFindTargets(join(root, 'packages'))]
