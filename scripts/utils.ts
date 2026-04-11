@@ -44,3 +44,5 @@ export const formatDate = (date: string | number | Date, format: string = 'YYYY-
 
   return format.replace('YYYY', String(year)).replace('MM', month).replace('DD', day)
 }
+
+export const sleep = (time: number) => new Promise((resolve) => setTimeout(resolve, time))

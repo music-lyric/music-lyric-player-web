@@ -1,4 +1,4 @@
-import { exec } from './utils'
+import { exec, sleep } from './utils'
 import { mainVersion, targets } from './target'
 
 const main = async () => {
@@ -11,7 +11,7 @@ const main = async () => {
 
   for (const target of targets) {
     try {
-      console.log(`try publish for ${target.id}`)
+      console.log(`publish id=${target.id}`)
 
       const args = ['publish', '--no-git-checks', '--access', 'public', ...(releaseTag ? ['--tag', releaseTag] : [])]
       await exec('pnpm', args, {
@@ -19,9 +19,11 @@ const main = async () => {
         cwd: target.root,
       })
 
-      console.log(`publish success for ${target.id}`)
+      console.log(`publish success id=${target.id}`)
     } catch (err) {
-      console.log(`publish for ${target.id}`)
+      console.log(`publish failed id=${target.id} err=${err}`)
+    } finally {
+      await sleep(3000)
     }
   }
 }

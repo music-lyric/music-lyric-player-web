@@ -51,4 +51,4 @@ if (!mainPackge) {
 
 export const mainVersion = mainPackge.version
 
-export const targets: Target[] = [mainPackge, ...handleFindTargets(join(root, 'packages'))]
+export const targets: Target[] = [...handleFindTargets(join(root, 'packages')), mainPackge]
