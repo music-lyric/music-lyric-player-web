@@ -9,7 +9,8 @@
     "build": "turbo run build",
     "build:force": "turbo run build --force",
     "change-log:build": "tsx scripts/change-log/build.ts",
-    "change-log:match": "tsx scripts/change-log/match.ts"
+    "change-log:match": "tsx scripts/change-log/match.ts",
+    "publish": "tsx scripts/publish.ts"
   },
   "homepage": "https://github.com/music-lyric/music-lyric-player-web#readme",
   "bugs": {
