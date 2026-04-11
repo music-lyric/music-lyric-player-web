@@ -34,7 +34,7 @@ export interface BaseLyricPlayerEventMap {
 }
 
 export class BaseLyricPlayer {
-  readonly config: ConfigManager<Options, DeepPartial<Options>> = new ConfigManager(DEFAULT_OPTIONS)
+  readonly config = new ConfigManager<Options, DeepPartial<Options>>(DEFAULT_OPTIONS)
 
   readonly event: Event<BaseLyricPlayerEventMap> = new Event()
 

@@ -1,19 +1,25 @@
-import { mergeObject, cloneObjectDeep } from '@root/object'
+import type { NestedKeys } from '@root/types'
 
-type Listener<Full> = (newConfig: Full) => void
+import { Event } from '@root/event'
 
-export class ConfigManager<Full, Init> {
+import { mergeObject, cloneObjectDeep, compareObject } from '@root/object'
+
+export interface ConfigManagerEventMap<Full, Keys> {
+  update: (changeKeys: Keys[], config: Full) => void
+  reset: (config: Full) => void
+}
+
+export class ConfigManager<Full, Init, Keys = NestedKeys<Full>> {
+  readonly event = new Event<ConfigManagerEventMap<Full, Keys>>()
+
   private def: Full
   private now: Full
-
-  private listeners: Listener<Full>[] = []
 
   constructor(def: Full, init?: Init) {
     this.def = def
     this.now = cloneObjectDeep(def)
     if (init) {
       this.now = mergeObject(this.now, init)
-      this.emit()
     }
   }
 
@@ -21,30 +27,29 @@ export class ConfigManager<Full, Init> {
     if (!target) {
       return
     }
-    this.now = mergeObject(this.now, target)
-    this.emit()
+
+    const prev = this.now
+    this.now = mergeObject(cloneObjectDeep(prev), target)
+
+    const changed = compareObject(prev, this.now) as Keys[]
+    if (changed.length) {
+      this.event.emit('update', changed, this.now)
+    }
   }
 
   reset() {
+    const prev = cloneObjectDeep(this.now)
     this.now = cloneObjectDeep(this.def)
-    this.emit()
+
+    const changed = compareObject(prev, this.now) as Keys[]
+    if (changed.length) {
+      this.event.emit('update', changed, this.now)
+    }
+
+    this.event.emit('reset', this.now)
   }
 
   get current() {
     return this.now
-  }
-
-  on(listener: Listener<Full>) {
-    this.listeners.push(listener)
-  }
-
-  off(listener: Listener<Full>) {
-    this.listeners = this.listeners.filter((l) => l !== listener)
-  }
-
-  private emit() {
-    for (const listener of this.listeners) {
-      listener(this.now)
-    }
   }
 }

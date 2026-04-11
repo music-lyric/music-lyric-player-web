@@ -34,7 +34,7 @@ export class DomLyricPlayer {
 
     this.container.event.add('change-size', this.onSizeUpdate)
 
-    this.config.on(this.onConfigUpdate)
+    this.config.event.add('update', this.onConfigUpdate)
   }
 
   private onSizeUpdate = () => {
@@ -195,7 +195,7 @@ export class DomLyricPlayer {
 
     this.container.event.remove('change-size', this.onSizeUpdate)
 
-    this.config.off(this.onConfigUpdate)
+    this.config.event.remove('update', this.onConfigUpdate)
 
     this.handleClearLines()
   }
