@@ -9,7 +9,7 @@ import { ConfigManager } from '@music-lyric-player/utils'
 
 import { Context } from '@root/context'
 import { ConfigClient } from '@root/config'
-import { Container, BaseLineElement, NormalLineElement } from '@root/components'
+import { Container, BaseLineElement, NormalLineElement, InterludeLineElement } from '@root/components'
 
 export class DomLyricPlayer {
   public config: ConfigClient = new ConfigManager(DEFAULT_CONFIG, {})
@@ -99,6 +99,11 @@ export class DomLyricPlayer {
           result.push(element)
           break
         }
+        case LineType.Interlude: {
+          const element = new InterludeLineElement(this.context, line)
+          result.push(element)
+          break
+        }
       }
     }
 
@@ -132,7 +137,7 @@ export class DomLyricPlayer {
       return
     }
 
-    const lineGap = this.config.current.style.fontSize * 0.6
+    const lineGap = this.config.current.style.fontSize * 0.8
     const containerHeight = this.container.clientHeight
     const anchorY = containerHeight * (this.config.current.scroll.activePosition / 100)
 

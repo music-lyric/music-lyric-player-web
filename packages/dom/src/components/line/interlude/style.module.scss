@@ -1,0 +1,38 @@
+.interlude {
+  display: flex;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  gap: 12px;
+  overflow: visible;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.6);
+  transform-origin: var(--lyric-player-line-position) center;
+
+  transition:
+    opacity 0.3s linear,
+    transform 0.6s ease-out;
+
+  .dot {
+    --dot-size: calc(var(--lyric-player-font-size) * 0.4);
+    width: var(--dot-size);
+    height: var(--dot-size);
+
+    display: inline-block;
+    aspect-ratio: 1 / 1;
+    border-radius: 100%;
+    opacity: 0.2;
+    background-color: black;
+  }
+
+  :global([active]) & {
+    transition-delay: 0.1s;
+    opacity: 1;
+    transform: scale(1);
+    .dot {
+      opacity: 0.8;
+      transition-property: opacity;
+      transition-timing-function: linear;
+    }
+  }
+}

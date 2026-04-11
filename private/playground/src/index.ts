@@ -132,6 +132,7 @@ const parseLyricContent = (content: string) => {
     .agentExtract()
     .backgroundExtract()
     .backgroundClean()
+    .interludeInsert()
     .spaceInsert()
     .stressMark()
     .final()
