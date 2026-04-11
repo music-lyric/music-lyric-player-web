@@ -35,5 +35,9 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "dependencies": {
+    "@music-lyric-player/base": "workspace:*",
+    "@music-lyric-player/dom": "workspace:*"
+  }
 }
