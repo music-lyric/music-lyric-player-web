@@ -1,11 +1,12 @@
 .container {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-  overflow: visible;
-  display: flex;
-
   --lyric-player-container-width: 0;
   --lyric-player-container-height: 0;
+
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  box-sizing: border-box;
+  user-select: none;
 }
