@@ -11,21 +11,32 @@ import { Context } from '@root/context'
 import { ConfigClient } from '@root/config'
 import { Container, BaseLineElement, NormalLineElement, InterludeLineElement } from '@root/components'
 
+import { ScrollHandler } from './scroll'
+
 export class DomLyricPlayer {
-  public config: ConfigClient = new ConfigManager(DEFAULT_CONFIG, {})
+  public config: ConfigClient
 
   private context: Context
   private player: BaseLyricPlayer
 
   private container: Container
-  private lines: BaseLineElement[]
+  private lineMap: Map<number, BaseLineElement>
+
+  private scroll: ScrollHandler
 
   constructor(player: BaseLyricPlayer) {
-    this.context = new Context(this.config)
+    const config = new ConfigManager(DEFAULT_CONFIG, {})
+    const context = new Context(config)
+    const container = new Container(context)
+
+    this.config = config
+    this.context = context
+    this.container = container
     this.player = player
 
-    this.container = new Container(this.context)
-    this.lines = []
+    this.lineMap = new Map()
+    this.scroll = new ScrollHandler(player, config, container)
+    this.scroll.onScroll = this.onScroll.bind(this)
 
     this.player.event.add('play', this.onPlay)
     this.player.event.add('pause', this.onPause)
@@ -45,7 +56,7 @@ export class DomLyricPlayer {
 
   private onConfigUpdate = () => {
     this.container.updateConfig()
-    for (const line of this.lines) {
+    for (const line of this.lineMap.values()) {
       line.updateConfig()
     }
     requestAnimationFrame(() => {
@@ -58,17 +69,14 @@ export class DomLyricPlayer {
   }
 
   private onPause = (currentTime: number) => {
-    for (let i = 0; i < this.lines.length; i++) {
-      const line = this.lines[i]
-      if (!line) {
-        continue
-      }
-      const isActive = this.handleGetLineIsActive(i)
-      line.pause(currentTime, isActive)
+    for (const [index, element] of this.lineMap) {
+      const isActive = this.handleGetLineIsActive(index)
+      element.pause(currentTime, isActive)
     }
   }
 
   private onLyricUpadte = (info: Info) => {
+    this.scroll.clear()
     this.handleInitLines()
     requestAnimationFrame(() => {
       this.handleRefreshLineSize()
@@ -82,58 +90,61 @@ export class DomLyricPlayer {
     })
   }
 
+  private onScroll(line: number) {
+    this.handleUpdateLines(line)
+  }
+
   private handleClearLines() {
-    for (const line of this.lines) {
+    for (const line of this.lineMap.values()) {
       line.destroy()
     }
-    this.lines = []
+    this.lineMap.clear()
   }
 
   private handleInitLines() {
-    const result = []
+    const result = new Map<number, BaseLineElement>()
 
-    for (const line of this.player.currentInfo.lines) {
+    for (let i = 0; i < this.player.currentInfo.lines.length; i++) {
+      const line = this.player.currentInfo.lines[i]
+      if (!line) {
+        continue
+      }
       switch (line.type) {
         case LineType.Normal: {
           const element = new NormalLineElement(this.context, line)
-          result.push(element)
+          result.set(i, element)
           break
         }
         case LineType.Interlude: {
           const element = new InterludeLineElement(this.context, line)
-          result.push(element)
+          result.set(i, element)
           break
         }
       }
     }
 
     this.handleClearLines()
-    for (const line of result) {
+    this.lineMap = result
+
+    for (const line of result.values()) {
       this.container.appendChild(line.element)
     }
-
-    this.lines = result
   }
 
   private handleRefreshLineSize() {
-    for (const line of this.lines) {
+    for (const line of this.lineMap.values()) {
       line.updateSize()
     }
   }
 
   private handleGetLineIsActive(index: number) {
-    const target = this.player.currentInfo.lines[index]
-    if (!target) {
-      return false
-    }
-    return this.player.currentLines.includes(target)
+    return this.player.currentIndex.includes(index)
   }
 
-  private handleUpdateLines() {
+  private handleUpdateLines(line?: number) {
     const allLinesInfo = this.player.currentInfo.lines
-    const lineElements = this.lines
 
-    if (!lineElements.length || !allLinesInfo.length) {
+    if (!this.lineMap.size || !allLinesInfo.length) {
       return
     }
 
@@ -142,9 +153,9 @@ export class DomLyricPlayer {
     const anchorY = containerHeight * (this.config.current.scroll.activePosition / 100)
 
     let activeIndices: number[] = []
-    for (let i = 0; i < lineElements.length; i++) {
-      if (this.handleGetLineIsActive(i)) {
-        activeIndices.push(i)
+    for (const index of this.lineMap.keys()) {
+      if (this.handleGetLineIsActive(index)) {
+        activeIndices.push(index)
       }
     }
 
@@ -152,38 +163,42 @@ export class DomLyricPlayer {
       activeIndices = [0]
     }
 
-    const topPositions: number[] = new Array(lineElements.length).fill(0)
+    const topPositions: number[] = new Array(this.lineMap.size).fill(0)
     let y = 0
-    for (let i = 0; i < lineElements.length; i++) {
-      topPositions[i] = y
-      y += lineElements[i].height + lineGap
+    for (const [index, element] of this.lineMap) {
+      topPositions[index] = y
+      y += element.height + lineGap
     }
 
-    const firstActiveIdx = activeIndices[0]
-    const lastActiveIdx = activeIndices[activeIndices.length - 1]
-    const activeGroupTop = topPositions[firstActiveIdx]
-    const activeGroupBottom = topPositions[lastActiveIdx] + lineElements[lastActiveIdx].height
-    const activeGroupCenter = (activeGroupTop + activeGroupBottom) / 2
+    let anchorCenter: number
+    if (line && line >= 0) {
+      anchorCenter = topPositions[line] + this.lineMap.get(line)!.height / 2
+    } else {
+      const firstActiveIdx = activeIndices[0]
+      const lastActiveIdx = activeIndices[activeIndices.length - 1]
+      const activeGroupTop = topPositions[firstActiveIdx]
+      const activeGroupBottom = topPositions[lastActiveIdx] + this.lineMap.get(lastActiveIdx)!.height
+      anchorCenter = (activeGroupTop + activeGroupBottom) / 2
+    }
 
-    const offset = anchorY - activeGroupCenter
+    const offset = anchorY - anchorCenter
 
     const currentTime = this.player.currentTime
 
-    for (let i = 0; i < lineElements.length; i++) {
-      const line = lineElements[i]
-      const isActive = this.handleGetLineIsActive(i)
+    for (const [index, element] of this.lineMap) {
+      const isActive = this.handleGetLineIsActive(index)
 
-      line.updateStyle({
+      element.updateStyle({
         ...DEFAULT_LINE_ELEMENT_STYLE,
-        top: topPositions[i] + offset,
+        top: topPositions[index] + offset,
       })
 
       if (isActive) {
-        line.active = true
-        line.play(currentTime, true)
+        element.active = true
+        element.play(currentTime, true)
       } else {
-        line.active = false
-        line.reset()
+        element.active = false
+        element.reset()
       }
     }
   }
@@ -199,7 +214,6 @@ export class DomLyricPlayer {
     this.player.event.remove('linesUpdate', this.onLinesUpdate)
 
     this.container.event.remove('change-size', this.onSizeUpdate)
-
     this.config.event.remove('update', this.onConfigUpdate)
 
     this.handleClearLines()
