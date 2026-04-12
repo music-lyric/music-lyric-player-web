@@ -10,8 +10,8 @@ import Style from './style.module.scss'
 const DOT_COUNT = 3
 
 export class InterludeLineElement extends BaseLineElement {
-  override get type(): LineElementType {
-    return LineElementType.Interlude
+  override get type() {
+    return LineElementType.Interlude as const
   }
 
   private container: HTMLDivElement

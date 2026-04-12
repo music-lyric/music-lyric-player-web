@@ -63,12 +63,12 @@
     white-space: pre;
     user-select: none;
   }
-}
 
-:global([active]) .syllable {
-  .word {
-    opacity: 1;
-    transform: translateY(-2px);
+  :global([active]) & {
+    .word {
+      opacity: 1;
+      transform: translateY(-2px);
+    }
   }
 }
 
@@ -85,4 +85,20 @@
 }
 .extended > :first-child {
   margin-top: 10px;
+}
+
+.background {
+  opacity: 0;
+  transform: scale(0.8);
+
+  transition:
+    opacity 0.1s linear,
+    transform 0.3s cubic-bezier(0, 1, 0, 1);
+
+  font-size: calc(var(--lyric-player-font-size, 30px) * 0.8);
+
+  :global([active]) & {
+    opacity: 1;
+    transform: scale(1);
+  }
 }

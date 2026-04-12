@@ -11,20 +11,23 @@ import { applyClassName } from '@root/utils'
 import Style from './style.module.scss'
 
 export class NormalLineElement extends BaseLineElement {
-  override get type(): LineElementType {
-    return LineElementType.Normal
+  override get type() {
+    return LineElementType.Normal as const
   }
+
+  private readonly info: LineNormal
+  private readonly isBackgroundLine: boolean
 
   private container: HTMLDivElement
 
   private main!: MainNode
   private extended!: ExtendedNode
 
-  constructor(
-    context: Context,
-    private readonly info: LineNormal,
-  ) {
+  constructor(context: Context, info: LineNormal, isBackground: boolean) {
     super(context)
+
+    this.info = info
+    this.isBackgroundLine = isBackground
 
     this.container = document.createElement('div')
     this.wrapper.appendChild(this.container)
@@ -45,7 +48,11 @@ export class NormalLineElement extends BaseLineElement {
 
   override updateConfig() {
     super.updateConfig()
-    applyClassName(this.container, [Style.normal, this.context.config.style.className.line.normal.wrapper])
+    const className = [Style.normal, this.context.config.style.className.line.normal.original]
+    if (this.isBackgroundLine) {
+      className.push(Style.background)
+    }
+    applyClassName(this.container, className)
   }
 
   override play(time: number, isActive: boolean) {
@@ -58,5 +65,9 @@ export class NormalLineElement extends BaseLineElement {
 
   override reset() {
     this.main.reset()
+  }
+
+  get isBackground() {
+    return this.isBackgroundLine
   }
 }

@@ -1,6 +1,7 @@
 import type { Line } from '@music-lyric-kit/lyric'
+import type { LineElement } from '@root/components'
 
-import { DEFAULT_LINE_ELEMENT_STYLE } from '@root/components'
+import { DEFAULT_LINE_ELEMENT_STYLE, LineElementType } from '@root/components'
 import { DEFAULT_CONFIG } from '@root/config'
 
 import { Info, LineType } from '@music-lyric-kit/lyric'
@@ -9,7 +10,7 @@ import { ConfigManager } from '@music-lyric-player/utils'
 
 import { Context } from '@root/context'
 import { ConfigClient } from '@root/config'
-import { Container, BaseLineElement, NormalLineElement, InterludeLineElement } from '@root/components'
+import { Container, NormalLineElement, InterludeLineElement } from '@root/components'
 
 import { ScrollHandler } from './scroll'
 
@@ -20,7 +21,9 @@ export class DomLyricPlayer {
   private player: BaseLyricPlayer
 
   private container: Container
-  private lineMap: Map<number, BaseLineElement>
+
+  private lineElemeMap: Map<number, LineElement>
+  private lineIndexMap: Map<number, number[]>
 
   private scroll: ScrollHandler
 
@@ -34,9 +37,11 @@ export class DomLyricPlayer {
     this.container = container
     this.player = player
 
-    this.lineMap = new Map()
     this.scroll = new ScrollHandler(player, config, container)
     this.scroll.onScroll = this.onScroll.bind(this)
+
+    this.lineElemeMap = new Map()
+    this.lineIndexMap = new Map()
 
     this.player.event.add('play', this.onPlay)
     this.player.event.add('pause', this.onPause)
@@ -56,7 +61,7 @@ export class DomLyricPlayer {
 
   private onConfigUpdate = () => {
     this.container.updateConfig()
-    for (const line of this.lineMap.values()) {
+    for (const line of this.lineElemeMap.values()) {
       line.updateConfig()
     }
     requestAnimationFrame(() => {
@@ -69,7 +74,7 @@ export class DomLyricPlayer {
   }
 
   private onPause = (currentTime: number) => {
-    for (const [index, element] of this.lineMap) {
+    for (const [index, element] of this.lineElemeMap) {
       const isActive = this.handleGetLineIsActive(index)
       element.pause(currentTime, isActive)
     }
@@ -95,105 +100,157 @@ export class DomLyricPlayer {
   }
 
   private handleClearLines() {
-    for (const line of this.lineMap.values()) {
+    for (const line of this.lineElemeMap.values()) {
       line.destroy()
     }
-    this.lineMap.clear()
+    this.lineElemeMap.clear()
+    this.lineIndexMap.clear()
   }
 
   private handleInitLines() {
-    const result = new Map<number, BaseLineElement>()
+    const lineElemeMap = new Map<number, LineElement>()
+    const lineIndexMap = new Map<number, number[]>()
 
-    for (let i = 0; i < this.player.currentInfo.lines.length; i++) {
-      const line = this.player.currentInfo.lines[i]
-      if (!line) {
-        continue
-      }
+    let lineIndex = 0
+    let elemIndex = 0
+
+    for (const line of this.player.currentInfo.lines) {
+      const currentLineIndex = lineIndex
+      const currentElemIndex = elemIndex
+
+      const indexs = []
+      lineIndex++
+      elemIndex++
+
       switch (line.type) {
-        case LineType.Normal: {
-          const element = new NormalLineElement(this.context, line)
-          result.set(i, element)
+        case LineType.Interlude: {
+          const elem = new InterludeLineElement(this.context, line)
+          lineElemeMap.set(currentElemIndex, elem)
+          indexs.push(currentElemIndex)
           break
         }
-        case LineType.Interlude: {
-          const element = new InterludeLineElement(this.context, line)
-          result.set(i, element)
-          break
+        case LineType.Normal: {
+          const elem = new NormalLineElement(this.context, line, false)
+          lineElemeMap.set(currentElemIndex, elem)
+          indexs.push(currentElemIndex)
+          for (const background of line.background || []) {
+            const elem = new NormalLineElement(this.context, background, true)
+            lineElemeMap.set(elemIndex, elem)
+            indexs.push(elemIndex)
+            elemIndex++
+          }
         }
       }
+
+      lineIndexMap.set(currentLineIndex, indexs)
     }
 
     this.handleClearLines()
-    this.lineMap = result
-
-    for (const line of result.values()) {
+    for (const line of lineElemeMap.values()) {
       this.container.appendChild(line.element)
     }
+
+    this.lineElemeMap = lineElemeMap
+    this.lineIndexMap = lineIndexMap
   }
 
   private handleRefreshLineSize() {
-    for (const line of this.lineMap.values()) {
+    for (const line of this.lineElemeMap.values()) {
       line.updateSize()
     }
   }
 
-  private handleGetLineIsActive(index: number) {
-    return this.player.currentIndex.includes(index)
+  private handleGetLineIsActive(elemIndex: number) {
+    for (const lineIdx of this.player.currentIndex) {
+      const elemIndices = this.lineIndexMap.get(lineIdx)
+      if (elemIndices && elemIndices.includes(elemIndex)) {
+        return true
+      }
+    }
+    return false
   }
 
-  private handleUpdateLines(line?: number) {
-    const allLinesInfo = this.player.currentInfo.lines
-
-    if (!this.lineMap.size || !allLinesInfo.length) {
+  private handleUpdateLines(targetIndex?: number) {
+    const linNumFull = this.lineElemeMap.size
+    if (!linNumFull || !this.player.currentInfo.lines.length) {
       return
     }
 
-    const lineGap = this.config.current.style.fontSize * 0.8
-    const containerHeight = this.container.clientHeight
-    const anchorY = containerHeight * (this.config.current.scroll.activePosition / 100)
+    const currentSpace = this.config.current.style.fontSize * 0.8
+    const currentContainerHeight = this.container.clientHeight
+    const currentActivePosition = currentContainerHeight * (this.config.current.scroll.activePosition / 100)
 
-    let activeIndices: number[] = []
-    for (const index of this.lineMap.keys()) {
-      if (this.handleGetLineIsActive(index)) {
-        activeIndices.push(index)
+    const isInScrolling = targetIndex !== void 0 && targetIndex >= 0
+    const currentActiveLines: number[] = []
+    const topPositions: number[] = new Array(linNumFull)
+
+    for (let i = 0; i < linNumFull; i++) {
+      if (this.handleGetLineIsActive(i)) {
+        currentActiveLines.push(i)
       }
     }
-
-    if (activeIndices.length === 0) {
-      activeIndices = [0]
+    if (!currentActiveLines.length) {
+      const firstLineElems = this.lineIndexMap.get(0) || [0]
+      currentActiveLines.push(...firstLineElems)
     }
 
-    const topPositions: number[] = new Array(this.lineMap.size).fill(0)
-    let y = 0
-    for (const [index, element] of this.lineMap) {
-      topPositions[index] = y
-      y += element.height + lineGap
+    for (let i = 0; i < linNumFull; i++) {
+      const element = this.lineElemeMap.get(i)
+      if (!element) {
+        continue
+      }
+
+      const isActiveLine = currentActiveLines.includes(i)
+
+      if (i === 0) {
+        topPositions[i] = 0
+        continue
+      }
+
+      const lastTop = topPositions[i - 1]
+      const lastElement = this.lineElemeMap.get(i - 1)
+      const lastHeight = lastElement?.height ?? 0
+      const baseTop = lastTop + lastHeight
+
+      if (element.type === LineElementType.Normal && element.isBackground) {
+        if (!isInScrolling && !isActiveLine) {
+          topPositions[i] = baseTop - element.height
+        } else {
+          topPositions[i] = baseTop + currentSpace * 0.5
+        }
+        continue
+      }
+
+      topPositions[i] = baseTop + currentSpace
     }
 
-    let anchorCenter: number
-    if (line && line >= 0) {
-      anchorCenter = topPositions[line] + this.lineMap.get(line)!.height / 2
+    let currentActiveOffset: number
+    if (isInScrolling) {
+      const targetElement = this.lineElemeMap.get(targetIndex)
+      const targetHeight = targetElement?.height ?? 0
+      currentActiveOffset = topPositions[targetIndex] + targetHeight / 2
     } else {
-      const firstActiveIdx = activeIndices[0]
-      const lastActiveIdx = activeIndices[activeIndices.length - 1]
+      const firstActiveIdx = currentActiveLines[0]
+      const lastActiveIdx = currentActiveLines[currentActiveLines.length - 1]
       const activeGroupTop = topPositions[firstActiveIdx]
-      const activeGroupBottom = topPositions[lastActiveIdx] + this.lineMap.get(lastActiveIdx)!.height
-      anchorCenter = (activeGroupTop + activeGroupBottom) / 2
+      const lastElementHeight = this.lineElemeMap.get(lastActiveIdx)?.height ?? 0
+      const activeGroupBottom = topPositions[lastActiveIdx] + lastElementHeight
+      currentActiveOffset = (activeGroupTop + activeGroupBottom) / 2
     }
-
-    const offset = anchorY - anchorCenter
-
+    const offset = currentActivePosition - currentActiveOffset
     const currentTime = this.player.currentTime
 
-    for (const [index, element] of this.lineMap) {
-      const isActive = this.handleGetLineIsActive(index)
-
+    for (let i = 0; i < linNumFull; i++) {
+      const element = this.lineElemeMap.get(i)
+      if (!element) {
+        continue
+      }
+      const isActiveLine = currentActiveLines.includes(i)
       element.updateStyle({
         ...DEFAULT_LINE_ELEMENT_STYLE,
-        top: topPositions[index] + offset,
+        top: topPositions[i] + offset,
       })
-
-      if (isActive) {
+      if (isActiveLine) {
         element.active = true
         element.play(currentTime, true)
       } else {
