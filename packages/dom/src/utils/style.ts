@@ -6,10 +6,6 @@ export const createCssText = (styles: Partial<CSSStyleDeclaration>) => {
     .join(';')
 }
 
-export const createStyleKey = (key: string) => {
-  return `--lyric-player-${key}`
-}
-
 export const applyClassName = (element: HTMLDivElement, names: string[]) => {
   for (const item of element.classList.values()) {
     element.classList.remove(item)

@@ -40,19 +40,19 @@ export class NormalLineElement extends BaseLineElement {
     this.main = new MainNode(this.context, this.info)
     this.container.appendChild(this.main.element)
 
-    if (this.info.content.extended.length) {
+    if (this.info.content.extended.length && this.context.config.line.normal.extended.visible) {
       this.extended = new ExtendedNode(this.context, this.info)
       this.container.appendChild(this.extended.element)
     }
   }
 
   override updateConfig() {
-    super.updateConfig()
-    const className = [Style.normal, this.context.config.style.className.line.normal.original]
-    if (this.isBackgroundLine) {
-      className.push(Style.background)
-    }
+    const className = [Style.normal, this.context.config.line.normal.className, this.isBackgroundLine ? Style.background : '']
     applyClassName(this.container, className)
+
+    super.updateConfig()
+    this.main?.updateConfig()
+    this.extended?.updateConfig()
   }
 
   override play(time: number, isActive: boolean) {

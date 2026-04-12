@@ -1,9 +1,9 @@
 import { Event } from '@music-lyric-player/utils'
 import { Context } from '@root/context'
 
-import { applyClassName, createStyleKey } from '@root/utils'
+import { applyClassName } from '@root/utils'
 
-import Style from './style.module.scss'
+import Styles from './style.module.scss'
 
 export interface ContainerEventMap {
   'change-visible': (visible: boolean) => void
@@ -19,11 +19,13 @@ export class Container {
   private readonly resizeObserver: ResizeObserver
   private readonly intersectionObserver: IntersectionObserver
 
-  private width = 0
-  private height = 0
-  private isVisible = false
+  private size: { width: number; height: number }
+  private isVisible: boolean
 
   constructor(private readonly context: Context) {
+    this.size = { width: 0, height: 0 }
+    this.isVisible = false
+
     this.dom = document.createElement('div')
 
     this.resizeObserver = new ResizeObserver(this.handleResize)
@@ -55,13 +57,11 @@ export class Container {
     }
 
     const { width, height } = entry.contentRect
-    if (this.width === width && this.height === height) {
+    if (this.size.width === width && this.size.height === height) {
       return
     }
 
-    this.width = width
-    this.height = height
-
+    this.size = { width, height }
     this.event.emit('change-size', width, height)
 
     const domStyle = this.dom.style
@@ -78,13 +78,7 @@ export class Container {
   }
 
   updateConfig() {
-    const { style } = this.context.config
-    applyClassName(this.dom, [Style.container, style.className.container])
-
-    const domStyle = this.dom.style
-    domStyle.setProperty(createStyleKey('font-size'), `${style.fontSize}px`)
-    domStyle.setProperty(createStyleKey('font-weight'), `${style.fontWeight}`)
-    domStyle.setProperty(createStyleKey('font-family'), `${style.fontFamily}`)
+    applyClassName(this.dom, [Styles.container])
   }
 
   appendChild(child: HTMLDivElement) {
@@ -107,12 +101,12 @@ export class Container {
     this.dom.remove()
   }
 
-  get clientWidth() {
-    return this.width
+  get width() {
+    return this.size.width
   }
 
-  get clientHeight() {
-    return this.height
+  get height() {
+    return this.size.height
   }
 
   get visible() {

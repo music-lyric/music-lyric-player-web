@@ -18,42 +18,53 @@ export class ExtendedNode {
     this.info = info
     this.content = document.createElement('div')
 
-    const classNames = [Style.extended, context.config.style.className.line.normal.extended]
-    applyClassName(this.content, classNames)
-
-    this.handleInit()
+    this.updateConfig()
   }
 
-  private handleInit() {
+  private init() {
     const config = this.context.config.line.normal.extended
 
+    this.content.replaceChildren()
     for (const item of this.info.content.extended) {
       if (!item.content?.trim()) {
         continue
       }
       switch (item.type) {
         case ExtendedType.Translate: {
-          if (!config.translate) {
+          if (!config.translate.visible) {
             break
           }
+
           const element = document.createElement('div')
           element.innerText = item.content
-          element.classList.add(Style.translate)
+
+          const className = [Style.translate, config.translate.className]
+          applyClassName(element, className)
+
           this.content.appendChild(element)
           break
         }
         case ExtendedType.Roman: {
-          if (!config.roman) {
+          if (!config.roman.visible) {
             break
           }
+
           const element = document.createElement('div')
           element.innerText = item.content
-          element.classList.add(Style.roman)
+
+          const className = [Style.roman, config.roman.className]
+          applyClassName(element, className)
+
           this.content.appendChild(element)
           break
         }
       }
     }
+  }
+
+  updateConfig() {
+    this.init()
+    applyClassName(this.content, [Style.extended])
   }
 
   get element() {

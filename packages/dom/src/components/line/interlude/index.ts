@@ -87,7 +87,7 @@ export class InterludeLineElement extends BaseLineElement {
 
   override updateConfig() {
     super.updateConfig()
-    applyClassName(this.container, [Style.interlude])
+    applyClassName(this.container, [Style.interlude, this.context.config.line.interlude.className])
   }
 
   override play(time: number, isActive: boolean) {

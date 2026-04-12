@@ -1,11 +1,11 @@
+@use '../common.scss' as *;
+
 .interlude {
   display: flex;
   padding-top: 6px;
   padding-bottom: 6px;
   gap: 12px;
-  overflow: visible;
-  pointer-events: none;
-  opacity: 0;
+
   transform: scale(0.6);
   transform-origin: var(--lyric-player-line-position) center;
 
@@ -14,23 +14,26 @@
     transform 0.6s ease-out;
 
   .dot {
-    --dot-size: calc(var(--lyric-player-font-size) * 0.4);
-    width: var(--dot-size);
-    height: var(--dot-size);
-
     display: inline-block;
+
+    width: build-var('line-interlude', 'size');
+    height: build-var('line-interlude', 'size');
+
+    opacity: build-var('line-interlude', 'opacity');
+    background-color: build-var('line-interlude', 'color');
+
     aspect-ratio: 1 / 1;
     border-radius: 100%;
-    opacity: 0.2;
-    background-color: black;
   }
 
-  :global([active]) & {
-    transition-delay: 0.1s;
-    opacity: 1;
+  [active] & {
     transform: scale(1);
+    transition-delay: 0.1s;
+
     .dot {
-      opacity: 0.8;
+      opacity: build-var('line-interlude-active', 'opacity');
+      background-color: build-var('line-interlude-active', 'color');
+
       transition-property: opacity;
       transition-timing-function: linear;
     }

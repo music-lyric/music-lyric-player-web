@@ -1,0 +1,3 @@
+@function build-var($module, $key) {
+  @return var(--lyric-player-#{$module}-#{$key});
+}

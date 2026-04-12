@@ -10,7 +10,7 @@ import { ConfigManager } from '@music-lyric-player/utils'
 
 import { Context } from '@root/context'
 import { ConfigClient } from '@root/config'
-import { Container, NormalLineElement, InterludeLineElement } from '@root/components'
+import { Root, NormalLineElement, InterludeLineElement } from '@root/components'
 
 import { ScrollHandler } from './scroll'
 
@@ -20,7 +20,7 @@ export class DomLyricPlayer {
   private context: Context
   private player: BaseLyricPlayer
 
-  private container: Container
+  private root: Root
 
   private lineElemeMap: Map<number, LineElement>
   private lineIndexMap: Map<number, number[]>
@@ -30,14 +30,14 @@ export class DomLyricPlayer {
   constructor(player: BaseLyricPlayer) {
     const config = new ConfigManager(DEFAULT_CONFIG, {})
     const context = new Context(config)
-    const container = new Container(context)
+    const root = new Root(context)
 
     this.config = config
     this.context = context
-    this.container = container
+    this.root = root
     this.player = player
 
-    this.scroll = new ScrollHandler(player, config, container)
+    this.scroll = new ScrollHandler(player, config, root)
     this.scroll.onScroll = this.onScroll.bind(this)
 
     this.lineElemeMap = new Map()
@@ -48,7 +48,7 @@ export class DomLyricPlayer {
     this.player.event.add('lyricUpdate', this.onLyricUpadte)
     this.player.event.add('linesUpdate', this.onLinesUpdate)
 
-    this.container.event.add('change-size', this.onSizeUpdate)
+    this.root.event.add('change-size', this.onSizeUpdate)
 
     this.config.event.add('update', this.onConfigUpdate)
   }
@@ -56,21 +56,23 @@ export class DomLyricPlayer {
   private onSizeUpdate = () => {
     requestAnimationFrame(() => {
       this.handleRefreshLineSize()
+      this.handleUpdateLineStyle()
     })
   }
 
   private onConfigUpdate = () => {
-    this.container.updateConfig()
-    for (const line of this.lineElemeMap.values()) {
-      line.updateConfig()
-    }
+    this.root.updateConfig()
+    this.handleUpdateLineConfig()
     requestAnimationFrame(() => {
       this.handleRefreshLineSize()
+      this.handleUpdateLineStyle()
     })
   }
 
   private onPlay = (currentTime: number) => {
-    this.handleUpdateLines()
+    requestAnimationFrame(() => {
+      this.handleUpdateLineStyle()
+    })
   }
 
   private onPause = (currentTime: number) => {
@@ -85,18 +87,18 @@ export class DomLyricPlayer {
     this.handleInitLines()
     requestAnimationFrame(() => {
       this.handleRefreshLineSize()
-      this.handleUpdateLines()
+      this.handleUpdateLineStyle()
     })
   }
 
   private onLinesUpdate = (lines: Line[]) => {
     requestAnimationFrame(() => {
-      this.handleUpdateLines()
+      this.handleUpdateLineStyle()
     })
   }
 
   private onScroll(line: number) {
-    this.handleUpdateLines(line)
+    this.handleUpdateLineStyle(line)
   }
 
   private handleClearLines() {
@@ -107,7 +109,17 @@ export class DomLyricPlayer {
     this.lineIndexMap.clear()
   }
 
+  private handleUpdateLineConfig() {
+    const position = this.config.current.line.layout.align
+    for (const element of this.lineElemeMap.values()) {
+      element.position = position
+      element.updateConfig()
+    }
+  }
+
   private handleInitLines() {
+    const position = this.config.current.line.layout.align
+
     const lineElemeMap = new Map<number, LineElement>()
     const lineIndexMap = new Map<number, number[]>()
 
@@ -125,16 +137,19 @@ export class DomLyricPlayer {
       switch (line.type) {
         case LineType.Interlude: {
           const elem = new InterludeLineElement(this.context, line)
+          elem.position = position
           lineElemeMap.set(currentElemIndex, elem)
           indexs.push(currentElemIndex)
           break
         }
         case LineType.Normal: {
           const elem = new NormalLineElement(this.context, line, false)
+          elem.position = position
           lineElemeMap.set(currentElemIndex, elem)
           indexs.push(currentElemIndex)
           for (const background of line.background || []) {
             const elem = new NormalLineElement(this.context, background, true)
+            elem.position = position
             lineElemeMap.set(elemIndex, elem)
             indexs.push(elemIndex)
             elemIndex++
@@ -147,7 +162,7 @@ export class DomLyricPlayer {
 
     this.handleClearLines()
     for (const line of lineElemeMap.values()) {
-      this.container.appendChild(line.element)
+      this.root.appendChild(line.element)
     }
 
     this.lineElemeMap = lineElemeMap
@@ -170,15 +185,17 @@ export class DomLyricPlayer {
     return false
   }
 
-  private handleUpdateLines(targetIndex?: number) {
+  private handleUpdateLineStyle(targetIndex?: number) {
     const linNumFull = this.lineElemeMap.size
     if (!linNumFull || !this.player.currentInfo.lines.length) {
       return
     }
 
-    const currentSpace = this.config.current.style.fontSize * 0.8
-    const currentContainerHeight = this.container.clientHeight
-    const currentActivePosition = currentContainerHeight * (this.config.current.scroll.activePosition / 100)
+    const currentSpace = Math.max(0, this.config.current.line.layout.gap)
+    const currentContainerHeight = Math.max(0, this.root.height)
+
+    const activePercent = Math.min(Math.max(this.config.current.scroll.activePosition, 0), 100)
+    const currentActivePosition = currentContainerHeight * (activePercent / 100)
 
     const isInScrolling = targetIndex !== void 0 && targetIndex >= 0
     const currentActiveLines: number[] = []
@@ -261,7 +278,7 @@ export class DomLyricPlayer {
   }
 
   get element() {
-    return this.container.element
+    return this.root.element
   }
 
   destroy() {
@@ -270,7 +287,7 @@ export class DomLyricPlayer {
     this.player.event.remove('lyricUpdate', this.onLyricUpadte)
     this.player.event.remove('linesUpdate', this.onLinesUpdate)
 
-    this.container.event.remove('change-size', this.onSizeUpdate)
+    this.root.event.remove('change-size', this.onSizeUpdate)
     this.config.event.remove('update', this.onConfigUpdate)
 
     this.handleClearLines()

@@ -1,5 +1,5 @@
 import { BaseLyricPlayer } from '@music-lyric-player/base'
-import { Container } from '@root/components'
+import { Root } from '@root/components'
 import { ConfigClient } from '@root/config'
 
 export class ScrollHandler {
@@ -9,9 +9,9 @@ export class ScrollHandler {
   constructor(
     private readonly player: BaseLyricPlayer,
     private readonly config: ConfigClient,
-    private readonly container: Container,
+    private readonly root: Root,
   ) {
-    this.container.event.add('wheel', this.onWheel)
+    this.root.event.add('wheel', this.onWheel)
   }
 
   private onWheel = (e: WheelEvent) => {
@@ -63,7 +63,7 @@ export class ScrollHandler {
 
   destroy() {
     this.clearTimer()
-    this.container.event.remove('wheel', this.onWheel)
+    this.root.event.remove('wheel', this.onWheel)
   }
 
   onScroll(line: number) {}

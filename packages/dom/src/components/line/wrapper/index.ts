@@ -74,7 +74,7 @@ export abstract class BaseLineElement {
   }
 
   updateConfig() {
-    applyClassName(this.wrapper, [Style.wrapper, this.context.config.style.className.line.wrapper])
+    applyClassName(this.wrapper, [Style.wrapper, this.context.config.line.wrapper.className])
   }
 
   updateStyle(current: LineElementStyle) {

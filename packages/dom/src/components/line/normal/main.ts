@@ -76,10 +76,12 @@ export class MainNode {
   ) {
     this.dom = document.createElement('div')
     this.words = []
-    this.init()
+
+    this.updateConfig()
   }
 
   private init() {
+    this.dom.replaceChildren()
     for (const item of this.info.content.words) {
       switch (item.type) {
         case WordType.Normal: {
@@ -96,7 +98,11 @@ export class MainNode {
         }
       }
     }
-    applyClassName(this.dom, [Style.syllable, this.context.config.style.className.line.normal.syllable])
+  }
+
+  updateConfig() {
+    this.init()
+    applyClassName(this.dom, [Style.syllable])
   }
 
   play(currentTime: number, isActive: boolean) {

@@ -1,5 +1,12 @@
+$positions: left, center, right;
+
 .wrapper {
-  --lyric-player-line-position: left;
+  --lyric-player-line-position: center;
+  @each $pos in $positions {
+    &[position='#{$pos}'] {
+      --lyric-player-line-position: #{$pos};
+    }
+  }
 
   display: flex;
   position: absolute;
