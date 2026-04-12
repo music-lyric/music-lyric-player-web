@@ -8,7 +8,7 @@ export const compareObject = (prev: any, next: any, prefix = ''): string[] => {
     return []
   }
 
-  const changes: string[] = []
+  const changes = new Set<string>()
 
   const keys = new Set([...Object.keys(prev), ...Object.keys(next)])
   for (const key of keys) {
@@ -21,12 +21,18 @@ export const compareObject = (prev: any, next: any, prefix = ''): string[] => {
       continue
     }
 
-    if (isPlainObject(a) && isPlainObject(a)) {
-      changes.push(...compareObject(a, b, path))
+    if (isPlainObject(a) && isPlainObject(b)) {
+      const nextChanges = compareObject(a, b, path)
+      if (nextChanges.length > 0) {
+        changes.add(path)
+        for (const change of nextChanges) {
+          changes.add(change)
+        }
+      }
     } else {
-      changes.push(path)
+      changes.add(path)
     }
   }
 
-  return changes
+  return [...changes]
 }
