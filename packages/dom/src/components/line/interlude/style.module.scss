@@ -16,11 +16,11 @@
   .dot {
     display: inline-block;
 
-    width: build-var('line-interlude', 'size');
-    height: build-var('line-interlude', 'size');
+    width: build-line-var('interlude', '', 'size');
+    height: build-line-var('interlude', '', 'size');
 
-    opacity: build-var('line-interlude', 'opacity');
-    background-color: build-var('line-interlude', 'color');
+    opacity: build-line-var('interlude', '', 'opacity');
+    background-color: build-line-var('interlude', '', 'color');
 
     aspect-ratio: 1 / 1;
     border-radius: 100%;
@@ -31,8 +31,8 @@
     transition-delay: 0.1s;
 
     .dot {
-      opacity: build-var('line-interlude-active', 'opacity');
-      background-color: build-var('line-interlude-active', 'color');
+      opacity: build-line-var('interlude', 'active', 'opacity');
+      background-color: build-line-var('interlude', 'active', 'color');
 
       transition-property: opacity;
       transition-timing-function: linear;

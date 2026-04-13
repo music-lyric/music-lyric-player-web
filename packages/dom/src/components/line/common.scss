@@ -1,3 +1,7 @@
-@function build-var($module, $key) {
-  @return var(--lyric-player-#{$module}-#{$key});
+@function build-line-var($module, $sub, $suffix) {
+  @if $sub == '' or $sub == null {
+    @return var(--lyric-player-line-#{$module}-#{$suffix});
+  } @else {
+    @return var(--lyric-player-line-#{$module}-#{$sub}-#{$suffix});
+  }
 }

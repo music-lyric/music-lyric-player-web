@@ -34,30 +34,30 @@ export class Style {
     this.dom.textContent = target
   }
 
-  private buildNormalLineValue(type: string, value: string | number | undefined, suffix: string, unit: string = '') {
+  private buildNormalLineValue(fallbackType: string | undefined, value: string | number | undefined, suffix: string, unit: string = '') {
     if (value === void 0 || value === null || value === '') {
-      if (type === 'normal') {
+      if (!fallbackType) {
         return ''
       }
-      return `var(${this.buildKey(`line-normal-${suffix}`)})`
+      return `var(${this.buildKey(`line-${fallbackType}-${suffix}`)})`
     }
     return `${value}${unit}`
   }
-  private buildNormalLineConfig(type: string, config: NormalLineConfig.Common) {
+  private buildNormalLineConfig(type: string, config: NormalLineConfig.Base | undefined, fallbackType?: string) {
     if (!config) {
       return {}
     }
 
     const block: Record<string, string> = {
-      [`line-${type}-color`]: this.buildNormalLineValue(type, config.normalStyle?.color, 'color'),
-      [`line-${type}-opacity`]: this.buildNormalLineValue(type, config.normalStyle?.opacity, 'opacity'),
+      [`line-${type}-color`]: this.buildNormalLineValue(fallbackType, config.style?.normal?.color, 'color'),
+      [`line-${type}-opacity`]: this.buildNormalLineValue(fallbackType, config.style?.normal?.opacity, 'opacity'),
 
-      [`line-${type}-active-color`]: this.buildNormalLineValue(type, config.activeStyle?.color, 'active-color'),
-      [`line-${type}-active-opacity`]: this.buildNormalLineValue(type, config.activeStyle?.opacity, 'active-opacity'),
+      [`line-${type}-active-color`]: this.buildNormalLineValue(fallbackType, config.style?.active?.color, 'active-color'),
+      [`line-${type}-active-opacity`]: this.buildNormalLineValue(fallbackType, config.style?.active?.opacity, 'active-opacity'),
 
-      [`line-${type}-font-size`]: this.buildNormalLineValue(type, config.font?.size, 'font-size', 'px'),
-      [`line-${type}-font-family`]: this.buildNormalLineValue(type, config.font?.family, 'font-family'),
-      [`line-${type}-font-weight`]: this.buildNormalLineValue(type, config.font?.weight, 'font-weight'),
+      [`line-${type}-font-size`]: this.buildNormalLineValue(fallbackType, config.font?.size, 'font-size', 'px'),
+      [`line-${type}-font-family`]: this.buildNormalLineValue(fallbackType, config.font?.family, 'font-family'),
+      [`line-${type}-font-weight`]: this.buildNormalLineValue(fallbackType, config.font?.weight, 'font-weight'),
     }
 
     return Object.fromEntries(Object.entries(block).filter(([_, v]) => v !== ''))
@@ -68,14 +68,18 @@ export class Style {
       return {}
     }
 
+    const getValue = (val: string | number | undefined, unit: string = '') => {
+      return val === void 0 || val === null || val === '' ? '' : `${val}${unit}`
+    }
+
     const block: Record<string, string> = {
-      'line-interlude-size': `${config.size}px`,
+      'line-interlude-size': getValue(config.size, 'px'),
 
-      'line-interlude-color': `${config.normalStyle?.color}`,
-      'line-interlude-opacity': `${config.normalStyle?.opacity}`,
+      'line-interlude-color': getValue(config.style?.normal?.color),
+      'line-interlude-opacity': getValue(config.style?.normal?.opacity),
 
-      'line-interlude-active-color': `${config.activeStyle?.color}`,
-      'line-interlude-active-opacity': `${config.activeStyle?.opacity}`,
+      'line-interlude-active-color': getValue(config.style?.active?.color),
+      'line-interlude-active-opacity': getValue(config.style?.active?.opacity),
     }
 
     return Object.fromEntries(Object.entries(block).filter(([_, v]) => v !== ''))
@@ -86,10 +90,11 @@ export class Style {
 
     const result = {
       // line
-      ...this.buildNormalLineConfig('normal', line.normal),
-      ...this.buildNormalLineConfig('normal-syllable', line.normal.syllable),
-      ...this.buildNormalLineConfig('normal-translate', line.normal.extended.translate),
-      ...this.buildNormalLineConfig('normal-roman', line.normal.extended.roman),
+      ...this.buildNormalLineConfig('normal-base', line.normal.base),
+      ...this.buildNormalLineConfig('normal-syllable', line.normal.syllable, 'normal-base'),
+      ...this.buildNormalLineConfig('normal-extended-base', line.normal.extended.base, 'normal-base'),
+      ...this.buildNormalLineConfig('normal-extended-translate', line.normal.extended.translate, 'normal-extended-base'),
+      ...this.buildNormalLineConfig('normal-extended-roman', line.normal.extended.roman, 'normal-extended-base'),
       // interlude
       ...this.buildInterludeConfig(line.interlude),
     }

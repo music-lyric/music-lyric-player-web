@@ -33,27 +33,32 @@ export interface StyleConfig {
 }
 
 export namespace NormalLineConfig {
-  export interface Common {
-    /**
-     * Font settings.
-     */
-    font?: FontConfig
+  export interface Base {
     /**
      * Custom CSS class name appended to the current element's DOM.
      * @default ""
      */
     className: string
     /**
-     * Style for the inactive state.
+     * Font settings.
      */
-    normalStyle?: StyleConfig
+    font?: FontConfig
     /**
-     * Style for the active state.
+     * Styles
      */
-    activeStyle?: StyleConfig
+    style?: {
+      /**
+       * Style for the inactive state.
+       */
+      normal: StyleConfig
+      /**
+       * Style for the active state.
+       */
+      active: StyleConfig
+    }
   }
 
-  export interface Syllable extends Common {
+  export interface Syllable extends Base {
     /**
      * Whether to enable syllable-level highlighting/display features (e.g., karaoke coloring effect).
      * @default true
@@ -61,7 +66,7 @@ export namespace NormalLineConfig {
     visible: boolean
   }
 
-  export interface Translate extends Common {
+  export interface Translate extends Base {
     /**
      * Whether to show translated lyrics.
      * @default true
@@ -69,7 +74,7 @@ export namespace NormalLineConfig {
     visible: boolean
   }
 
-  export interface Roman extends Common {
+  export interface Roman extends Base {
     /**
      * Whether to show transliterated lyrics (Roman/Pinyin).
      * @default false
@@ -84,6 +89,10 @@ export namespace NormalLineConfig {
      */
     visible: boolean
     /**
+     * Base config.
+     */
+    base: Base
+    /**
      * Translation line config.
      */
     translate: Translate
@@ -91,17 +100,6 @@ export namespace NormalLineConfig {
      * Roman line config.
      */
     roman: Roman
-  }
-
-  export interface All extends Common {
-    /**
-     * Syllable config.
-     */
-    syllable: Syllable
-    /**
-     * Extended config.
-     */
-    extended: Extended
   }
 }
 
@@ -117,13 +115,18 @@ export interface InterludeLineConfig {
    */
   className: string
   /**
-   * Style for the inactive state.
+   * Styles
    */
-  normalStyle: StyleConfig
-  /**
-   * Style for the active state.
-   */
-  activeStyle: StyleConfig
+  style?: {
+    /**
+     * Style for the inactive state.
+     */
+    normal: StyleConfig
+    /**
+     * Style for the active state.
+     */
+    active: StyleConfig
+  }
 }
 
 export interface Config {
@@ -181,7 +184,20 @@ export interface Config {
     /**
      * Normal lines.
      */
-    normal: NormalLineConfig.All
+    normal: {
+      /**
+       * Base config.
+       */
+      base: NormalLineConfig.Base
+      /**
+       * Syllable config.
+       */
+      syllable: NormalLineConfig.Syllable
+      /**
+       * Extended config.
+       */
+      extended: NormalLineConfig.Extended
+    }
     /**
      * Interlude lines.
      */
@@ -228,15 +244,19 @@ export const DEFAULT_CONFIG: Config = {
       className: '',
     },
     normal: {
-      font: DEFAULT_FONT_CONFIG,
-      className: '',
-      normalStyle: {
-        color: DEFAULT_COLOR,
-        opacity: 0.5,
-      },
-      activeStyle: {
-        color: DEFAULT_COLOR,
-        opacity: 1,
+      base: {
+        className: '',
+        font: DEFAULT_FONT_CONFIG,
+        style: {
+          normal: {
+            color: DEFAULT_COLOR,
+            opacity: 0.5,
+          },
+          active: {
+            color: DEFAULT_COLOR,
+            opacity: 1,
+          },
+        },
       },
       syllable: {
         visible: true,
@@ -244,44 +264,42 @@ export const DEFAULT_CONFIG: Config = {
       },
       extended: {
         visible: true,
-        translate: {
-          visible: true,
+        base: {
           className: '',
           font: {
             size: DEFAULT_EXTENDED_FONT_SIZE,
           },
-          normalStyle: {
-            opacity: 0.4,
+          style: {
+            normal: {
+              opacity: 0.4,
+            },
+            active: {
+              opacity: 0.6,
+            },
           },
-          activeStyle: {
-            opacity: 0.6,
-          },
+        },
+        translate: {
+          visible: true,
+          className: '',
         },
         roman: {
           visible: false,
           className: '',
-          font: {
-            size: DEFAULT_EXTENDED_FONT_SIZE,
-          },
-          normalStyle: {
-            opacity: 0.4,
-          },
-          activeStyle: {
-            opacity: 0.6,
-          },
         },
       },
     },
     interlude: {
-      size: 16,
       className: '',
-      normalStyle: {
-        color: DEFAULT_COLOR,
-        opacity: 0,
-      },
-      activeStyle: {
-        color: DEFAULT_COLOR,
-        opacity: 0.8,
+      size: 16,
+      style: {
+        normal: {
+          color: DEFAULT_COLOR,
+          opacity: 0.2,
+        },
+        active: {
+          color: DEFAULT_COLOR,
+          opacity: 0.8,
+        },
       },
     },
   },

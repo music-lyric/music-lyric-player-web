@@ -8,16 +8,16 @@
 
   transition: opacity 0.6s ease;
 
-  font-size: build-var('line-normal', 'font-size');
-  font-weight: build-var('line-normal', 'font-weight');
-  font-family: build-var('line-normal', 'font-family');
+  font-size: build-line-var('normal', 'base', 'font-size');
+  font-weight: build-line-var('normal', 'base', 'font-weight');
+  font-family: build-line-var('normal', 'base', 'font-family');
 
-  color: build-var('line-normal', 'color');
-  opacity: build-var('line-normal', 'opacity');
+  color: build-line-var('normal', 'base', 'color');
+  opacity: build-line-var('normal', 'base', 'opacity');
 
   [active] & {
-    color: build-var('line-normal-active', 'color');
-    opacity: build-var('line-normal-active', 'opacity');
+    color: build-line-var('normal', 'base-active', 'color');
+    opacity: build-line-var('normal', 'base-active', 'opacity');
   }
 
   &::before {
@@ -57,14 +57,14 @@
 }
 
 .syllable {
-  font-size: build-var('line-normal-syllable', 'font-size');
-  font-weight: build-var('line-normal-syllable', 'font-weight');
-  font-family: build-var('line-normal-syllable', 'font-family');
+  font-size: build-line-var('normal', 'syllable', 'font-size');
+  font-weight: build-line-var('normal', 'syllable', 'font-weight');
+  font-family: build-line-var('normal', 'syllable', 'font-family');
 
   .word {
     display: inline-block;
-    color: build-var('line-normal-syllable', 'color');
-    opacity: build-var('line-normal-syllable', 'opacity');
+    color: build-line-var('normal', 'syllable', 'color');
+    opacity: build-line-var('normal', 'syllable', 'opacity');
     transform: translateY(0);
 
     transition-property: opacity, transform;
@@ -80,8 +80,8 @@
 
   [active] & {
     .word {
-      color: build-var('line-normal-syllable-active', 'color');
-      opacity: build-var('line-normal-syllable-active', 'opacity');
+      color: build-line-var('normal', 'syllable-active', 'color');
+      opacity: build-line-var('normal', 'syllable-active', 'opacity');
       transform: translateY(-2px);
     }
   }
@@ -94,29 +94,29 @@
 
   .translate {
     display: inline-block;
-    font-size: build-var('line-normal-translate', 'font-size');
-    font-weight: build-var('line-normal-translate', 'font-weight');
-    font-family: build-var('line-normal-translate', 'font-family');
+    font-size: build-line-var('normal', 'extended-translate', 'font-size');
+    font-weight: build-line-var('normal', 'extended-translate', 'font-weight');
+    font-family: build-line-var('normal', 'extended-translate', 'font-family');
 
-    color: build-var('line-normal-translate', 'color');
-    opacity: build-var('line-normal-translate', 'opacity');
+    color: build-line-var('normal', 'extended-translate', 'color');
+    opacity: build-line-var('normal', 'extended-translate', 'opacity');
     [active] & {
-      color: build-var('line-normal-translate-active', 'color');
-      opacity: build-var('line-normal-translate-active', 'opacity');
+      color: build-line-var('normal', 'extended-translate-active', 'color');
+      opacity: build-line-var('normal', 'extended-translate-active', 'opacity');
     }
   }
 
   .roman {
     display: inline-block;
-    font-size: build-var('line-normal-roman', 'font-size');
-    font-weight: build-var('line-normal-roman', 'font-weight');
-    font-family: build-var('line-normal-roman', 'font-family');
+    font-size: build-line-var('normal', 'extended-roman', 'font-size');
+    font-weight: build-line-var('normal', 'extended-roman', 'font-weight');
+    font-family: build-line-var('normal', 'extended-roman', 'font-family');
 
-    color: build-var('line-normal-roman', 'color');
-    opacity: build-var('line-normal-roman', 'opacity');
+    color: build-line-var('normal', 'extended-roman', 'color');
+    opacity: build-line-var('normal', 'extended-roman', 'opacity');
     [active] & {
-      color: build-var('line-normal-roman-active', 'color');
-      opacity: build-var('line-normal-roman-active', 'opacity');
+      color: build-line-var('normal', 'extended-roman-active', 'color');
+      opacity: build-line-var('normal', 'extended-roman-active', 'opacity');
     }
   }
 }

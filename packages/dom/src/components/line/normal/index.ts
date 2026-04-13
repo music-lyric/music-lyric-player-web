@@ -47,7 +47,7 @@ export class NormalLineElement extends BaseLineElement {
   }
 
   override updateConfig() {
-    const className = [Style.normal, this.context.config.line.normal.className, this.isBackgroundLine ? Style.background : '']
+    const className = [Style.normal, this.context.config.line.normal.base.className, this.isBackgroundLine ? Style.background : '']
     applyClassName(this.container, className)
 
     super.updateConfig()
