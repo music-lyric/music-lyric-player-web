@@ -37,8 +37,7 @@ export class DomLyricPlayer {
     this.root = root
     this.player = player
 
-    this.scroll = new ScrollHandler(player, config, root)
-    this.scroll.onScroll = this.onScroll.bind(this)
+    this.scroll = new ScrollHandler(player, config, root, this.onScroll.bind(this))
 
     this.lineElemeMap = new Map()
     this.lineIndexMap = new Map()
@@ -97,8 +96,13 @@ export class DomLyricPlayer {
     })
   }
 
-  private onScroll(line: number) {
-    this.handleUpdateLineStyle(line)
+  private onScroll(line: number, scrolling: boolean) {
+    if (scrolling) {
+      this.root.setAttribute('scrolling')
+    } else {
+      this.root.removeAttribute('scrolling')
+    }
+    this.handleUpdateLineStyle(line, scrolling)
   }
 
   private handleClearLines() {
@@ -185,7 +189,7 @@ export class DomLyricPlayer {
     return false
   }
 
-  private handleUpdateLineStyle(targetIndex?: number) {
+  private handleUpdateLineStyle(targetIndex?: number, scrolling: boolean = false) {
     const linNumFull = this.lineElemeMap.size
     if (!linNumFull || !this.player.currentInfo.lines.length) {
       return
@@ -197,7 +201,6 @@ export class DomLyricPlayer {
     const activePercent = Math.min(Math.max(this.config.current.scroll.activePosition, 0), 100)
     const currentActivePosition = currentContainerHeight * (activePercent / 100)
 
-    const isInScrolling = targetIndex !== void 0 && targetIndex >= 0
     const currentActiveLines: number[] = []
     const topPositions: number[] = new Array(linNumFull)
 
@@ -230,7 +233,7 @@ export class DomLyricPlayer {
       const baseTop = lastTop + lastHeight
 
       if (element.type === LineElementType.Normal && element.isBackground) {
-        if (!isInScrolling && !isActiveLine) {
+        if (!scrolling && !isActiveLine) {
           topPositions[i] = baseTop - element.height
         } else {
           topPositions[i] = baseTop + currentSpace * 0.5
@@ -242,7 +245,7 @@ export class DomLyricPlayer {
     }
 
     let currentActiveOffset: number
-    if (isInScrolling) {
+    if (scrolling && targetIndex) {
       const targetElement = this.lineElemeMap.get(targetIndex)
       const targetHeight = targetElement?.height ?? 0
       currentActiveOffset = topPositions[targetIndex] + targetHeight / 2

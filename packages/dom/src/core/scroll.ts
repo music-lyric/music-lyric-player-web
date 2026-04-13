@@ -3,13 +3,15 @@ import { Root } from '@root/components'
 import { ConfigClient } from '@root/config'
 
 export class ScrollHandler {
-  private active: number | null = null
+  private scrolling = false
+  private active: number = -1
   private timer: any | null = null
 
   constructor(
     private readonly player: BaseLyricPlayer,
     private readonly config: ConfigClient,
     private readonly root: Root,
+    private readonly onChange: (line: number, scrolling: boolean) => void,
   ) {
     this.root.event.add('wheel', this.onWheel)
   }
@@ -36,17 +38,19 @@ export class ScrollHandler {
       return
     }
 
+    this.scrolling = true
     this.active = nextIndex
-    this.onScroll(nextIndex)
+    this.onChange(nextIndex, true)
     this.updateTimer()
   }
 
   private updateTimer() {
     this.clearTimer()
     this.timer = setTimeout(() => {
+      this.scrolling = false
+      this.active = -1
       this.timer = null
-      this.active = null
-      this.onScroll(-1)
+      this.onChange(-1, false)
     }, 3 * 1000)
   }
 
@@ -58,7 +62,7 @@ export class ScrollHandler {
 
   clear() {
     this.clearTimer()
-    this.active = null
+    this.active = -1
   }
 
   destroy() {
@@ -66,5 +70,10 @@ export class ScrollHandler {
     this.root.event.remove('wheel', this.onWheel)
   }
 
-  onScroll(line: number) {}
+  get current() {
+    return {
+      scrolling: this.scrolling,
+      active: this.active,
+    }
+  }
 }

@@ -39,6 +39,14 @@ export class Root {
     this.style.updateConfig()
   }
 
+  setAttribute(name: string, value?: string) {
+    this.container.setAttribute(name, value)
+  }
+
+  removeAttribute(name: string) {
+    this.container.removeAttribute(name)
+  }
+
   appendChild(child: HTMLDivElement) {
     this.container.appendChild(child)
   }

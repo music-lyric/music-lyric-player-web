@@ -81,6 +81,14 @@ export class Container {
     applyClassName(this.dom, [Styles.container])
   }
 
+  setAttribute(name: string, value?: string) {
+    this.dom.setAttribute(name, value || '')
+  }
+
+  removeAttribute(name: string) {
+    this.dom.removeAttribute(name)
+  }
+
   appendChild(child: HTMLDivElement) {
     this.dom.appendChild(child)
   }
