@@ -1,26 +1,26 @@
-import { BaseLyricPlayer } from '@music-lyric-player/base'
-import { Root } from '@root/components'
-import { ConfigClient } from '@root/config'
+import type { BaseLyricPlayer } from '@music-lyric-player/base'
+import type { Root } from '@root/components'
+
+interface ScrollHandlerHost {
+  readonly player: BaseLyricPlayer
+  readonly root: Root
+  handleScroll(line: number, scrolling: boolean): void
+}
 
 export class ScrollHandler {
   private scrolling = false
   private active: number = -1
   private timer: any | null = null
 
-  constructor(
-    private readonly player: BaseLyricPlayer,
-    private readonly config: ConfigClient,
-    private readonly root: Root,
-    private readonly onChange: (line: number, scrolling: boolean) => void,
-  ) {
-    this.root.event.add('wheel', this.onWheel)
+  constructor(private readonly host: ScrollHandlerHost) {
+    this.host.root.event.add('wheel', this.onWheel)
   }
 
   private onWheel = (e: WheelEvent) => {
     e.preventDefault()
 
-    const currentLines = this.player.currentLines.length
-    if (!currentLines) {
+    const currentLines = this.host.player.currentInfo.lines
+    if (!currentLines.length) {
       return
     }
 
@@ -29,47 +29,42 @@ export class ScrollHandler {
       return
     }
 
-    if (this.active === null) {
-      this.active = this.player.currentActive
+    if (this.active === -1) {
+      this.active = this.host.player.currentActive
     }
 
     const nextIndex = this.active + direction
-    if (nextIndex < 0 || nextIndex >= this.player.currentInfo.lines.length) {
+    if (nextIndex < 0 || nextIndex >= currentLines.length) {
       return
     }
 
     this.scrolling = true
     this.active = nextIndex
-    this.onChange(nextIndex, true)
+    this.host.handleScroll(nextIndex, true)
     this.updateTimer()
   }
-
   private updateTimer() {
     this.clearTimer()
     this.timer = setTimeout(() => {
       this.scrolling = false
       this.active = -1
       this.timer = null
-      this.onChange(-1, false)
+      this.host.handleScroll(-1, false)
     }, 3 * 1000)
   }
-
   private clearTimer() {
     if (this.timer !== null) {
       clearTimeout(this.timer)
     }
   }
-
   clear() {
     this.clearTimer()
     this.active = -1
   }
-
   destroy() {
     this.clearTimer()
-    this.root.event.remove('wheel', this.onWheel)
+    this.host.root.event.remove('wheel', this.onWheel)
   }
-
   get current() {
     return {
       scrolling: this.scrolling,

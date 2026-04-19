@@ -37,7 +37,11 @@ export class DomLyricPlayer {
     this.root = root
     this.player = player
 
-    this.scroll = new ScrollHandler(player, config, root, this.onScroll.bind(this))
+    this.scroll = new ScrollHandler({
+      player: this.player,
+      root: this.root,
+      handleScroll: this.handleScroll.bind(this),
+    })
 
     this.lineElemeMap = new Map()
     this.lineIndexMap = new Map()
@@ -96,7 +100,7 @@ export class DomLyricPlayer {
     })
   }
 
-  private onScroll(line: number, scrolling: boolean) {
+  private handleScroll(line: number, scrolling: boolean) {
     if (scrolling) {
       this.root.setAttribute('scrolling')
     } else {
