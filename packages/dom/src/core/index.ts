@@ -114,7 +114,7 @@ export class DomLyricPlayer {
   }
 
   private handleUpdateLineConfig() {
-    const position = this.config.current.line.layout.align
+    const position = this.config.current.layout.align
     for (const element of this.lineElemeMap.values()) {
       element.position = position
       element.updateConfig()
@@ -122,7 +122,7 @@ export class DomLyricPlayer {
   }
 
   private handleInitLines() {
-    const position = this.config.current.line.layout.align
+    const position = this.config.current.layout.align
 
     const lineElemeMap = new Map<number, LineElement>()
     const lineIndexMap = new Map<number, number[]>()
@@ -195,10 +195,10 @@ export class DomLyricPlayer {
       return
     }
 
-    const currentSpace = Math.max(0, this.config.current.line.layout.gap)
+    const currentSpace = Math.max(0, this.config.current.layout.gap)
     const currentContainerHeight = Math.max(0, this.root.height)
 
-    const activePercent = Math.min(Math.max(this.config.current.scroll.activePosition, 0), 100)
+    const activePercent = Math.min(Math.max(this.config.current.scroll.anchor, 0), 100)
     const currentActivePosition = currentContainerHeight * (activePercent / 100)
 
     const currentActiveLines: number[] = []

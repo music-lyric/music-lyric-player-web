@@ -1,4 +1,4 @@
-import { ConfigManager, DeepPartial } from '@music-lyric-player/utils'
+import { ConfigManager, DeepRequired } from '@music-lyric-player/utils'
 
 export interface FontConfig {
   /**
@@ -7,8 +7,8 @@ export interface FontConfig {
    */
   size?: number
   /**
-   * Font weight (100 - 900).
-   * @default 700
+   * Font weight (100–900).
+   * @default 500
    */
   weight?: number
   /**
@@ -21,15 +21,27 @@ export interface FontConfig {
 
 export interface StyleConfig {
   /**
-   * color value.
+   * Color value.
    * @default "#000000"
    * @example "rgba(255, 255, 255, 0.8)" or "#000000"
    */
   color?: string
   /**
-   * Opacity level (0.0 - 1.0).
+   * Opacity level (0.0–1.0).
+   * @default 1
    */
   opacity?: number
+}
+
+export interface StateStyleConfig {
+  /**
+   * Style for the inactive state.
+   */
+  normal?: StyleConfig
+  /**
+   * Style for the active state.
+   */
+  active?: StyleConfig
 }
 
 export namespace NormalLineConfig {
@@ -38,32 +50,23 @@ export namespace NormalLineConfig {
      * Custom CSS class name appended to the current element's DOM.
      * @default ""
      */
-    className: string
+    className?: string
     /**
      * Font settings.
      */
     font?: FontConfig
     /**
-     * Styles
+     * State-based style overrides.
      */
-    style?: {
-      /**
-       * Style for the inactive state.
-       */
-      normal: StyleConfig
-      /**
-       * Style for the active state.
-       */
-      active: StyleConfig
-    }
+    style?: StateStyleConfig
   }
 
   export interface Syllable extends Base {
     /**
-     * Whether to enable syllable-level highlighting/display features (e.g., karaoke coloring effect).
+     * Whether to enable syllable-level (word-by-word) highlighting.
      * @default true
      */
-    visible: boolean
+    enabled?: boolean
   }
 
   export interface Translate extends Base {
@@ -71,15 +74,15 @@ export namespace NormalLineConfig {
      * Whether to show translated lyrics.
      * @default true
      */
-    visible: boolean
+    visible?: boolean
   }
 
   export interface Roman extends Base {
     /**
-     * Whether to show transliterated lyrics (Roman/Pinyin).
+     * Whether to show romanized (pinyin) lyrics.
      * @default false
      */
-    visible: boolean
+    visible?: boolean
   }
 
   export interface Extended {
@@ -87,133 +90,140 @@ export namespace NormalLineConfig {
      * If false, both translate and roman lines will be forcibly hidden.
      * @default true
      */
-    visible: boolean
+    visible?: boolean
     /**
-     * Base config.
+     * Shared base config for all extended lines.
      */
-    base: Base
+    base?: Base
     /**
      * Translation line config.
      */
-    translate: Translate
+    translate?: Translate
     /**
-     * Roman line config.
+     * Romanization line config.
      */
-    roman: Roman
+    roman?: Roman
   }
 }
 
 export interface InterludeLineConfig {
   /**
-   * Size of the interlude indicator (e.g., diameter of the dots or font size in pixels).
-   * @default 16
-   */
-  size: number
-  /**
    * Custom CSS class name for the interlude container.
    * @default ""
    */
-  className: string
+  className?: string
   /**
-   * Styles
+   * Size of the interlude indicator (e.g., dot diameter) in px.
+   * @default 16
    */
-  style?: {
-    /**
-     * Style for the inactive state.
-     */
-    normal: StyleConfig
-    /**
-     * Style for the active state.
-     */
-    active: StyleConfig
-  }
+  size?: number
+  /**
+   * State-based style overrides.
+   */
+  style?: StateStyleConfig
 }
 
 export interface Config {
   /**
-   * config for the player's root container node.
+   * Root container config.
    */
-  root: {
+  root?: {
     /**
      * Custom CSS class name for the outermost wrapper.
      * @default ""
      */
-    className: string
+    className?: string
   }
 
   /**
-   * Lyric line and layout system config.
+   * Global geometric layout rules.
    */
-  line: {
+  layout?: {
     /**
-     * Global geometric layout rules.
+     * Horizontal alignment of lyrics within the container.
+     * @default "left"
      */
-    layout: {
+    align?: 'left' | 'center' | 'right'
+    /**
+     * Vertical base spacing between lines (in px).
+     * @default 30
+     */
+    gap?: number
+  }
+
+  /**
+   * Visual effects applied to lines based on distance from the active line.
+   */
+  // TODO
+  effect?: {
+    /**
+     * Scale transform effect.
+     */
+    scale?: {
       /**
-       * Horizontal alignment of lyrics within the container.
-       * @default "left"
+       * Whether to enable the scale effect.
+       * @default false
        */
-      align: 'left' | 'center' | 'right'
+      enabled?: boolean
       /**
-       * Vertical base spacing between lines (in px).
-       * @default 24
+       * Minimum scale ratio (applied to the farthest lines).
+       * @default 0.65
        */
-      gap: number
+      min?: number
       /**
-       * Duet rules.
+       * Maximum scale ratio (applied to the active line).
+       * @default 1
        */
-      duet: {
-        /**
-         * Whether to enable duet layout.
-         * @default true
-         * @example When enabled, multi-singer lyrics will be specially formatted. For instance: Singer A is forced to the left, Singer B to the right, overriding the global align setting.
-         */
-        enable: boolean
-      }
+      max?: number
     }
-    /**
-     * Line wrapper.
-     */
-    wrapper: {
-      /**
-       * Custom CSS class name for the line wrapper.
-       * @default ""
-       */
-      className: string
-    }
-    /**
-     * Normal lines.
-     */
-    normal: {
-      /**
-       * Base config.
-       */
-      base: NormalLineConfig.Base
-      /**
-       * Syllable config.
-       */
-      syllable: NormalLineConfig.Syllable
-      /**
-       * Extended config.
-       */
-      extended: NormalLineConfig.Extended
-    }
-    /**
-     * Interlude lines.
-     */
-    interlude: InterludeLineConfig
   }
 
   /**
    * Viewport scrolling engine config.
    */
-  scroll: {
+  scroll?: {
     /**
-     * Vertical anchor position of the active line in the scroll container (percentage: 0-100).
+     * Vertical anchor position of the active line within the scroll container.
+     *
+     * Expressed as a percentage (0–100) of the container height.
+     * - `50` — active line stays at the vertical center.
+     * - `30` — active line stays closer to the top.
+     *
      * @default 50
-     * @example 50 means the currently singing line will always stay in the exact vertical center of the container; 30 means it stays closer to the top.
      */
-    activePosition: number
+    anchor?: number
+  }
+
+  /**
+   * Lyric line config.
+   */
+  line?: {
+    /**
+     * Custom CSS class name for the line wrapper.
+     * @default ""
+     */
+    className?: string
+    /**
+     * Normal (vocal) line config.
+     */
+    normal?: {
+      /**
+       * Base config.
+       */
+      base?: NormalLineConfig.Base
+      /**
+       * Syllable-level (word-by-word) config.
+       */
+      syllable?: NormalLineConfig.Syllable
+      /**
+       * Extended (e.g. translation / romanization) config.
+       */
+      extended?: NormalLineConfig.Extended
+    }
+    /**
+     * Interlude (instrumental break) line config.
+     */
+    interlude?: InterludeLineConfig
   }
 }
 
@@ -227,22 +237,30 @@ const DEFAULT_FONT_CONFIG: FontConfig = {
 
 const DEFAULT_EXTENDED_FONT_SIZE = Math.round(DEFAULT_FONT_CONFIG.size! * 0.6)
 
-export const DEFAULT_CONFIG: Config = {
+export const DEFAULT_CONFIG: DeepRequired<Config> = {
   root: {
     className: '',
   },
 
+  layout: {
+    align: 'left',
+    gap: 30,
+  },
+
+  effect: {
+    scale: {
+      enabled: false,
+      min: 0.65,
+      max: 1,
+    },
+  },
+
+  scroll: {
+    anchor: 50,
+  },
+
   line: {
-    layout: {
-      align: 'left',
-      gap: 30,
-      duet: {
-        enable: true,
-      },
-    },
-    wrapper: {
-      className: '',
-    },
+    className: '',
     normal: {
       base: {
         className: '',
@@ -259,7 +277,7 @@ export const DEFAULT_CONFIG: Config = {
         },
       },
       syllable: {
-        visible: true,
+        enabled: true,
         className: '',
       },
       extended: {
@@ -303,10 +321,6 @@ export const DEFAULT_CONFIG: Config = {
       },
     },
   },
+} as DeepRequired<Config>
 
-  scroll: {
-    activePosition: 50,
-  },
-} as const
-
-export type ConfigClient = ConfigManager<Config, DeepPartial<Config>>
+export type ConfigClient = ConfigManager<DeepRequired<Config>, Config>
