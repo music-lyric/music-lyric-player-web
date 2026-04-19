@@ -1,7 +1,13 @@
+$positions: left, center, right;
+
+@function build-player-var($target) {
+  @return var(--lyric-player-#{$target});
+}
+
 @function build-line-var($module, $sub, $suffix) {
   @if $sub == '' or $sub == null {
-    @return var(--lyric-player-line-#{$module}-#{$suffix});
+    @return build-player-var('line-#{$module}-#{$suffix}');
   } @else {
-    @return var(--lyric-player-line-#{$module}-#{$sub}-#{$suffix});
+    @return build-player-var('line-#{$module}-#{$sub}-#{$suffix}');
   }
 }

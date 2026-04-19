@@ -2,7 +2,7 @@ import type { Line } from '@music-lyric-kit/lyric'
 import type { LineElement, LineElementStyle } from '@root/components'
 
 import { LineElementType } from '@root/components'
-import { DEFAULT_CONFIG } from '@root/config'
+import { DEFAULT_CONFIG, ScrollAnimationConfig } from '@root/config'
 
 import { Info, LineType } from '@music-lyric-kit/lyric'
 import { BaseLyricPlayer } from '@music-lyric-player/base'
@@ -219,6 +219,52 @@ export class DomLyricPlayer {
 
     return parseFloat((min + (max - min) * (1 - gaussian)).toFixed(2))
   }
+  /**
+   * @returns [transitionDuration, transitionDelay]
+   */
+  private handleCalcLineTransition(offset: number, played: boolean): [number, number] {
+    const config = this.config.current.scroll.animation
+    if (!config) {
+      return [0, 0]
+    }
+
+    const duration = Math.max(config.duration ?? 0, 0)
+
+    switch (config.mode) {
+      case ScrollAnimationConfig.Mode.Smooth: {
+        return [duration, Math.max(config.delay ?? 0, 0)]
+      }
+      case ScrollAnimationConfig.Mode.Ripple: {
+        const step = Math.max(config.step ?? 20, 10)
+        const range = Math.max(config.range ?? 3, 1)
+
+        const distance = Math.min(Math.abs(offset), range)
+        const normalized = distance / range
+
+        // ease-out quadratic: fast start, gentle end
+        const eased = 1 - (1 - normalized) ** 2
+
+        return [duration, Math.round(eased * range * step)]
+      }
+      case ScrollAnimationConfig.Mode.Directional: {
+        const step = Math.max(config.step ?? 40, 10)
+        const range = Math.max(config.range ?? 5, 1)
+
+        const distance = Math.min(Math.abs(offset), range)
+        const normalized = distance / range
+
+        if (played) {
+          // far lines move first, in lines follow
+          const eased = (1 - normalized) * (1 - normalized)
+          return [duration, Math.round(eased * range * step)]
+        } else {
+          // near lines move first, far lines follow
+          const eased = 1 - (1 - normalized) ** 2
+          return [duration, Math.round(eased * range * step)]
+        }
+      }
+    }
+  }
   private handleUpdateLineStyle(targetIndex?: number, scrolling: boolean = false) {
     const linNumFull = this.lineElemeMap.size
     if (!linNumFull || !this.player.currentInfo.lines.length) {
@@ -306,7 +352,12 @@ export class DomLyricPlayer {
       const style: LineElementStyle = {
         top: topPositions[i] + offset,
       }
+
+      const [transitionDuration, transitionDelay] = this.handleCalcLineTransition(indexOffset, isPlayedLine)
+      style.transitionDuration = transitionDuration
+
       if (!isActiveLine && !scrolling) {
+        style.transitionDelay = transitionDelay
         style.scale = this.handleCalcLineScale(indexOffset)
         style.blur = this.handleCalcLineBlur(indexOffset)
       }

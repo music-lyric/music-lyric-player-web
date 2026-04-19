@@ -79,6 +79,7 @@ export class Style {
   }
 
   updateConfig() {
+    const scroll = this.context.config.scroll
     const line = this.context.config.line
 
     const result = {
@@ -90,6 +91,8 @@ export class Style {
       ...this.buildNormalLineConfig('normal-extended-roman', line.normal.extended.roman, 'normal-extended-base'),
       // interlude
       ...this.buildInterludeConfig(line.interlude),
+      // scroll
+      'scroll-easing': scroll.animation?.easing,
     }
 
     this.apply(result)

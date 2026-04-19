@@ -79,7 +79,7 @@ export abstract class BaseLineElement {
 
     domStyle.transform = `translate(${current.left || 0}px, ${current.top || 0}px) scale(${current.scale || 1})`
 
-    domStyle.transitionDuration = `${current.transitionDuration || 500}ms`
+    domStyle.transitionDuration = `${current.transitionDuration || 0}ms`
     domStyle.transitionDelay = `${current.transitionDelay || 0}ms`
 
     if (current.hide) {

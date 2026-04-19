@@ -131,6 +131,88 @@ export interface InterludeLineConfig {
   style?: StateStyleConfig
 }
 
+export namespace ScrollAnimationConfig {
+  interface WithTransition {
+    /**
+     * Transition duration for **each individual line**.
+     * In cascade modes (Ripple/Directional), the total visual duration
+     * is approximately `duration + range × step`.
+     * @unit ms
+     * @default 500
+     */
+    duration?: number
+    /**
+     * CSS easing function.
+     * @example "ease-in-out"
+     * @example "cubic-bezier(0.4, 0, 0.2, 1)"
+     * @example "linear"
+     * @default "ease"
+     */
+    easing?: string
+  }
+
+  export enum Mode {
+    /**
+     * No cascade, all lines transition together with optional fixed delay.
+     */
+    Smooth = 'smooth',
+    /**
+     * Active line first, symmetrically expands outward like a ripple.
+     */
+    Ripple = 'ripple',
+    /**
+     * Played lines move first, upcoming lines follow with directional propagation.
+     */
+    Directional = 'directional',
+  }
+
+  export interface Smooth extends WithTransition {
+    mode: Mode.Smooth
+    /**
+     * Fixed delay before transition starts.
+     * @unit ms
+     * @default 0
+     */
+    delay?: number
+  }
+
+  export interface Ripple extends WithTransition {
+    mode: Mode.Ripple
+    /**
+     * Max number of lines affected by the cascade.
+     * Lines beyond this range receive the same maximum delay.
+     * @default 5
+     * @minimum 1
+     */
+    range?: number
+    /**
+     * Base time interval between each line's delay.
+     * @unit ms
+     * @default 40
+     * @minimum 10
+     */
+    step?: number
+  }
+
+  export interface Directional extends WithTransition {
+    mode: Mode.Directional
+    /**
+     * Max number of lines affected by the cascade.
+     * Lines beyond this range receive the same maximum delay.
+     * @default 5
+     * @minimum 1
+     */
+    range?: number
+    /**
+     * Base time interval between each line's delay.
+     * @unit ms
+     * @default 40
+     * @minimum 10
+     */
+    step?: number
+  }
+}
+
 export interface Config {
   /**
    * Root container config.
@@ -218,8 +300,20 @@ export interface Config {
      * - `30` — active line stays closer to the top.
      *
      * @default 50
+     * @minimum 0
+     * @maximum 100
      */
     anchor?: number
+    /**
+     * Transition animation config for scroll-triggered line movements.
+     *
+     * - `Smooth` — all lines move together with a uniform transition (no cascade).
+     * - `Ripple` — active line moves first, nearby lines follow symmetrically outward.
+     * - `Directional` — played lines move first, upcoming lines follow with directional propagation.
+     *
+     * @default SmoothMode
+     */
+    animation?: ScrollAnimationConfig.Smooth | ScrollAnimationConfig.Ripple | ScrollAnimationConfig.Directional
   }
 
   /**
@@ -290,6 +384,11 @@ export const DEFAULT_CONFIG: DeepRequired<Config> = {
 
   scroll: {
     anchor: 50,
+    animation: {
+      mode: ScrollAnimationConfig.Mode.Smooth,
+      duration: 500,
+      easing: 'ease',
+    },
   },
 
   line: {
