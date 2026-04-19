@@ -1,5 +1,5 @@
 import type { Line } from '@music-lyric-kit/lyric'
-import type { LineElement } from '@root/components'
+import type { LineElement, LineElementStyle } from '@root/components'
 
 import { LineElementType } from '@root/components'
 import { DEFAULT_CONFIG } from '@root/config'
@@ -189,6 +189,21 @@ export class DomLyricPlayer {
     return false
   }
 
+  private handleCalcLineScale(offset: number) {
+    const config = this.config.current.effect.scale
+    if (!config.enabled) {
+      return void 0
+    }
+
+    const sigma = 2.2
+
+    const min = Math.max(config.min, 0)
+    const max = Math.min(config.max, 1)
+
+    const gaussian = Math.exp(-(offset * offset) / (2 * sigma * sigma))
+
+    return parseFloat((min + (max - min) * gaussian).toFixed(2))
+  }
   private handleUpdateLineStyle(targetIndex?: number, scrolling: boolean = false) {
     const linNumFull = this.lineElemeMap.size
     if (!linNumFull || !this.player.currentInfo.lines.length) {
@@ -270,9 +285,17 @@ export class DomLyricPlayer {
       element.active = isActiveLine
       element.played = isPlayedLine
 
-      element.updateStyle({
+      const activeIndex = currentActiveLines[0] ?? 0
+      const indexOffset = i - activeIndex
+
+      const style: LineElementStyle = {
         top: topPositions[i] + offset,
-      })
+      }
+      if (!isActiveLine && !scrolling) {
+        style.scale = this.handleCalcLineScale(indexOffset)
+      }
+
+      element.updateStyle(style)
 
       if (isActiveLine) {
         element.play(currentTime, true)

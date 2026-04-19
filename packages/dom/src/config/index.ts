@@ -162,7 +162,6 @@ export interface Config {
   /**
    * Visual effects applied to lines based on distance from the active line.
    */
-  // TODO
   effect?: {
     /**
      * Scale transform effect.
