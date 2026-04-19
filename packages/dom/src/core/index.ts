@@ -353,13 +353,18 @@ export class DomLyricPlayer {
         top: topPositions[i] + offset,
       }
 
-      const [transitionDuration, transitionDelay] = this.handleCalcLineTransition(indexOffset, isPlayedLine)
-      style.transitionDuration = transitionDuration
-
-      if (!isActiveLine && !scrolling) {
-        style.transitionDelay = transitionDelay
-        style.scale = this.handleCalcLineScale(indexOffset)
-        style.blur = this.handleCalcLineBlur(indexOffset)
+      if (scrolling) {
+        style.opacity = 1
+        style.transitionDelay = 0
+        style.transitionDuration = 200
+      } else {
+        const [transitionDuration, transitionDelay] = this.handleCalcLineTransition(indexOffset, isPlayedLine)
+        style.transitionDuration = transitionDuration
+        if (!isActiveLine) {
+          style.transitionDelay = transitionDelay
+          style.scale = this.handleCalcLineScale(indexOffset)
+          style.blur = this.handleCalcLineBlur(indexOffset)
+        }
       }
 
       element.updateStyle(style)
