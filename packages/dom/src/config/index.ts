@@ -1,5 +1,17 @@
 import { ConfigManager, DeepRequired } from '@music-lyric-player/utils'
 
+type PaddingValue = `${number}px`
+
+type Padding =
+  /** all */
+  | PaddingValue
+  /** top/bottom | left/right */
+  | `${PaddingValue} ${PaddingValue}`
+  /** top | left/right | bottom */
+  | `${PaddingValue} ${PaddingValue} ${PaddingValue}`
+  /** top | right | bottom | left */
+  | `${PaddingValue} ${PaddingValue} ${PaddingValue} ${PaddingValue}`
+
 export interface FontConfig {
   /**
    * Font size (in px).
@@ -223,6 +235,18 @@ export interface Config {
      * @default ""
      */
     className?: string
+    /**
+     * Container padding.
+     *
+     * @unit px
+     * @default "20px"
+     *
+     * @example 1 value: `"20px"` → all sides
+     * @example 2 values: `"20px 10px"` → top/bottom | left/right
+     * @example 3 values: `"20px 10px 30px"` → top | left/right | bottom
+     * @example 4 values: `"20px 10px 30px 5px"` → top | right | bottom | left
+     */
+    padding?: Padding
   }
 
   /**
@@ -359,9 +383,10 @@ const DEFAULT_FONT_CONFIG: FontConfig = {
 
 const DEFAULT_EXTENDED_FONT_SIZE = Math.round(DEFAULT_FONT_CONFIG.size! * 0.6)
 
-export const DEFAULT_CONFIG: DeepRequired<Config> = {
+export const DEFAULT_CONFIG: Config = {
   root: {
     className: '',
+    padding: '20px',
   },
 
   layout: {
@@ -457,6 +482,8 @@ export const DEFAULT_CONFIG: DeepRequired<Config> = {
       },
     },
   },
-} as DeepRequired<Config>
+}
 
-export type ConfigClient = ConfigManager<DeepRequired<Config>, Config>
+export type ConfigRequired = DeepRequired<Config>
+
+export type ConfigClient = ConfigManager<ConfigRequired, Config>

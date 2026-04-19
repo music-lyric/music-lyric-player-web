@@ -100,6 +100,8 @@ export class Style {
       ...this.buildNormalLineConfig('normal-extended-roman', line.normal.extended.roman, 'normal-extended-base'),
       // interlude
       ...this.buildInterludeConfig(line.interlude),
+      // container
+      'container-padding': `${this.context.config.root.padding}`,
       // scroll
       'scroll-easing': scroll.animation?.easing,
     }

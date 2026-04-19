@@ -1,5 +1,6 @@
 import type { Line } from '@music-lyric-kit/lyric'
 import type { LineElement, LineElementStyle } from '@root/components'
+import type { ConfigRequired } from '@root/config'
 
 import { LineElementType } from '@root/components'
 import { DEFAULT_CONFIG, ScrollAnimationConfig } from '@root/config'
@@ -28,7 +29,7 @@ export class DomLyricPlayer {
   private scroll: ScrollHandler
 
   constructor(player: BaseLyricPlayer) {
-    const config = new ConfigManager(DEFAULT_CONFIG, {})
+    const config = new ConfigManager(DEFAULT_CONFIG as ConfigRequired, {})
     const context = new Context(config)
     const root = new Root(context)
 
