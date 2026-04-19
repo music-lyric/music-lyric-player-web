@@ -83,7 +83,7 @@ export class Container {
   }
 
   updateConfig() {
-    applyClassName(this.dom, [Styles.container])
+    applyClassName(this.dom, [Styles.container, this.context.config.container.className])
   }
 
   setAttribute(name: string, value?: string) {

@@ -227,9 +227,9 @@ export namespace ScrollAnimationConfig {
 
 export interface Config {
   /**
-   * Root container config.
+   * Container config.
    */
-  root?: {
+  container?: {
     /**
      * Custom CSS class name for the outermost wrapper.
      * @default ""
@@ -384,7 +384,7 @@ const DEFAULT_FONT_CONFIG: FontConfig = {
 const DEFAULT_EXTENDED_FONT_SIZE = Math.round(DEFAULT_FONT_CONFIG.size! * 0.6)
 
 export const DEFAULT_CONFIG: Config = {
-  root: {
+  container: {
     className: '',
     padding: '20px',
   },
