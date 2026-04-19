@@ -11,25 +11,14 @@ export enum LineElementType {
 }
 
 export interface LineElementStyle {
-  top: number
-  left: number
-  scale: number
-  opacity: number
-  blur: number
-  hide: boolean
-  transitionDelay: number
-  transitionDuration: number
-}
-
-export const DEFAULT_LINE_ELEMENT_STYLE: LineElementStyle = {
-  top: 0,
-  left: 0,
-  scale: 1,
-  opacity: 1,
-  blur: 0,
-  hide: false,
-  transitionDelay: 0,
-  transitionDuration: 500,
+  top?: number
+  left?: number
+  scale?: number
+  opacity?: number
+  blur?: number
+  hide?: boolean
+  transitionDelay?: number
+  transitionDuration?: number
 }
 
 export abstract class BaseLineElement {
@@ -49,6 +38,14 @@ export abstract class BaseLineElement {
       this.wrapper.setAttribute('active', '')
     } else {
       this.wrapper.removeAttribute('active')
+    }
+  }
+
+  set played(value: boolean) {
+    if (value) {
+      this.wrapper.setAttribute('played', '')
+    } else {
+      this.wrapper.removeAttribute('played')
     }
   }
 
@@ -80,13 +77,24 @@ export abstract class BaseLineElement {
   updateStyle(current: LineElementStyle) {
     const domStyle = this.wrapper.style
 
-    domStyle.transform = `translate(${current.left}px, ${current.top}px) scale(${current.scale})`
+    domStyle.transform = `translate(${current.left || 0}px, ${current.top || 0}px) scale(${current.scale || 1})`
 
-    domStyle.transitionDuration = `${current.transitionDuration}ms`
-    domStyle.transitionDelay = `${current.transitionDelay}ms`
+    domStyle.transitionDuration = `${current.transitionDuration || 500}ms`
+    domStyle.transitionDelay = `${current.transitionDelay || 0}ms`
 
-    domStyle.filter = `blur(${current.blur}px)`
-    domStyle.opacity = current.hide ? '0' : `${current.opacity}`
+    if (current.hide) {
+      domStyle.opacity = '0'
+    } else if (current.opacity) {
+      domStyle.opacity = `${current.opacity}`
+    } else {
+      domStyle.opacity = ''
+    }
+
+    if (current.blur) {
+      domStyle.filter = `blur(${current.blur}px)`
+    } else {
+      domStyle.filter = ''
+    }
   }
 
   abstract play(time: number, isActive: boolean): void

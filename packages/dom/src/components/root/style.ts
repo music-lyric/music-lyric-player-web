@@ -47,19 +47,17 @@ export class Style {
     if (!config) {
       return {}
     }
-
     const block: Record<string, string> = {
       [`line-${type}-color`]: this.buildNormalLineValue(fallbackType, config.style?.normal?.color, 'color'),
       [`line-${type}-opacity`]: this.buildNormalLineValue(fallbackType, config.style?.normal?.opacity, 'opacity'),
-
       [`line-${type}-active-color`]: this.buildNormalLineValue(fallbackType, config.style?.active?.color, 'active-color'),
       [`line-${type}-active-opacity`]: this.buildNormalLineValue(fallbackType, config.style?.active?.opacity, 'active-opacity'),
-
+      [`line-${type}-played-color`]: this.buildNormalLineValue(fallbackType, config.style?.played?.color, 'played-color'),
+      [`line-${type}-played-opacity`]: this.buildNormalLineValue(fallbackType, config.style?.played?.opacity, 'played-opacity'),
       [`line-${type}-font-size`]: this.buildNormalLineValue(fallbackType, config.font?.size, 'font-size', 'px'),
       [`line-${type}-font-family`]: this.buildNormalLineValue(fallbackType, config.font?.family, 'font-family'),
       [`line-${type}-font-weight`]: this.buildNormalLineValue(fallbackType, config.font?.weight, 'font-weight'),
     }
-
     return Object.fromEntries(Object.entries(block).filter(([_, v]) => v !== ''))
   }
 
@@ -67,21 +65,16 @@ export class Style {
     if (!config) {
       return {}
     }
-
     const getValue = (val: string | number | undefined, unit: string = '') => {
       return val === void 0 || val === null || val === '' ? '' : `${val}${unit}`
     }
-
     const block: Record<string, string> = {
       'line-interlude-size': getValue(config.size, 'px'),
-
       'line-interlude-color': getValue(config.style?.normal?.color),
       'line-interlude-opacity': getValue(config.style?.normal?.opacity),
-
       'line-interlude-active-color': getValue(config.style?.active?.color),
       'line-interlude-active-opacity': getValue(config.style?.active?.opacity),
     }
-
     return Object.fromEntries(Object.entries(block).filter(([_, v]) => v !== ''))
   }
 

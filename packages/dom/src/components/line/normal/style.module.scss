@@ -1,74 +1,76 @@
 @use '../common.scss' as *;
 
+@mixin apply-font($element) {
+  font-size: build-line-var('normal', $element, 'font-size');
+  font-weight: build-line-var('normal', $element, 'font-weight');
+  font-family: build-line-var('normal', $element, 'font-family');
+}
+
+@mixin apply-style($element) {
+  color: build-line-var('normal', $element, 'color');
+  opacity: build-line-var('normal', $element, 'opacity');
+
+  [active] & {
+    color: build-line-var('normal', '#{$element}-active', 'color');
+    opacity: build-line-var('normal', '#{$element}-active', 'opacity');
+  }
+
+  [played] & {
+    color: build-line-var('normal', '#{$element}-played', 'color');
+    opacity: build-line-var('normal', '#{$element}-played', 'opacity');
+  }
+}
+
 .normal {
   position: relative;
   display: inline-flex;
   flex-direction: column;
   pointer-events: auto;
-
   transition: opacity 0.6s ease;
 
-  font-size: build-line-var('normal', 'base', 'font-size');
-  font-weight: build-line-var('normal', 'base', 'font-weight');
-  font-family: build-line-var('normal', 'base', 'font-family');
-
-  color: build-line-var('normal', 'base', 'color');
-  opacity: build-line-var('normal', 'base', 'opacity');
-
-  [active] & {
-    color: build-line-var('normal', 'base-active', 'color');
-    opacity: build-line-var('normal', 'base-active', 'opacity');
-  }
+  @include apply-font('base');
+  @include apply-style('base');
 
   &::before {
     content: '';
     display: block;
     position: absolute;
-    left: -14px;
-    top: -14px;
-    right: -14px;
-    bottom: -14px;
+    inset: -14px;
     transform: scale(1);
     border-radius: 12px;
     background-color: currentColor;
     opacity: 0;
     z-index: 0;
+    pointer-events: none;
     transition:
       opacity 0.2s ease,
-      left 0.15s ease,
-      top 0.15s ease,
-      right 0.15s ease,
-      bottom 0.15s ease,
+      inset 0.15s ease,
       transform 0.2s ease;
-    pointer-events: none;
   }
+
   &:hover::before {
-    transform: scale(1);
     opacity: 0.08;
   }
+
   &:active::before {
-    transform: scale(1);
-    left: -8px;
-    top: -10px;
-    right: -10px;
-    bottom: -8px;
+    inset: -10px -10px -8px -8px;
     opacity: 0.16;
   }
 }
 
 .syllable {
-  font-size: build-line-var('normal', 'syllable', 'font-size');
-  font-weight: build-line-var('normal', 'syllable', 'font-weight');
-  font-family: build-line-var('normal', 'syllable', 'font-family');
+  @include apply-font('syllable');
 
   .word {
     display: inline-block;
-    color: build-line-var('normal', 'syllable', 'color');
-    opacity: build-line-var('normal', 'syllable', 'opacity');
     transform: translateY(0);
-
     transition-property: opacity, transform;
     transition-timing-function: cubic-bezier(0.33, 1, 0.68, 1), cubic-bezier(0.215, 0.61, 0.355, 1);
+
+    @include apply-style('syllable');
+    [active] & {
+      transform: translateY(-2px);
+    }
   }
 
   .space {
@@ -77,14 +79,6 @@
     white-space: pre;
     user-select: none;
   }
-
-  [active] & {
-    .word {
-      color: build-line-var('normal', 'syllable-active', 'color');
-      opacity: build-line-var('normal', 'syllable-active', 'opacity');
-      transform: translateY(-2px);
-    }
-  }
 }
 
 .extended {
@@ -92,44 +86,27 @@
   flex-direction: column;
   gap: 8px;
 
+  > :first-child {
+    margin-top: 10px;
+  }
+
   .translate {
     display: inline-block;
-    font-size: build-line-var('normal', 'extended-translate', 'font-size');
-    font-weight: build-line-var('normal', 'extended-translate', 'font-weight');
-    font-family: build-line-var('normal', 'extended-translate', 'font-family');
-
-    color: build-line-var('normal', 'extended-translate', 'color');
-    opacity: build-line-var('normal', 'extended-translate', 'opacity');
-    [active] & {
-      color: build-line-var('normal', 'extended-translate-active', 'color');
-      opacity: build-line-var('normal', 'extended-translate-active', 'opacity');
-    }
+    @include apply-font('extended-translate');
+    @include apply-style('extended-translate');
   }
 
   .roman {
     display: inline-block;
-    font-size: build-line-var('normal', 'extended-roman', 'font-size');
-    font-weight: build-line-var('normal', 'extended-roman', 'font-weight');
-    font-family: build-line-var('normal', 'extended-roman', 'font-family');
-
-    color: build-line-var('normal', 'extended-roman', 'color');
-    opacity: build-line-var('normal', 'extended-roman', 'opacity');
-    [active] & {
-      color: build-line-var('normal', 'extended-roman-active', 'color');
-      opacity: build-line-var('normal', 'extended-roman-active', 'opacity');
-    }
+    @include apply-font('extended-roman');
+    @include apply-style('extended-roman');
   }
-}
-.extended > :first-child {
-  margin-top: 10px;
 }
 
 .background {
   opacity: 0;
-
   transform: scale(0.6);
   transform-origin: var(--lyric-player-line-position) center;
-
   transition:
     opacity 0.1s linear,
     transform 0.3s cubic-bezier(0, 1, 0, 1);
@@ -137,5 +114,9 @@
   :is([active], [scrolling]) & {
     opacity: 1;
     transform: scale(0.75);
+  }
+
+  :is([played]) & {
+    opacity: 0;
   }
 }

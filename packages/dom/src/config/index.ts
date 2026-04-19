@@ -45,6 +45,14 @@ export interface StateStyleConfig {
 }
 
 export namespace NormalLineConfig {
+  interface StateStyle extends StateStyleConfig {
+    /**
+     * Style for the already played state.
+     * If not provided, it usually falls back to `normal`.
+     */
+    played?: StyleConfig
+  }
+
   export interface Base {
     /**
      * Custom CSS class name appended to the current element's DOM.
@@ -58,7 +66,7 @@ export namespace NormalLineConfig {
     /**
      * State-based style overrides.
      */
-    style?: StateStyleConfig
+    style?: StateStyle
   }
 
   export interface Syllable extends Base {
@@ -268,11 +276,15 @@ export const DEFAULT_CONFIG: DeepRequired<Config> = {
         style: {
           normal: {
             color: DEFAULT_COLOR,
-            opacity: 0.5,
+            opacity: 0.6,
           },
           active: {
             color: DEFAULT_COLOR,
             opacity: 1,
+          },
+          played: {
+            color: DEFAULT_COLOR,
+            opacity: 0.4,
           },
         },
       },

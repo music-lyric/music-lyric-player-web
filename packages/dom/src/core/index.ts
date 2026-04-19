@@ -1,7 +1,7 @@
 import type { Line } from '@music-lyric-kit/lyric'
 import type { LineElement } from '@root/components'
 
-import { DEFAULT_LINE_ELEMENT_STYLE, LineElementType } from '@root/components'
+import { LineElementType } from '@root/components'
 import { DEFAULT_CONFIG } from '@root/config'
 
 import { Info, LineType } from '@music-lyric-kit/lyric'
@@ -263,16 +263,20 @@ export class DomLyricPlayer {
       if (!element) {
         continue
       }
+
+      const isPlayedLine = currentActiveLines.length > 0 && i < currentActiveLines[0]
       const isActiveLine = currentActiveLines.includes(i)
+
+      element.active = isActiveLine
+      element.played = isPlayedLine
+
       element.updateStyle({
-        ...DEFAULT_LINE_ELEMENT_STYLE,
         top: topPositions[i] + offset,
       })
+
       if (isActiveLine) {
-        element.active = true
         element.play(currentTime, true)
       } else {
-        element.active = false
         element.reset()
       }
     }
