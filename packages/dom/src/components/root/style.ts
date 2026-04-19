@@ -102,6 +102,8 @@ export class Style {
       ...this.buildInterludeConfig(line.interlude),
       // container
       'container-padding': `${this.context.config.container.padding}`,
+      'container-fade-top': `${this.context.config.container.fade.top}`,
+      'container-fade-bottom': `${this.context.config.container.fade.bottom}`,
       // scroll
       'scroll-easing': scroll.animation?.easing,
     }

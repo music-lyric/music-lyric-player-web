@@ -84,6 +84,12 @@ export class Container {
 
   updateConfig() {
     applyClassName(this.dom, [Styles.container, this.context.config.container.className])
+
+    if (this.context.config.container.fade.enabled) {
+      this.dom.setAttribute('enable-fade', '')
+    } else {
+      this.dom.removeAttribute('enable-fade')
+    }
   }
 
   setAttribute(name: string, value?: string) {

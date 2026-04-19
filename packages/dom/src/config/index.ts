@@ -247,6 +247,26 @@ export interface Config {
      * @example 4 values: `"20px 10px 30px 5px"` → top | right | bottom | left
      */
     padding?: Padding
+    /**
+     * Container edge fade.
+     */
+    fade?: {
+      /**
+       * Enable edge fade.
+       * @default true
+       */
+      enabled?: boolean
+      /**
+       * Top edge fade range.
+       * @default "5%"
+       */
+      top?: `${number}%`
+      /**
+       * Bottom edge fade range.
+       * @default "10%"
+       */
+      bottom?: `${number}%`
+    }
   }
 
   /**
@@ -387,6 +407,11 @@ export const DEFAULT_CONFIG: Config = {
   container: {
     className: '',
     padding: '20px',
+    fade: {
+      enabled: true,
+      top: '5%',
+      bottom: '10%',
+    },
   },
 
   layout: {
