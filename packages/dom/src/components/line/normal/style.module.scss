@@ -105,7 +105,7 @@
 
 .background {
   opacity: 0;
-  transform: scale(0.6);
+  transform: scale(0.5);
   transform-origin: var(--lyric-player-line-position) center;
   transition:
     opacity 0.1s linear,
@@ -113,7 +113,7 @@
 
   :is([active], [scrolling]) & {
     opacity: 1;
-    transform: scale(0.75);
+    transform: scale(0.7);
   }
 
   :is([played]) & {

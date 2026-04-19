@@ -236,7 +236,7 @@ export class DomLyricPlayer {
         if (!scrolling && !isActiveLine) {
           topPositions[i] = baseTop - element.height
         } else {
-          topPositions[i] = baseTop + currentSpace * 0.5
+          topPositions[i] = baseTop + currentSpace * 0.2
         }
         continue
       }
