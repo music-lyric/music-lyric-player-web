@@ -111,7 +111,7 @@ export class BaseLyricPlayer {
 
       if (this.handleGetLineTime(i) > time) {
         lines.push(line)
-        index.push(i) // 保证 lines 和 index 同步推入
+        index.push(i)
       }
     }
 
@@ -193,6 +193,10 @@ export class BaseLyricPlayer {
     this.event.emit('linesUpdate', [], [], -1)
   }
 
+  /**
+   * Start playback
+   * @param time Optional time in ms to seek to before starting playback. If not provided, playback will start from the current position.
+   */
   play(time?: number) {
     this.pause()
 
@@ -208,6 +212,9 @@ export class BaseLyricPlayer {
     this.event.emit('play', this.handleGetCurrentTime())
   }
 
+  /**
+   * Pause playback
+   */
   pause() {
     if (this.state.playing) {
       this.time.seek = this.handleGetCurrentTime()
@@ -221,6 +228,9 @@ export class BaseLyricPlayer {
     this.event.emit('pause', this.handleGetCurrentTime())
   }
 
+  /**
+   * Stop playback
+   */
   dispose() {
     this.pause()
     this.event.clear()
@@ -231,26 +241,44 @@ export class BaseLyricPlayer {
     this.info = new Info()
   }
 
+  /**
+   * Whether the player is currently playing.
+   */
   get currentPlaying() {
     return this.state.playing
   }
 
+  /**
+   * Current active lines.
+   */
   get currentLines() {
     return [...this.active.lines]
   }
 
+  /**
+   * Indices of currently active lines.
+   */
   get currentIndex() {
     return [...this.active.index]
   }
 
+  /**
+   * The index of the primary active line, or -1 if none.
+   */
   get currentActive() {
     return this.handleGetActiveIndex()
   }
 
+  /**
+   * The current lyric info object.
+   */
   get currentInfo() {
     return this.info
   }
 
+  /**
+   * The current playback time in ms.
+   */
   get currentTime() {
     return this.handleGetCurrentTime()
   }
