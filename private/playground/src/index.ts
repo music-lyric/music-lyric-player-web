@@ -205,6 +205,18 @@ const createLineBindings = (prefix: string, getObj: (c: any) => any, setObj: (pa
     get: (c) => getObj(c)?.style?.active?.opacity,
     apply: (v) => setObj({ style: { active: { opacity: v } } }),
   },
+  {
+    id: `s-${prefix}-played-color`,
+    type: 'text',
+    get: (c) => getObj(c)?.style?.played?.color,
+    apply: (v) => setObj({ style: { played: { color: v } } }),
+  },
+  {
+    id: `s-${prefix}-played-opacity`,
+    type: 'number',
+    get: (c) => getObj(c)?.style?.played?.opacity,
+    apply: (v) => setObj({ style: { played: { opacity: v } } }),
+  },
 ]
 
 const SETTINGS_BINDINGS: SettingsBinding[] = [
