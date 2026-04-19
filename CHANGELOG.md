@@ -1,3 +1,37 @@
+## v0.2.0 (2026-04-19)
+
+### Feature
+
+- `base`
+  - support get current active lines index ([78c05cf](https://github.com/music-lyric/music-lyric-player-web/commit/78c05cf))
+- `dom`
+  - support custom played style ([e8e4979](https://github.com/music-lyric/music-lyric-player-web/commit/e8e4979))
+  - add config interface export ([a809bf8](https://github.com/music-lyric/music-lyric-player-web/commit/a809bf8))
+  - support show background line ([7c55a75](https://github.com/music-lyric/music-lyric-player-web/commit/7c55a75))
+  - support handle scroll event ([003873f](https://github.com/music-lyric/music-lyric-player-web/commit/003873f))
+  - prevent user select text ([f8b807b](https://github.com/music-lyric/music-lyric-player-web/commit/f8b807b))
+- `playground`
+  - support custom played style ([ba877f2](https://github.com/music-lyric/music-lyric-player-web/commit/ba877f2))
+  - support edit config ([1e863db](https://github.com/music-lyric/music-lyric-player-web/commit/1e863db))
+- `utils`
+  - compare object support return parent path ([085fa52](https://github.com/music-lyric/music-lyric-player-web/commit/085fa52))
+
+### Bug Fix
+
+- `dom`
+  - prevent main line from being pushed out of viewport ([8090c65](https://github.com/music-lyric/music-lyric-player-web/commit/8090c65))
+  - background line not show when scrolling ([a424553](https://github.com/music-lyric/music-lyric-player-web/commit/a424553))
+
+### Code Refactor
+
+- `dom`
+  - optimize background line gap ([03de27b](https://github.com/music-lyric/music-lyric-player-web/commit/03de27b))
+  - config structure ([8056f1a](https://github.com/music-lyric/music-lyric-player-web/commit/8056f1a))
+  - line config ([e250bb1](https://github.com/music-lyric/music-lyric-player-web/commit/e250bb1))
+  - config ([9dcd24c](https://github.com/music-lyric/music-lyric-player-web/commit/9dcd24c))
+- `utils`
+  - deep type tools ([22607f2](https://github.com/music-lyric/music-lyric-player-web/commit/22607f2))
+
 ## v0.1.0 (2026-04-11)
 
 ### Document
