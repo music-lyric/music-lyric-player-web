@@ -204,6 +204,21 @@ export class DomLyricPlayer {
 
     return parseFloat((min + (max - min) * gaussian).toFixed(2))
   }
+  private handleCalcLineBlur(offset: number) {
+    const config = this.config.current.effect.blur
+    if (!config.enabled) {
+      return 0
+    }
+
+    const sigma = 2.2
+
+    const min = Math.max(config.min, 0)
+    const max = Math.min(config.max, 4.5)
+
+    const gaussian = Math.exp(-(offset * offset) / (2 * sigma * sigma))
+
+    return parseFloat((min + (max - min) * (1 - gaussian)).toFixed(2))
+  }
   private handleUpdateLineStyle(targetIndex?: number, scrolling: boolean = false) {
     const linNumFull = this.lineElemeMap.size
     if (!linNumFull || !this.player.currentInfo.lines.length) {
@@ -293,6 +308,7 @@ export class DomLyricPlayer {
       }
       if (!isActiveLine && !scrolling) {
         style.scale = this.handleCalcLineScale(indexOffset)
+        style.blur = this.handleCalcLineBlur(indexOffset)
       }
 
       element.updateStyle(style)

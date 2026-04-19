@@ -183,6 +183,27 @@ export interface Config {
        */
       max?: number
     }
+    /**
+     * Blur effect configuration for lyric lines.
+     * Lines closer to the active line are clearer, farther lines are more blurred.
+     */
+    blur?: {
+      /**
+       * Whether to enable the blur effect.
+       * @default true
+       */
+      enabled?: boolean
+      /**
+       * Minimum blur value in px (applied to the active line).
+       * @default 1
+       */
+      min?: number
+      /**
+       * Maximum blur value in px (applied to the farthest lines).
+       * @default 5
+       */
+      max?: number
+    }
   }
 
   /**
@@ -259,6 +280,11 @@ export const DEFAULT_CONFIG: DeepRequired<Config> = {
       enabled: false,
       min: 0.65,
       max: 1,
+    },
+    blur: {
+      enabled: true,
+      min: 0.4,
+      max: 4.5,
     },
   },
 
