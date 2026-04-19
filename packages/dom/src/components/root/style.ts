@@ -5,11 +5,20 @@ import { Context } from '@root/context'
 import Styles from './style.module.scss'
 
 export class Style {
-  private readonly dom: HTMLStyleElement
+  private readonly runtime: HTMLStyleElement
+  private readonly embed: HTMLStyleElement
 
-  constructor(private readonly context: Context) {
-    this.dom = document.createElement('style')
-    this.dom.id = 'lyric-player-style'
+  constructor(
+    private readonly context: Context,
+    private readonly root: HTMLDivElement,
+  ) {
+    this.runtime = document.createElement('style')
+    this.runtime.id = 'lyric-player-style-runtime'
+    this.embed = document.createElement('style')
+    this.embed.id = 'lyric-player-style-embed'
+
+    this.root.appendChild(this.runtime)
+    this.root.appendChild(this.embed)
   }
 
   private buildKey(key: string) {
@@ -31,7 +40,7 @@ export class Style {
 
     const target = `.${Styles.root} {\n${result}\n}`
 
-    this.dom.textContent = target
+    this.runtime.textContent = target
   }
 
   private buildNormalLineValue(fallbackType: string | undefined, value: string | number | undefined, suffix: string, unit: string = '') {
@@ -96,9 +105,5 @@ export class Style {
     }
 
     this.apply(result)
-  }
-
-  get element() {
-    return this.dom
   }
 }

@@ -8,26 +8,21 @@ const cssInlinePlugin = (): Plugin => {
     apply: 'build',
     enforce: 'post',
     generateBundle(_options, bundle) {
-      const cssChunks: string[] = []
-      const cssFileNames: string[] = []
-
+      const styleChunks: string[] = []
       for (const [fileName, chunk] of Object.entries(bundle)) {
         if (chunk.type === 'asset' && fileName.endsWith('.css')) {
-          cssChunks.push(chunk.source as string)
-          cssFileNames.push(fileName)
+          styleChunks.push(chunk.source as string)
           delete bundle[fileName]
         }
       }
+      if (!styleChunks.length) {
+        return
+      }
 
-      if (cssChunks.length === 0) return
-
-      const cssContent = cssChunks.join('\n')
-
-      const injection = `\n;(function(){try{if(typeof document!=='undefined'){var s=document.createElement("style");s.setAttribute("data-lyric-player","");s.textContent=${JSON.stringify(cssContent)};document.head.appendChild(s)}}catch(e){}})();\n`
-
+      const styleContent = styleChunks.join('\n')
       for (const chunk of Object.values(bundle)) {
         if (chunk.type === 'chunk' && chunk.isEntry && chunk.fileName.endsWith('.js')) {
-          chunk.code += injection
+          chunk.code = chunk.code + `\nconst __LYRIC_PLAYER_STYLE__ = ${JSON.stringify(styleContent)};\n`
           break
         }
       }

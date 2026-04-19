@@ -18,18 +18,15 @@ export class Root {
   private readonly dom: HTMLDivElement
 
   constructor(private readonly context: Context) {
-    const container = new Container(context)
-    this.container = container
-    this.event = container.event
-
-    const style = new Style(context)
-    this.style = style
-
     this.dom = document.createElement('div')
     applyClassName(this.dom, [Styles.root])
 
-    this.dom.appendChild(this.style.element)
-    this.dom.appendChild(this.container.element)
+    const style = new Style(context, this.dom)
+    this.style = style
+
+    const container = new Container(context, this.dom)
+    this.container = container
+    this.event = container.event
 
     this.updateConfig()
   }
