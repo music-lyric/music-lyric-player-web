@@ -245,17 +245,15 @@ export class DomLyricPlayer {
     }
 
     let currentActiveOffset: number
-    if (scrolling && targetIndex) {
+    if (scrolling && targetIndex !== undefined) {
       const targetElement = this.lineElemeMap.get(targetIndex)
       const targetHeight = targetElement?.height ?? 0
       currentActiveOffset = topPositions[targetIndex] + targetHeight / 2
     } else {
       const firstActiveIdx = currentActiveLines[0]
-      const lastActiveIdx = currentActiveLines[currentActiveLines.length - 1]
-      const activeGroupTop = topPositions[firstActiveIdx]
-      const lastElementHeight = this.lineElemeMap.get(lastActiveIdx)?.height ?? 0
-      const activeGroupBottom = topPositions[lastActiveIdx] + lastElementHeight
-      currentActiveOffset = (activeGroupTop + activeGroupBottom) / 2
+      const firstElement = this.lineElemeMap.get(firstActiveIdx)
+      const firstElementHeight = firstElement?.height ?? 0
+      currentActiveOffset = topPositions[firstActiveIdx] + firstElementHeight / 2
     }
     const offset = currentActivePosition - currentActiveOffset
     const currentTime = this.player.currentTime
