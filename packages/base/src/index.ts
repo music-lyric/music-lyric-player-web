@@ -242,6 +242,26 @@ export class BaseLyricPlayer {
   }
 
   /**
+   * Find all active lines at the given time (ms). Does not mutate internal state.
+   * @param time time in ms to find active lines for.
+   */
+  matchLinesWithTime(time: number): { lines: Line[]; index: number[] } {
+    const lines: Line[] = []
+    const index: number[] = []
+    for (let i = 0; i < this.info.lines.length; i++) {
+      const line = this.info.lines[i]
+      if (line.time.start > time) {
+        break
+      }
+      if (this.handleGetLineTime(i) > time) {
+        lines.push(line)
+        index.push(i)
+      }
+    }
+    return { lines, index }
+  }
+
+  /**
    * Whether the player is currently playing.
    */
   get currentPlaying() {
