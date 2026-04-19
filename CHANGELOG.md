@@ -1,3 +1,34 @@
+## v0.3.0 (2026-04-20)
+
+### Feature
+
+- `base`
+  - support query active lines by a timestamp ([5ff017e](https://github.com/music-lyric/music-lyric-player-web/commit/5ff017e))
+  - support get current is playing ([12093de](https://github.com/music-lyric/music-lyric-player-web/commit/12093de))
+- `dom`
+  - support add edge fade mask for container ([34982db](https://github.com/music-lyric/music-lyric-player-web/commit/34982db))
+  - support add padding for container ([ed75a4c](https://github.com/music-lyric/music-lyric-player-web/commit/ed75a4c))
+  - skip primitive types in deep util type tools ([126cf03](https://github.com/music-lyric/music-lyric-player-web/commit/126cf03))
+  - add scroll animation ([07e3075](https://github.com/music-lyric/music-lyric-player-web/commit/07e3075))
+  - support blur lyric line ([254137d](https://github.com/music-lyric/music-lyric-player-web/commit/254137d))
+  - support scaling lyric line ([84a79d3](https://github.com/music-lyric/music-lyric-player-web/commit/84a79d3))
+- `playground`
+  - support custom scroll animation config ([e1387f4](https://github.com/music-lyric/music-lyric-player-web/commit/e1387f4))
+
+### Bug Fix
+
+- `dom`
+  - unable to scroll lyrics immediately after loading ([fcf8442](https://github.com/music-lyric/music-lyric-player-web/commit/fcf8442))
+  - background line not show when scrolling ([73e75fc](https://github.com/music-lyric/music-lyric-player-web/commit/73e75fc))
+
+### Code Refactor
+
+- `base`
+  - optimize code ([93b7a5c](https://github.com/music-lyric/music-lyric-player-web/commit/93b7a5c))
+- `dom`
+  - change the root field to container field ([5816f69](https://github.com/music-lyric/music-lyric-player-web/commit/5816f69))
+  - expose bundled style as variable ([7710799](https://github.com/music-lyric/music-lyric-player-web/commit/7710799))
+
 ## v0.2.0 (2026-04-19)
 
 ### Feature
