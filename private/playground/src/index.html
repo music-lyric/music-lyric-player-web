@@ -632,7 +632,7 @@
           <div class="settings-content-area" id="settings-content-area">
             <!-- Layout -->
             <div class="settings-section" id="section-layout">
-              <h3 class="settings-section-header">Layout & Scroll</h3>
+              <h3 class="settings-section-header">Layout</h3>
               <div class="settings-section-content">
                 <div class="settings-row">
                   <span class="settings-label">Align</span>
@@ -646,9 +646,45 @@
                   <span class="settings-label">Line Gap</span>
                   <input class="settings-input" id="s-layout-gap" type="number" min="0" max="100" step="1" />
                 </div>
+              </div>
+            </div>
+
+            <div class="settings-section" id="section-scroll">
+              <h3 class="settings-section-header">Scroll</h3>
+              <div class="settings-section-content">
                 <div class="settings-row">
                   <span class="settings-label">Anchor Position (%)</span>
                   <input class="settings-input" id="s-scroll-anchor" type="number" min="0" max="100" step="1" />
+                </div>
+                <div class="settings-row">
+                  <span class="settings-label">Mode</span>
+                  <select class="settings-select" id="s-scroll-animation-mode">
+                    <option value="smooth">Smooth</option>
+                    <option value="ripple">Ripple</option>
+                    <option value="directional">Directional</option>
+                  </select>
+                </div>
+                <div class="settings-row">
+                  <span class="settings-label">Duration (ms)</span>
+                  <input class="settings-input" id="s-scroll-animation-duration" type="number" min="0" max="2000" step="50" placeholder="500" />
+                </div>
+                <div class="settings-row">
+                  <span class="settings-label">Easing</span>
+                  <input class="settings-input" id="s-scroll-animation-easing" type="text" placeholder="ease" />
+                </div>
+                <!-- Smooth -->
+                <div class="settings-row" id="scroll-anim-delay-row">
+                  <span class="settings-label">Delay (ms)</span>
+                  <input class="settings-input" id="s-scroll-animation-delay" type="number" min="0" max="1000" step="10" placeholder="0" />
+                </div>
+                <!-- Ripple / Directional -->
+                <div class="settings-row" id="scroll-anim-range-row" style="display: none">
+                  <span class="settings-label">Range (lines)</span>
+                  <input class="settings-input" id="s-scroll-animation-range" type="number" min="1" max="30" step="1" placeholder="5" />
+                </div>
+                <div class="settings-row" id="scroll-anim-step-row" style="display: none">
+                  <span class="settings-label">Step (ms)</span>
+                  <input class="settings-input" id="s-scroll-animation-step" type="number" min="10" max="200" step="5" placeholder="40" />
                 </div>
               </div>
             </div>
