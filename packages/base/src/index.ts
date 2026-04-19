@@ -231,6 +231,10 @@ export class BaseLyricPlayer {
     this.info = new Info()
   }
 
+  get currentPlaying() {
+    return this.state.playing
+  }
+
   get currentLines() {
     return [...this.active.lines]
   }
