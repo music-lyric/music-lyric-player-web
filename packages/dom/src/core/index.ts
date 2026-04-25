@@ -97,7 +97,7 @@ export class DomLyricPlayer {
 
   private onLinesUpdate = (lines: Line[], indexs: number[], index: number, isSeek: boolean) => {
     requestAnimationFrame(() => {
-      this.handleUpdateLineStyle(void 0, this.scroll.current.scrolling, isSeek)
+      this.handleUpdateLineStyle(isSeek)
     })
   }
 
@@ -107,7 +107,7 @@ export class DomLyricPlayer {
     } else {
       this.root.removeAttribute('scrolling')
     }
-    this.handleUpdateLineStyle(line, scrolling)
+    this.handleUpdateLineStyle()
   }
 
   private handleClearLines() {
@@ -270,7 +270,7 @@ export class DomLyricPlayer {
       }
     }
   }
-  private handleUpdateLineStyle(targetIndex?: number, scrolling = false, seek = false) {
+  private handleUpdateLineStyle(seek = false) {
     const linNumFull = this.lineElemeMap.size
     if (!linNumFull || !this.player.currentInfo.lines.length) {
       return
@@ -285,7 +285,7 @@ export class DomLyricPlayer {
     const currentActiveLines: number[] = []
     const topPositions: number[] = new Array(linNumFull)
 
-    const isSeekOrScroll = seek || scrolling || targetIndex !== void 0
+    const isInScroll = this.scroll.current.scrolling
 
     for (let i = 0; i < linNumFull; i++) {
       if (this.handleGetLineIsActive(i)) {
@@ -316,7 +316,7 @@ export class DomLyricPlayer {
       const baseTop = lastTop + lastHeight
 
       if (element.type === LineElementType.Normal && element.isBackground) {
-        if (!scrolling && !isActiveLine) {
+        if (!isInScroll && !isActiveLine) {
           topPositions[i] = baseTop - element.height
         } else {
           topPositions[i] = baseTop + currentSpace * 0.2
@@ -328,10 +328,11 @@ export class DomLyricPlayer {
     }
 
     let currentActiveOffset: number
-    if (scrolling && targetIndex !== undefined) {
-      const targetElement = this.lineElemeMap.get(targetIndex)
+    if (isInScroll) {
+      const currentScroll = this.scroll.current.active
+      const targetElement = this.lineElemeMap.get(currentScroll)
       const targetHeight = targetElement?.height ?? 0
-      currentActiveOffset = topPositions[targetIndex] + targetHeight / 2
+      currentActiveOffset = topPositions[currentScroll] + targetHeight / 2
     } else {
       const firstActiveIdx = currentActiveLines[0]
       const firstElement = this.lineElemeMap.get(firstActiveIdx)
@@ -362,7 +363,7 @@ export class DomLyricPlayer {
         top: topPositions[i] + offset,
       }
 
-      if (scrolling) {
+      if (isInScroll) {
         style.opacity = 1
         style.transitionDelay = 0
         style.transitionDuration = 200
@@ -383,7 +384,7 @@ export class DomLyricPlayer {
         continue
       }
 
-      if (isSeekOrScroll || !isAlreadyActive) {
+      if (seek || !isAlreadyActive) {
         element.play(currentTime, true)
       }
     }
