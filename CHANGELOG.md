@@ -1,3 +1,26 @@
+## v0.4.0 (2026-04-26)
+
+### Feature
+
+- `base`
+  - lines update event add is in seek param ([ed95eb0](https://github.com/music-lyric/music-lyric-player-web/commit/ed95eb0))
+- `dom`
+  - add mask animation for line word ([e1b76c3](https://github.com/music-lyric/music-lyric-player-web/commit/e1b76c3))
+
+### Bug Fix
+
+- `dom`
+  - the position of a completed word was incorrect when switch play state ([e62f821](https://github.com/music-lyric/music-lyric-player-web/commit/e62f821))
+  - playback was triggered when not playing ([751ff96](https://github.com/music-lyric/music-lyric-player-web/commit/751ff96))
+  - incorrect active line when scrolling ([743d1f5](https://github.com/music-lyric/music-lyric-player-web/commit/743d1f5))
+  - played background line not show when scrolling ([f1044b4](https://github.com/music-lyric/music-lyric-player-web/commit/f1044b4))
+  - an incorrect function call occurred while multiple lines play ([a08dccb](https://github.com/music-lyric/music-lyric-player-web/commit/a08dccb))
+
+### Code Refactor
+
+- `dom`
+  - optimize code ([9ef62e4](https://github.com/music-lyric/music-lyric-player-web/commit/9ef62e4))
+
 ## v0.3.0 (2026-04-20)
 
 ### Feature
