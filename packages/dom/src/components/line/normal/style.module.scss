@@ -63,14 +63,10 @@
 
   .word {
     display: inline-block;
-    transform: translateY(0);
-    transition-property: opacity, transform;
-    transition-timing-function: cubic-bezier(0.33, 1, 0.68, 1), cubic-bezier(0.215, 0.61, 0.355, 1);
+    transition-property: opacity;
+    transition-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
 
     @include apply-style('syllable');
-    [active] & {
-      transform: translateY(-2px);
-    }
   }
 
   .space {

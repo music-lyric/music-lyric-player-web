@@ -33,14 +33,16 @@ export class WordNode {
     const delay = this.wordInfo.time.start - this.lineTime.start
     const duration = Math.max(1000, this.wordInfo.time.duration)
 
-    this.floatAnimation = this.dom.animate([{ transform: 'translateY(0px)' }, { transform: 'translateY(-2px)' }], {
+    const animation = this.dom.animate([{ transform: 'translateY(0px)' }, { transform: 'translateY(-2px)' }], {
       delay,
       duration,
       fill: 'both',
       composite: 'add',
       easing: 'ease',
     })
-    this.floatAnimation.pause()
+    animation.pause()
+
+    this.floatAnimation = animation
   }
 
   updateMaskStyle(image: string, size: string) {
@@ -56,7 +58,7 @@ export class WordNode {
     this.maskAnimation.pause()
   }
 
-  updateStyle(isPlay: boolean, isActive: boolean, time: number, lineDuration = 0) {
+  updateStyle(isPlay: boolean, isActive: boolean, currentTime: number, relativeTime: number, lineDuration: number) {
     if (!isActive) {
       if (this.floatAnimation && this.floatAnimation.playbackRate !== -1) {
         this.floatAnimation.playbackRate = -1
@@ -69,29 +71,38 @@ export class WordNode {
       return
     }
 
+    const isFinished = currentTime >= this.wordInfo.time.end
     if (this.floatAnimation) {
-      this.floatAnimation.playbackRate = 1
-      this.floatAnimation.currentTime = time > 0 ? time : 0
-      if (isPlay) {
-        this.floatAnimation.play()
+      if (isFinished && this.floatAnimation.playState === 'finished') {
+        // skip
       } else {
-        this.floatAnimation.pause()
+        this.floatAnimation.playbackRate = 1
+        this.floatAnimation.currentTime = relativeTime > 0 ? relativeTime : 0
+        if (isPlay) {
+          this.floatAnimation.play()
+        } else {
+          this.floatAnimation.pause()
+        }
       }
     }
 
     if (this.maskAnimation) {
-      // line not start
-      const delay = time < 0 ? -time : 0
+      const delay = relativeTime < 0 ? -relativeTime : 0
       if (this.maskAnimationDelay !== delay) {
         this.maskAnimationDelay = delay
         this.maskAnimation.effect!.updateTiming({ delay })
       }
-      this.maskAnimation.playbackRate = 1
-      this.maskAnimation.currentTime = time < 0 ? 0 : time > lineDuration ? lineDuration : time
-      if (isPlay) {
-        this.maskAnimation.play()
+
+      if (isFinished && this.maskAnimation.playState === 'finished') {
+        // skip
       } else {
-        this.maskAnimation.pause()
+        this.maskAnimation.playbackRate = 1
+        this.maskAnimation.currentTime = relativeTime < 0 ? 0 : relativeTime > lineDuration ? lineDuration : relativeTime
+        if (isPlay) {
+          this.maskAnimation.play()
+        } else {
+          this.maskAnimation.pause()
+        }
       }
     }
   }
@@ -316,22 +327,22 @@ export class MainNode {
   }
 
   play(currentTime: number, isActive: boolean) {
-    const time = currentTime - this.info.time.start
+    const relativeTime = currentTime - this.info.time.start
     for (const word of this.words) {
-      word.updateStyle(true, isActive, time, this.info.time.duration)
+      word.updateStyle(true, isActive, currentTime, relativeTime, this.info.time.duration)
     }
   }
 
   pause(currentTime: number, isActive: boolean) {
-    const time = currentTime - this.info.time.start
+    const relativeTime = currentTime - this.info.time.start
     for (const word of this.words) {
-      word.updateStyle(false, isActive, time, this.info.time.duration)
+      word.updateStyle(false, isActive, currentTime, relativeTime, this.info.time.duration)
     }
   }
 
   reset() {
     for (const word of this.words) {
-      word.updateStyle(false, false, 0, this.info.time.duration)
+      word.updateStyle(false, false, 0, 0, this.info.time.duration)
     }
   }
 
