@@ -30,7 +30,7 @@ export class ScrollHandler {
     }
 
     if (this.active === -1) {
-      this.active = this.host.player.currentActive
+      this.active = this.host.player.currentIndex[0] ?? -1
     }
 
     const nextIndex = this.active + direction
@@ -43,6 +43,7 @@ export class ScrollHandler {
     this.host.handleScroll(nextIndex, true)
     this.updateTimer()
   }
+
   private updateTimer() {
     this.clearTimer()
     this.timer = setTimeout(() => {
@@ -57,14 +58,17 @@ export class ScrollHandler {
       clearTimeout(this.timer)
     }
   }
+
   clear() {
     this.clearTimer()
     this.active = -1
   }
+
   destroy() {
     this.clearTimer()
     this.host.root.event.remove('wheel', this.onWheel)
   }
+
   get current() {
     return {
       scrolling: this.scrolling,

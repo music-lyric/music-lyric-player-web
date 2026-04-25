@@ -327,19 +327,12 @@ export class DomLyricPlayer {
       topPositions[i] = baseTop + currentSpace
     }
 
-    let currentActiveOffset: number
-    if (isInScroll) {
-      const currentScroll = this.scroll.current.active
-      const targetElement = this.lineElemeMap.get(currentScroll)
-      const targetHeight = targetElement?.height ?? 0
-      currentActiveOffset = topPositions[currentScroll] + targetHeight / 2
-    } else {
-      const firstActiveIdx = currentActiveLines[0]
-      const firstElement = this.lineElemeMap.get(firstActiveIdx)
-      const firstElementHeight = firstElement?.height ?? 0
-      currentActiveOffset = topPositions[firstActiveIdx] + firstElementHeight / 2
-    }
-    const offset = currentActivePosition - currentActiveOffset
+    const firstActiveIdx = isInScroll ? this.lineIndexMap.get(this.scroll.current.active)?.[0] || 0 : currentActiveLines[0]
+    const firstElement = this.lineElemeMap.get(firstActiveIdx)
+    const firstElementHeight = firstElement?.height ?? 0
+
+    const currentActiveOffset = topPositions[firstActiveIdx] + firstElementHeight / 2
+    const currentOffset = currentActivePosition - currentActiveOffset
     const currentTime = this.player.currentTime
 
     for (let i = 0; i < linNumFull; i++) {
@@ -360,7 +353,7 @@ export class DomLyricPlayer {
       const indexOffset = i - activeIndex
 
       const style: LineElementStyle = {
-        top: topPositions[i] + offset,
+        top: topPositions[i] + currentOffset,
       }
 
       if (isInScroll) {
