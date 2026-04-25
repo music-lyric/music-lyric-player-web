@@ -285,6 +285,7 @@ export class DomLyricPlayer {
     const currentActiveLines: number[] = []
     const topPositions: number[] = new Array(linNumFull)
 
+    const isInPlay = this.player.currentPlaying
     const isInScroll = this.scroll.current.scrolling
 
     for (let i = 0; i < linNumFull; i++) {
@@ -378,7 +379,8 @@ export class DomLyricPlayer {
       }
 
       if (seek || !isAlreadyActive) {
-        element.play(currentTime, true)
+        if (isInPlay) element.play(currentTime, true)
+        else element.pause(currentTime, true)
       }
     }
   }
