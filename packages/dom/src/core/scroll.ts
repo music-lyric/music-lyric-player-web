@@ -1,25 +1,23 @@
 import type { BaseLyricPlayer } from '@music-lyric-player/base'
 import type { Root } from '@root/components'
 
-interface ScrollHandlerHost {
-  readonly player: BaseLyricPlayer
-  readonly root: Root
-  handleScroll(line: number, scrolling: boolean): void
-}
-
-export class ScrollHandler {
+export class ScrollManager {
   private scrolling = false
   private active: number = -1
   private timer: any | null = null
 
-  constructor(private readonly host: ScrollHandlerHost) {
-    this.host.root.event.add('wheel', this.onWheel)
+  constructor(
+    private readonly player: BaseLyricPlayer,
+    private readonly root: Root,
+    private readonly handleScroll: (line: number, scrolling: boolean) => void,
+  ) {
+    this.root.event.add('wheel', this.onWheel)
   }
 
   private onWheel = (e: WheelEvent) => {
     e.preventDefault()
 
-    const currentLines = this.host.player.currentInfo.lines
+    const currentLines = this.player.currentInfo.lines
     if (!currentLines.length) {
       return
     }
@@ -30,7 +28,7 @@ export class ScrollHandler {
     }
 
     if (this.active === -1) {
-      this.active = this.host.player.currentIndex[0] ?? -1
+      this.active = this.player.currentIndex[0] ?? -1
     }
 
     const nextIndex = this.active + direction
@@ -40,7 +38,7 @@ export class ScrollHandler {
 
     this.scrolling = true
     this.active = nextIndex
-    this.host.handleScroll(nextIndex, true)
+    this.handleScroll(nextIndex, true)
     this.updateTimer()
   }
 
@@ -50,7 +48,7 @@ export class ScrollHandler {
       this.scrolling = false
       this.active = -1
       this.timer = null
-      this.host.handleScroll(-1, false)
+      this.handleScroll(-1, false)
     }, 3 * 1000)
   }
   private clearTimer() {
@@ -66,7 +64,7 @@ export class ScrollHandler {
 
   destroy() {
     this.clearTimer()
-    this.host.root.event.remove('wheel', this.onWheel)
+    this.root.event.remove('wheel', this.onWheel)
   }
 
   get current() {
