@@ -31,8 +31,9 @@ export interface BaseLyricPlayerEventMap {
    * @param lines An array of the currently active lyric lines.
    * @param indexs An array of the currently active lyric lines' indexes.
    * @param firstIndex The index of the first currently active lyric line (-1 if none).
+   * @param isSeek Is seek.
    */
-  linesUpdate: (lines: Line[], indexs: number[], index: number) => void
+  linesUpdate: (lines: Line[], indexs: number[], index: number, isSeek: boolean) => void
 }
 
 export class BaseLyricPlayer {
@@ -120,7 +121,7 @@ export class BaseLyricPlayer {
     this.active.lines = lines
     this.active.index = index
 
-    this.event.emit('linesUpdate', [...this.active.lines], [...this.active.index], this.handleGetActiveIndex())
+    this.event.emit('linesUpdate', [...this.active.lines], [...this.active.index], this.handleGetActiveIndex(), true)
   }
 
   private handleUpdateActiveLines(now: number) {
@@ -161,7 +162,7 @@ export class BaseLyricPlayer {
 
     this.active.lines = newActiveLines
     this.active.index = newActiveIndex
-    this.event.emit('linesUpdate', [...this.active.lines], [...this.active.index], this.handleGetActiveIndex())
+    this.event.emit('linesUpdate', [...this.active.lines], [...this.active.index], this.handleGetActiveIndex(), false)
   }
 
   private onTick = () => {
@@ -190,7 +191,7 @@ export class BaseLyricPlayer {
     this.time.seek = 0
 
     this.event.emit('lyricUpdate', info)
-    this.event.emit('linesUpdate', [], [], -1)
+    this.event.emit('linesUpdate', [], [], -1, false)
   }
 
   /**
