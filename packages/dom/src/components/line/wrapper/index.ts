@@ -28,29 +28,53 @@ export abstract class BaseLineElement {
 
   protected readonly size: { width: number; height: number }
 
+  protected readonly status: { active: boolean; played: boolean; position: string }
+
   constructor(protected readonly context: Context) {
     this.wrapper = document.createElement('div')
     this.size = { width: 0, height: 0 }
+    this.status = { active: false, played: false, position: '' }
   }
 
   set active(value: boolean) {
+    if (value === this.status.active) {
+      return
+    }
     if (value) {
       this.wrapper.setAttribute('active', '')
     } else {
       this.wrapper.removeAttribute('active')
     }
+    this.status.active = value
+  }
+  get active() {
+    return this.status.active
   }
 
   set played(value: boolean) {
+    if (value === this.status.active) {
+      return
+    }
     if (value) {
       this.wrapper.setAttribute('played', '')
     } else {
       this.wrapper.removeAttribute('played')
     }
+    this.status.played = value
+  }
+  get played() {
+    return this.status.played
   }
 
   set position(value: string) {
+    if (value === this.status.position) {
+      return
+    }
     this.wrapper.setAttribute('position', value)
+    this.status.position = value
+  }
+  get position() {
+    return this.status.position
   }
 
   get element() {

@@ -95,9 +95,9 @@ export class DomLyricPlayer {
     })
   }
 
-  private onLinesUpdate = (lines: Line[]) => {
+  private onLinesUpdate = (lines: Line[], indexs: number[], index: number, isSeek: boolean) => {
     requestAnimationFrame(() => {
-      this.handleUpdateLineStyle()
+      this.handleUpdateLineStyle(void 0, this.scroll.current.scrolling, isSeek)
     })
   }
 
@@ -270,7 +270,7 @@ export class DomLyricPlayer {
       }
     }
   }
-  private handleUpdateLineStyle(targetIndex?: number, scrolling: boolean = false) {
+  private handleUpdateLineStyle(targetIndex?: number, scrolling = false, seek = false) {
     const linNumFull = this.lineElemeMap.size
     if (!linNumFull || !this.player.currentInfo.lines.length) {
       return
@@ -284,6 +284,8 @@ export class DomLyricPlayer {
 
     const currentActiveLines: number[] = []
     const topPositions: number[] = new Array(linNumFull)
+
+    const isSeekOrScroll = seek || scrolling || targetIndex !== void 0
 
     for (let i = 0; i < linNumFull; i++) {
       if (this.handleGetLineIsActive(i)) {
@@ -348,6 +350,8 @@ export class DomLyricPlayer {
       const isPlayedLine = currentActiveLines.length > 0 && i < currentActiveLines[0]
       const isActiveLine = currentActiveLines.includes(i)
 
+      const isAlreadyActive = element.active
+
       element.active = isActiveLine
       element.played = isPlayedLine
 
@@ -374,10 +378,13 @@ export class DomLyricPlayer {
 
       element.updateStyle(style)
 
-      if (isActiveLine) {
-        element.play(currentTime, true)
-      } else {
+      if (!isActiveLine) {
         element.reset()
+        continue
+      }
+
+      if (isSeekOrScroll || !isAlreadyActive) {
+        element.play(currentTime, true)
       }
     }
   }
