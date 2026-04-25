@@ -1,5 +1,7 @@
-import { WordType, type LineNormal, type WordNormal } from '@music-lyric-kit/lyric'
+import type { LineNormal, WordNormal, Time } from '@music-lyric-kit/lyric'
 import type { Context } from '@root/context'
+
+import { WordType } from '@music-lyric-kit/lyric'
 
 import { applyClassName } from '@root/utils'
 
@@ -7,58 +9,117 @@ import Style from './style.module.scss'
 
 export class WordNode {
   private readonly dom: HTMLDivElement
+  private readonly size: { width: number; height: number }
+
+  private floatAnimation?: Animation
+  private maskAnimation?: Animation
+
+  private maskAnimationDelay = 0
 
   constructor(
     private readonly context: Context,
-    private readonly info: WordNormal,
+    private readonly wordInfo: WordNormal,
+    private readonly lineTime: Time,
   ) {
     this.dom = document.createElement('div')
-    this.dom.innerText = info.content
+    this.dom.innerText = wordInfo.content
+    this.size = { width: 0, height: 0 }
 
     this.updateConfig()
+    this.init()
+  }
+
+  private init() {
+    const delay = this.wordInfo.time.start - this.lineTime.start
+    const duration = Math.max(1000, this.wordInfo.time.duration)
+
+    this.floatAnimation = this.dom.animate([{ transform: 'translateY(0px)' }, { transform: 'translateY(-2px)' }], {
+      delay,
+      duration,
+      fill: 'both',
+      composite: 'add',
+      easing: 'ease',
+    })
+    this.floatAnimation.pause()
+  }
+
+  updateMaskStyle(image: string, size: string) {
+    const style = this.dom.style
+    style.maskRepeat = 'no-repeat'
+    style.maskImage = image
+    style.maskSize = size
+  }
+
+  updateMaskAnimation(client: Animation) {
+    this.maskAnimation?.cancel()
+    this.maskAnimation = client
+    this.maskAnimation.pause()
+  }
+
+  updateStyle(isPlay: boolean, isActive: boolean, time: number, lineDuration = 0) {
+    if (!isActive) {
+      if (this.floatAnimation && this.floatAnimation.playbackRate !== -1) {
+        this.floatAnimation.playbackRate = -1
+        this.floatAnimation.play()
+      }
+      if (this.maskAnimation) {
+        this.maskAnimation.currentTime = 0
+        this.maskAnimation.pause()
+      }
+      return
+    }
+
+    if (this.floatAnimation) {
+      this.floatAnimation.playbackRate = 1
+      this.floatAnimation.currentTime = time > 0 ? time : 0
+      if (isPlay) {
+        this.floatAnimation.play()
+      } else {
+        this.floatAnimation.pause()
+      }
+    }
+
+    if (this.maskAnimation) {
+      // line not start
+      const delay = time < 0 ? -time : 0
+      if (this.maskAnimationDelay !== delay) {
+        this.maskAnimationDelay = delay
+        this.maskAnimation.effect!.updateTiming({ delay })
+      }
+      this.maskAnimation.playbackRate = 1
+      this.maskAnimation.currentTime = time < 0 ? 0 : time > lineDuration ? lineDuration : time
+      if (isPlay) {
+        this.maskAnimation.play()
+      } else {
+        this.maskAnimation.pause()
+      }
+    }
+  }
+
+  updateSize() {
+    this.size.width = this.dom.clientWidth
+    this.size.height = this.dom.clientHeight
   }
 
   updateConfig() {
     applyClassName(this.dom, [Style.word])
   }
 
-  updateStyle(isPlay: boolean, isActive: boolean, currentTime: number) {
-    const domStyle = this.dom.style
+  dispose() {
+    this.floatAnimation?.cancel()
+    this.maskAnimation?.cancel()
+  }
 
-    if (!isActive) {
-      domStyle.transitionDuration = '400ms'
-      domStyle.transitionDelay = '0ms'
-      domStyle.opacity = '0.4'
-      domStyle.transform = 'translateY(0px)'
-      return
-    }
+  get height() {
+    return this.size.height
+  }
 
-    const { start, duration } = this.info.time
-    if (duration <= 0) {
-      domStyle.transitionDuration = '0ms'
-      domStyle.transitionDelay = '0ms'
-      return
-    }
+  get width() {
+    return this.size.width
+  }
 
-    const raw = (currentTime - start) / duration
-    const progress = Math.max(0, Math.min(raw, 1))
-
-    if (!isPlay && progress < 1) {
-      domStyle.transitionDuration = '0ms'
-      domStyle.transitionDelay = '0ms'
-      domStyle.opacity = (0.4 + 0.6 * progress).toFixed(2)
-      domStyle.transform = `translateY(-${Math.round(progress * 2)}px)`
-      return
-    }
-
-    const delayMs = Math.round(start - currentTime)
-    const durationMs = Math.round(duration)
-
-    domStyle.setProperty('transition-duration', `${durationMs}ms, ${durationMs + 150}ms`, 'important')
-    domStyle.setProperty('transition-delay', `${delayMs}ms`, 'important')
-
-    domStyle.opacity = '1'
-    domStyle.transform = 'translateY(-2px)'
+  get info() {
+    return this.wordInfo
   }
 
   get element() {
@@ -68,7 +129,9 @@ export class WordNode {
 
 export class MainNode {
   private readonly dom: HTMLDivElement
-  private readonly words: WordNode[]
+  private words: WordNode[]
+
+  private readonly wordFadeWidth = 0.5
 
   constructor(
     private readonly context: Context,
@@ -82,10 +145,12 @@ export class MainNode {
 
   private init() {
     this.dom.replaceChildren()
+    this.words = []
+
     for (const item of this.info.content.words) {
       switch (item.type) {
         case WordType.Normal: {
-          const node = new WordNode(this.context, item)
+          const node = new WordNode(this.context, item, this.info.time)
           this.words.push(node)
           this.dom.appendChild(node.element)
           break
@@ -98,28 +163,175 @@ export class MainNode {
         }
       }
     }
+
+    this.updateSize()
   }
 
   updateConfig() {
-    this.init()
     applyClassName(this.dom, [Style.syllable])
+    this.init()
+  }
+
+  updateSize() {
+    requestAnimationFrame(() => {
+      for (const word of this.words) {
+        word.updateSize()
+      }
+      this.updateMaskAnimations()
+    })
+  }
+
+  private updateMaskAnimations() {
+    const lineDuration = this.info.time.duration
+    if (lineDuration <= 0) {
+      return
+    }
+
+    const wordCount = this.words.length
+    if (!wordCount) {
+      return
+    }
+
+    const invLineDuration = 1 / lineDuration
+
+    const wordStartTimes = new Float64Array(wordCount)
+    const wordDurations = new Float64Array(wordCount)
+    const wordWidths = new Float64Array(wordCount)
+    const wordFrontWidths = new Float64Array(wordCount + 1)
+
+    const lineStart = this.info.time.start
+    for (let i = 0; i < wordCount; i++) {
+      const word = this.words[i]
+      wordStartTimes[i] = word.info.time.start - lineStart
+      wordDurations[i] = word.info.time.duration
+      wordWidths[i] = word.width
+      wordFrontWidths[i + 1] = wordFrontWidths[i] + word.width
+    }
+
+    for (let index = 0; index < wordCount; index++) {
+      const wordWidth = wordWidths[index]
+      if (wordWidth <= 0) {
+        continue
+      }
+
+      const word = this.words[index]
+      if (!word) {
+        continue
+      }
+
+      const widthFade = word.height * this.wordFadeWidth
+      const widthFront = wordFrontWidths[index] + widthFade
+
+      const widthRatio = widthFade / wordWidth
+      const widthSize = 2 + widthRatio
+      const widthInTotal = widthRatio / widthSize
+      const leftPos = (1 - widthInTotal) / 2
+
+      const maskImage = `linear-gradient(to right, rgba(0, 0, 0, 1.0) ${leftPos * 100}%, rgba(0, 0, 0, 0.4) ${(leftPos + widthInTotal) * 100}%)`
+      const maskSize = `${widthSize * 100}% 100%`
+      word.updateMaskStyle(maskImage, maskSize)
+
+      // min mask position
+      const positionMin = -(wordWidth + widthFade)
+      const positionClamp = (v: number) => (v < positionMin ? positionMin : v > 0 ? 0 : v)
+
+      // mask postion
+      let cursor = -widthFront - wordWidth - widthFade
+      // normalised progress
+      let progress = 0
+      // prev
+      let prevCursor = cursor
+      let prevProgress = 0
+
+      // include a init frame
+      const frames: Keyframe[] = [{ offset: 0, maskPosition: `${positionClamp(cursor)}px 0` }]
+
+      let offset = 0
+      for (let i = 0; i < wordCount; i++) {
+        // pause
+        const gap = wordStartTimes[i] - offset
+        if (gap > 0) {
+          progress += gap * invLineDuration
+          prevProgress = progress > 1 ? 1 : progress < 0 ? 0 : progress
+          frames.push({ offset: prevProgress, maskPosition: `${positionClamp(cursor)}px 0` })
+        }
+        offset = wordStartTimes[i]
+
+        // move
+        const duration = wordDurations[i]
+        progress += duration * invLineDuration
+        cursor += wordWidths[i]
+
+        //  first word
+        if (i === 0) {
+          cursor += widthFade * 1.5
+        }
+        // end word
+        if (i === wordCount - 1) {
+          cursor += widthFade * 0.5
+        }
+
+        if (duration > 0) {
+          const target = progress > 1 ? 1 : progress < 0 ? 0 : progress
+          const dt = target - prevProgress
+          const dx = cursor - prevCursor
+
+          if (dx !== 0 && dt > 0) {
+            const rate = dt / dx
+            // visible range
+            if (prevCursor < positionMin && cursor > positionMin) {
+              frames.push({
+                offset: prevProgress + (positionMin - prevCursor) * rate,
+                maskPosition: `${positionMin}px 0`,
+              })
+            }
+            // full range
+            if (prevCursor < 0 && cursor > 0) {
+              frames.push({
+                offset: prevProgress - prevCursor * rate,
+                maskPosition: '0px 0',
+              })
+            }
+          }
+
+          prevCursor = cursor
+          prevProgress = target
+
+          frames.push({ offset: target, maskPosition: `${positionClamp(cursor)}px 0` })
+        } else {
+          // no duration word, skip build frame
+          prevCursor = cursor
+        }
+
+        offset += duration
+      }
+
+      const animation = word.element.animate(frames, {
+        duration: lineDuration || 1,
+        fill: 'both',
+      })
+      animation.pause()
+      word.updateMaskAnimation(animation)
+    }
   }
 
   play(currentTime: number, isActive: boolean) {
-    for (const item of this.words) {
-      item.updateStyle(true, isActive, currentTime)
+    const time = currentTime - this.info.time.start
+    for (const word of this.words) {
+      word.updateStyle(true, isActive, time, this.info.time.duration)
     }
   }
 
   pause(currentTime: number, isActive: boolean) {
-    for (const item of this.words) {
-      item.updateStyle(false, isActive, currentTime)
+    const time = currentTime - this.info.time.start
+    for (const word of this.words) {
+      word.updateStyle(false, isActive, time, this.info.time.duration)
     }
   }
 
   reset() {
-    for (const item of this.words) {
-      item.updateStyle(false, false, 0)
+    for (const word of this.words) {
+      word.updateStyle(false, false, 0, this.info.time.duration)
     }
   }
 
