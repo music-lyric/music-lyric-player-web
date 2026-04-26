@@ -43,7 +43,8 @@ export class BaseLyricPlayer {
 
   private state: {
     playing: boolean
-    frameId: number | null
+    frameId: ReturnType<typeof requestAnimationFrame> | null
+    timerId: ReturnType<typeof setTimeout> | null
     scanIndex: number
   }
   private active: {
@@ -60,6 +61,7 @@ export class BaseLyricPlayer {
     this.state = {
       playing: false,
       frameId: null,
+      timerId: null,
       scanIndex: 0,
     }
     this.active = {
@@ -173,7 +175,14 @@ export class BaseLyricPlayer {
     const now = this.handleGetCurrentTime()
     this.handleUpdateActiveLines(now)
 
-    this.state.frameId = requestAnimationFrame(this.onTick)
+    switch (this.config.current.driver) {
+      case 'animation':
+        this.state.frameId = window.requestAnimationFrame(this.onTick)
+        break
+      case 'timer':
+        this.state.timerId = window.setTimeout(this.onTick, 16)
+        break
+    }
   }
 
   updateLyric(info: Info) {
@@ -224,6 +233,10 @@ export class BaseLyricPlayer {
     if (this.state.frameId !== null) {
       cancelAnimationFrame(this.state.frameId)
       this.state.frameId = null
+    }
+    if (this.state.timerId !== null) {
+      clearTimeout(this.state.timerId)
+      this.state.timerId = null
     }
 
     this.event.emit('pause', this.handleGetCurrentTime())
