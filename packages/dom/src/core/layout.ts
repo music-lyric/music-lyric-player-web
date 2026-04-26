@@ -74,7 +74,6 @@ export class LayoutManager {
           delay: Math.max(animConfig.delay ?? 0, 0),
         }
       }
-
       case ScrollAnimationMode.Ripple: {
         const step = Math.max(animConfig.step ?? 20, 10)
         const range = Math.max(animConfig.range ?? 3, 1)
@@ -87,7 +86,6 @@ export class LayoutManager {
           delay: Math.round(eased * range * step),
         }
       }
-
       case ScrollAnimationMode.Directional: {
         const step = Math.max(animConfig.step ?? 40, 10)
         const range = Math.max(animConfig.range ?? 5, 1)
@@ -96,7 +94,6 @@ export class LayoutManager {
 
         if (played) {
           const eased = (1 - normalized) ** 2
-
           return {
             duration,
             delay: Math.round(eased * range * step),
@@ -104,13 +101,24 @@ export class LayoutManager {
         }
 
         const eased = 1 - (1 - normalized) ** 2
-
         return {
           duration,
           delay: Math.round(eased * range * step),
         }
       }
+      case ScrollAnimationMode.Stagger: {
+        const range = Math.max(animConfig.range ?? 4, 1)
+        const step = Math.max(animConfig.step ?? 50, 1)
 
+        const sign = 1
+        const clamped = Math.max(-range, Math.min(range, offset))
+        const result = (range + sign * clamped) * step
+
+        return {
+          duration,
+          delay: Math.round(result),
+        }
+      }
       default: {
         return {
           duration,
@@ -226,9 +234,9 @@ export class LayoutManager {
         const transition = this.calcTransition(indexOffset, isPlayedLine)
 
         style.transitionDuration = transition.duration
+        style.transitionDelay = transition.delay
 
         if (!isActiveLine) {
-          style.transitionDelay = transition.delay
           style.scale = this.calcScale(indexOffset)
           style.blur = this.calcBlur(indexOffset)
         }
