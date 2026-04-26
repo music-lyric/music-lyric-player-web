@@ -222,8 +222,10 @@ export class LayoutManager {
       const isActiveLine = activeElementSet.has(i)
       const isAlreadyActive = element.active
 
-      element.active = isActiveLine
-      element.played = isPlayedLine
+      if (this.context.player.currentPlaying) {
+        element.active = isActiveLine
+        element.played = isPlayedLine
+      }
 
       const indexOffset = i - activeIndex
 

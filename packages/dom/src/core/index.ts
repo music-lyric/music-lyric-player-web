@@ -103,7 +103,6 @@ export class DomLyricPlayer {
   private onLyricUpdate = (_info: Info) => {
     this.scrollManager.clear()
     this.lineManager.updateLines(this.player.currentInfo.lines)
-
     this.scheduleLayoutUpdate({
       updateSize: true,
     })
