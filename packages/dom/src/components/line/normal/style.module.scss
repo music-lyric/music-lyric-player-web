@@ -101,11 +101,13 @@
 
 .background {
   opacity: 0;
-  transform: scale(0.5);
+  transform: scale(0.6);
   transform-origin: var(--lyric-player-line-position) center;
-  transition:
-    opacity 0.1s linear,
-    transform 0.3s cubic-bezier(0, 1, 0, 1);
+
+  transition-property: opacity, transform;
+  transition-duration: 0.2s, 0.4s;
+  transition-delay: 0.1s, 0s;
+  transition-timing-function: ease, cubic-bezier(0.68, -0.55, 0.27, 1.55);
 
   :is([played]) & {
     opacity: 0;
