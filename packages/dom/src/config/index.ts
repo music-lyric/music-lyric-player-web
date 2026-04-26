@@ -1,229 +1,14 @@
 import { ConfigManager, DeepRequired } from '@music-lyric-player/utils'
 
-type PaddingValue = `${number}px`
+import { Padding, FontConfig } from './common'
+import { EffectConfig } from './effect'
+import { LineConfig } from './line'
+import { ScrollAnimationMode, ScrollConfig } from './scroll'
 
-type Padding =
-  /** all */
-  | PaddingValue
-  /** top/bottom | left/right */
-  | `${PaddingValue} ${PaddingValue}`
-  /** top | left/right | bottom */
-  | `${PaddingValue} ${PaddingValue} ${PaddingValue}`
-  /** top | right | bottom | left */
-  | `${PaddingValue} ${PaddingValue} ${PaddingValue} ${PaddingValue}`
-
-export interface FontConfig {
-  /**
-   * Font size (in px).
-   * @default 30
-   */
-  size?: number
-  /**
-   * Font weight (100–900).
-   * @default 500
-   */
-  weight?: number
-  /**
-   * Font family name.
-   * @default "sans-serif"
-   * @example "'PingFang SC', 'Helvetica Neue', Arial, sans-serif"
-   */
-  family?: string
-}
-
-export interface StyleConfig {
-  /**
-   * Color value.
-   * @default "#000000"
-   * @example "rgba(255, 255, 255, 0.8)" or "#000000"
-   */
-  color?: string
-  /**
-   * Opacity level (0.0–1.0).
-   * @default 1
-   */
-  opacity?: number
-}
-
-export interface StateStyleConfig {
-  /**
-   * Style for the inactive state.
-   */
-  normal?: StyleConfig
-  /**
-   * Style for the active state.
-   */
-  active?: StyleConfig
-}
-
-export namespace NormalLineConfig {
-  interface StateStyle extends StateStyleConfig {
-    /**
-     * Style for the already played state.
-     * If not provided, it usually falls back to `normal`.
-     */
-    played?: StyleConfig
-  }
-
-  export interface Base {
-    /**
-     * Custom CSS class name appended to the current element's DOM.
-     * @default ""
-     */
-    className?: string
-    /**
-     * Font settings.
-     */
-    font?: FontConfig
-    /**
-     * State-based style overrides.
-     */
-    style?: StateStyle
-  }
-
-  export interface Syllable extends Base {
-    /**
-     * Whether to enable syllable-level (word-by-word) highlighting.
-     * @default true
-     */
-    enabled?: boolean
-  }
-
-  export interface Translate extends Base {
-    /**
-     * Whether to show translated lyrics.
-     * @default true
-     */
-    visible?: boolean
-  }
-
-  export interface Roman extends Base {
-    /**
-     * Whether to show romanized (pinyin) lyrics.
-     * @default false
-     */
-    visible?: boolean
-  }
-
-  export interface Extended {
-    /**
-     * If false, both translate and roman lines will be forcibly hidden.
-     * @default true
-     */
-    visible?: boolean
-    /**
-     * Shared base config for all extended lines.
-     */
-    base?: Base
-    /**
-     * Translation line config.
-     */
-    translate?: Translate
-    /**
-     * Romanization line config.
-     */
-    roman?: Roman
-  }
-}
-
-export interface InterludeLineConfig {
-  /**
-   * Custom CSS class name for the interlude container.
-   * @default ""
-   */
-  className?: string
-  /**
-   * Size of the interlude indicator (e.g., dot diameter) in px.
-   * @default 16
-   */
-  size?: number
-  /**
-   * State-based style overrides.
-   */
-  style?: StateStyleConfig
-}
-
-export namespace ScrollAnimationConfig {
-  interface WithTransition {
-    /**
-     * Transition duration for **each individual line**.
-     * In cascade modes (Ripple/Directional), the total visual duration
-     * is approximately `duration + range × step`.
-     * @unit ms
-     * @default 500
-     */
-    duration?: number
-    /**
-     * CSS easing function.
-     * @example "ease-in-out"
-     * @example "cubic-bezier(0.4, 0, 0.2, 1)"
-     * @example "linear"
-     * @default "ease"
-     */
-    easing?: string
-  }
-
-  export enum Mode {
-    /**
-     * No cascade, all lines transition together with optional fixed delay.
-     */
-    Smooth = 'smooth',
-    /**
-     * Active line first, symmetrically expands outward like a ripple.
-     */
-    Ripple = 'ripple',
-    /**
-     * Played lines move first, upcoming lines follow with directional propagation.
-     */
-    Directional = 'directional',
-  }
-
-  export interface Smooth extends WithTransition {
-    mode: Mode.Smooth
-    /**
-     * Fixed delay before transition starts.
-     * @unit ms
-     * @default 0
-     */
-    delay?: number
-  }
-
-  export interface Ripple extends WithTransition {
-    mode: Mode.Ripple
-    /**
-     * Max number of lines affected by the cascade.
-     * Lines beyond this range receive the same maximum delay.
-     * @default 5
-     * @minimum 1
-     */
-    range?: number
-    /**
-     * Base time interval between each line's delay.
-     * @unit ms
-     * @default 40
-     * @minimum 10
-     */
-    step?: number
-  }
-
-  export interface Directional extends WithTransition {
-    mode: Mode.Directional
-    /**
-     * Max number of lines affected by the cascade.
-     * Lines beyond this range receive the same maximum delay.
-     * @default 5
-     * @minimum 1
-     */
-    range?: number
-    /**
-     * Base time interval between each line's delay.
-     * @unit ms
-     * @default 40
-     * @minimum 10
-     */
-    step?: number
-  }
-}
+export * from './common'
+export * from './effect'
+export * from './line'
+export * from './scroll'
 
 export interface Config {
   /**
@@ -288,109 +73,17 @@ export interface Config {
   /**
    * Visual effects applied to lines based on distance from the active line.
    */
-  effect?: {
-    /**
-     * Scale transform effect.
-     */
-    scale?: {
-      /**
-       * Whether to enable the scale effect.
-       * @default false
-       */
-      enabled?: boolean
-      /**
-       * Minimum scale ratio (applied to the farthest lines).
-       * @default 0.65
-       */
-      min?: number
-      /**
-       * Maximum scale ratio (applied to the active line).
-       * @default 1
-       */
-      max?: number
-    }
-    /**
-     * Blur effect configuration for lyric lines.
-     * Lines closer to the active line are clearer, farther lines are more blurred.
-     */
-    blur?: {
-      /**
-       * Whether to enable the blur effect.
-       * @default true
-       */
-      enabled?: boolean
-      /**
-       * Minimum blur value in px (applied to the active line).
-       * @default 1
-       */
-      min?: number
-      /**
-       * Maximum blur value in px (applied to the farthest lines).
-       * @default 5
-       */
-      max?: number
-    }
-  }
+  effect?: EffectConfig
 
   /**
    * Viewport scrolling engine config.
    */
-  scroll?: {
-    /**
-     * Vertical anchor position of the active line within the scroll container.
-     *
-     * Expressed as a percentage (0–100) of the container height.
-     * - `50` — active line stays at the vertical center.
-     * - `30` — active line stays closer to the top.
-     *
-     * @default 50
-     * @minimum 0
-     * @maximum 100
-     */
-    anchor?: number
-    /**
-     * Transition animation config for scroll-triggered line movements.
-     *
-     * - `Smooth` — all lines move together with a uniform transition (no cascade).
-     * - `Ripple` — active line moves first, nearby lines follow symmetrically outward.
-     * - `Directional` — played lines move first, upcoming lines follow with directional propagation.
-     *
-     * @default SmoothMode
-     */
-    animation?: ScrollAnimationConfig.Smooth | ScrollAnimationConfig.Ripple | ScrollAnimationConfig.Directional
-  }
+  scroll?: ScrollConfig
 
   /**
    * Lyric line config.
    */
-  line?: {
-    /**
-     * Custom CSS class name for the line wrapper.
-     * @default ""
-     */
-    className?: string
-    /**
-     * Normal (vocal) line config.
-     */
-    normal?: {
-      /**
-       * Base config.
-       */
-      base?: NormalLineConfig.Base
-      /**
-       * Syllable-level (word-by-word) config.
-       */
-      syllable?: NormalLineConfig.Syllable
-      /**
-       * Extended (e.g. translation / romanization) config.
-       */
-      extended?: NormalLineConfig.Extended
-    }
-    /**
-     * Interlude (instrumental break) line config.
-     */
-    interlude?: InterludeLineConfig
-  }
+  line?: LineConfig
 }
 
 const DEFAULT_COLOR = '#000000' as const
@@ -435,8 +128,9 @@ export const DEFAULT_CONFIG: Config = {
   scroll: {
     anchor: 50,
     animation: {
-      mode: ScrollAnimationConfig.Mode.Smooth,
+      mode: ScrollAnimationMode.Smooth,
       duration: 500,
+      delay: 0,
       easing: 'ease',
     },
   },

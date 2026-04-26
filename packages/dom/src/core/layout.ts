@@ -2,7 +2,7 @@ import type { LineElementStyle } from '@root/components'
 import type { CoreContext } from './context'
 import type { LineManager } from './line'
 
-import { ScrollAnimationConfig } from '@root/config'
+import { ScrollAnimationMode } from '@root/config'
 import { LineElementType } from '@root/components'
 
 const GAUSSIAN_SIGMA = 2.2
@@ -68,14 +68,14 @@ export class LayoutManager {
     const duration = Math.max(animConfig.duration ?? 0, 0)
 
     switch (animConfig.mode) {
-      case ScrollAnimationConfig.Mode.Smooth: {
+      case ScrollAnimationMode.Smooth: {
         return {
           duration,
           delay: Math.max(animConfig.delay ?? 0, 0),
         }
       }
 
-      case ScrollAnimationConfig.Mode.Ripple: {
+      case ScrollAnimationMode.Ripple: {
         const step = Math.max(animConfig.step ?? 20, 10)
         const range = Math.max(animConfig.range ?? 3, 1)
         const distance = Math.min(Math.abs(offset), range)
@@ -88,7 +88,7 @@ export class LayoutManager {
         }
       }
 
-      case ScrollAnimationConfig.Mode.Directional: {
+      case ScrollAnimationMode.Directional: {
         const step = Math.max(animConfig.step ?? 40, 10)
         const range = Math.max(animConfig.range ?? 5, 1)
         const distance = Math.min(Math.abs(offset), range)
