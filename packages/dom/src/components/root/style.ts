@@ -13,7 +13,7 @@ export class Style {
   ) {
     this.embed = document.createElement('style')
     this.embed.id = 'lyric-player-style-embed'
-    this.embed.textContent = __LYRIC_PLAYER_STYLE__
+    this.embed.textContent = globalThis?.__LYRIC_PLAYER_STYLE__ || ''
     this.root.appendChild(this.embed)
 
     this.runtime = document.createElement('style')
