@@ -1,7 +1,5 @@
-import type { BaseLyricPlayer } from '@music-lyric-player/base'
-import type { Root, LineElementStyle } from '@root/components'
-import type { ConfigClient } from '@root/config'
-import type { ScrollManager } from './scroll'
+import type { LineElementStyle } from '@root/components'
+import type { CoreContext } from './context'
 import type { LineManager } from './line'
 
 import { ScrollAnimationConfig } from '@root/config'
@@ -16,47 +14,55 @@ export interface TransitionResult {
 
 export class LayoutManager {
   constructor(
-    private readonly config: ConfigClient,
-    private readonly player: BaseLyricPlayer,
-    private readonly root: Root,
+    private readonly context: CoreContext,
     private readonly lineManager: LineManager,
-    private readonly scrollManager: ScrollManager,
   ) {}
 
   private gaussian(offset: number): number {
     return Math.exp(-(offset * offset) / (2 * GAUSSIAN_SIGMA * GAUSSIAN_SIGMA))
   }
 
+  private round(value: number, precision = 2): number {
+    const factor = 10 ** precision
+    return Math.round(value * factor) / factor
+  }
+
   private calcScale(offset: number): number | undefined {
-    const scaleConfig = this.config.current.effect.scale
+    const scaleConfig = this.context.config.current.effect.scale
+
     if (!scaleConfig.enabled) {
       return undefined
     }
 
     const min = Math.max(scaleConfig.min, 0)
-    const max = Math.min(scaleConfig.max, 1)
+    const max = Math.max(scaleConfig.max, min)
     const gaussian = this.gaussian(offset)
 
-    return parseFloat((min + (max - min) * gaussian).toFixed(2))
+    return this.round(min + (max - min) * gaussian)
   }
 
   private calcBlur(offset: number): number {
-    const blurConfig = this.config.current.effect.blur
+    const blurConfig = this.context.config.current.effect.blur
+
     if (!blurConfig.enabled) {
       return 0
     }
 
     const min = Math.max(blurConfig.min, 0)
-    const max = Math.min(blurConfig.max, 4.5)
+    const max = Math.max(Math.min(blurConfig.max, 4.5), min)
     const gaussian = this.gaussian(offset)
 
-    return parseFloat((min + (max - min) * (1 - gaussian)).toFixed(2))
+    return this.round(min + (max - min) * (1 - gaussian))
   }
 
   private calcTransition(offset: number, played: boolean): TransitionResult {
-    const animConfig = this.config.current.scroll.animation
+    const animConfig = this.context.config.current.scroll.animation
+
     if (!animConfig) {
-      return { duration: 0, delay: 0 }
+      return {
+        duration: 0,
+        delay: 0,
+      }
     }
 
     const duration = Math.max(animConfig.duration ?? 0, 0)
@@ -75,6 +81,7 @@ export class LayoutManager {
         const distance = Math.min(Math.abs(offset), range)
         const normalized = distance / range
         const eased = 1 - (1 - normalized) ** 2
+
         return {
           duration,
           delay: Math.round(eased * range * step),
@@ -89,39 +96,64 @@ export class LayoutManager {
 
         if (played) {
           const eased = (1 - normalized) ** 2
-          return { duration, delay: Math.round(eased * range * step) }
-        } else {
-          const eased = 1 - (1 - normalized) ** 2
-          return { duration, delay: Math.round(eased * range * step) }
+
+          return {
+            duration,
+            delay: Math.round(eased * range * step),
+          }
+        }
+
+        const eased = 1 - (1 - normalized) ** 2
+
+        return {
+          duration,
+          delay: Math.round(eased * range * step),
+        }
+      }
+
+      default: {
+        return {
+          duration,
+          delay: 0,
         }
       }
     }
   }
 
   update(isSeek = false) {
-    const linNumFull = this.lineManager.elementSize
-    if (!linNumFull || !this.player.currentInfo.lines.length) {
+    const { player, config, component, scroll } = this.context
+
+    const elementCount = this.lineManager.elementSize
+    if (!elementCount || !player.currentInfo.lines.length) {
       return
     }
 
-    const isInPlay = this.player.currentPlaying
-    const isInScroll = this.scrollManager.current.scrolling
+    const isInPlay = player.currentPlaying
+    const isInScroll = scroll.active
 
-    const currentSpace = Math.max(0, this.config.current.layout.gap)
-    const currentContainerHeight = Math.max(0, this.root.height)
+    const currentSpace = Math.max(0, config.current.layout.gap)
+    const currentContainerHeight = Math.max(0, component.root.height)
 
-    const activePercent = Math.min(Math.max(this.config.current.scroll.anchor, 0), 100)
+    const activePercent = Math.min(Math.max(config.current.scroll.anchor, 0), 100)
     const activePosition = currentContainerHeight * (activePercent / 100)
 
-    const activeLines: number[] = []
-    const topPositions: number[] = new Array(linNumFull)
+    const activeElementSet = this.lineManager.queryActiveElementSet(player.currentIndex)
+    const activeElementIndexes = [...activeElementSet]
 
-    for (let i = 0; i < linNumFull; i++) {
-      const element = this.lineManager.queryElement(i)
+    if (!activeElementIndexes.length) {
+      const firstElementIndexes = this.lineManager.queryElementIndexes(0) ?? [0]
 
-      if (this.lineManager.isActiveElement(i, this.player.currentIndex)) {
-        activeLines.push(i)
+      activeElementIndexes.push(...firstElementIndexes)
+
+      for (const elementIndex of firstElementIndexes) {
+        activeElementSet.add(elementIndex)
       }
+    }
+
+    const topPositions: number[] = new Array(elementCount)
+
+    for (let i = 0; i < elementCount; i++) {
+      const element = this.lineManager.queryElement(i)
 
       if (!element) {
         topPositions[i] = 0
@@ -139,42 +171,42 @@ export class LayoutManager {
       const baseTop = lastTop + lastHeight
 
       if (element.type === LineElementType.Normal && element.isBackground) {
-        const isActiveLine = activeLines.includes(i)
-        if (!isInScroll && !isActiveLine) {
+        const isActiveElement = activeElementSet.has(i)
+
+        if (!isInScroll && !isActiveElement) {
           topPositions[i] = baseTop - element.height
         } else {
           topPositions[i] = baseTop + currentSpace * 0.2
         }
+
         continue
       }
 
       topPositions[i] = baseTop + currentSpace
     }
 
-    if (!activeLines.length) {
-      const firstIndexs = this.lineManager.queryElementIndexs(0) || [0]
-      activeLines.push(...firstIndexs)
-    }
+    const firstActiveIndex = isInScroll
+      ? (this.lineManager.queryElementIndexes(scroll.activeIndex)?.[0] ?? activeElementIndexes[0] ?? 0)
+      : (activeElementIndexes[0] ?? 0)
 
-    const firstActiveIdx = isInScroll ? (this.lineManager.queryElementIndexs(this.scrollManager.current.active)?.[0] ?? 0) : activeLines[0]
-
-    const firstElement = this.lineManager.queryElement(firstActiveIdx)
+    const firstElement = this.lineManager.queryElement(firstActiveIndex)
     const firstElementHeight = firstElement?.height ?? 0
 
-    const currentActiveOffset = topPositions[firstActiveIdx] + firstElementHeight / 2
+    const currentActiveOffset = topPositions[firstActiveIndex] + firstElementHeight / 2
     const currentOffset = activePosition - currentActiveOffset
-    const currentTime = this.player.currentTime
+    const currentTime = player.currentTime
 
-    const activeIndex = activeLines[0] ?? 0
+    const activeIndex = activeElementIndexes[0] ?? 0
 
-    for (let i = 0; i < linNumFull; i++) {
+    for (let i = 0; i < elementCount; i++) {
       const element = this.lineManager.queryElement(i)
+
       if (!element) {
         continue
       }
 
-      const isPlayedLine = activeLines.length > 0 && i < activeLines[0]
-      const isActiveLine = activeLines.includes(i)
+      const isPlayedLine = activeElementIndexes.length > 0 && i < activeElementIndexes[0]
+      const isActiveLine = activeElementSet.has(i)
       const isAlreadyActive = element.active
 
       element.active = isActiveLine
@@ -192,7 +224,9 @@ export class LayoutManager {
         style.transitionDuration = 200
       } else {
         const transition = this.calcTransition(indexOffset, isPlayedLine)
+
         style.transitionDuration = transition.duration
+
         if (!isActiveLine) {
           style.transitionDelay = transition.delay
           style.scale = this.calcScale(indexOffset)
@@ -208,8 +242,11 @@ export class LayoutManager {
       }
 
       if (isSeek || !isAlreadyActive) {
-        if (isInPlay) element.play(currentTime, true)
-        else element.pause(currentTime, true)
+        if (isInPlay) {
+          element.play(currentTime, true)
+        } else {
+          element.pause(currentTime, true)
+        }
       }
     }
   }

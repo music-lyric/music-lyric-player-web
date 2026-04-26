@@ -1,6 +1,5 @@
 import type { InterludeLineConfig, NormalLineConfig } from '@root/config'
-
-import { Context } from '@root/context'
+import type { ComponentContext } from '@root/components/context'
 
 import Styles from './style.module.scss'
 
@@ -9,7 +8,7 @@ export class Style {
   private readonly embed: HTMLStyleElement
 
   constructor(
-    private readonly context: Context,
+    private readonly context: ComponentContext,
     private readonly root: HTMLDivElement,
   ) {
     this.runtime = document.createElement('style')

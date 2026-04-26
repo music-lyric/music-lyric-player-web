@@ -1,5 +1,5 @@
 import type { LineNormal } from '@music-lyric-kit/lyric'
-import type { Context } from '@root/context'
+import type { ComponentContext } from '@root/components/context'
 
 import { ExtendedType } from '@music-lyric-kit/lyric'
 
@@ -8,12 +8,12 @@ import { applyClassName } from '@root/utils'
 import Style from './style.module.scss'
 
 export class ExtendedNode {
-  private context: Context
+  private context: ComponentContext
 
   private info: LineNormal
   private content: HTMLDivElement
 
-  constructor(context: Context, info: LineNormal) {
+  constructor(context: ComponentContext, info: LineNormal) {
     this.context = context
     this.info = info
     this.content = document.createElement('div')

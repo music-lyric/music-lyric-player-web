@@ -1,5 +1,5 @@
 import type { LineNormal } from '@music-lyric-kit/lyric'
-import type { Context } from '@root/context'
+import type { ComponentContext } from '@root/components/context'
 
 import { BaseLineElement, LineElementType } from '../wrapper'
 
@@ -23,7 +23,7 @@ export class NormalLineElement extends BaseLineElement {
   private main!: MainNode
   private extended!: ExtendedNode
 
-  constructor(context: Context, info: LineNormal, isBackground: boolean) {
+  constructor(context: ComponentContext, info: LineNormal, isBackground: boolean) {
     super(context)
 
     this.info = info

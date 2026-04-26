@@ -1,15 +1,14 @@
-import type { Line } from '@music-lyric-kit/lyric'
+import type { Line, Info } from '@music-lyric-kit/lyric'
 import type { ConfigRequired } from '@root/config'
 
 import { DEFAULT_CONFIG } from '@root/config'
-import { Info } from '@music-lyric-kit/lyric'
 import { BaseLyricPlayer } from '@music-lyric-player/base'
 import { ConfigManager } from '@music-lyric-player/utils'
 
-import { Context } from '@root/context'
 import { ConfigClient } from '@root/config'
-import { Root } from '@root/components'
+import { ComponentContext, Root } from '@root/components'
 
+import { CoreContext } from './context'
 import { ScrollManager } from './scroll'
 import { LineManager } from './line'
 import { LayoutManager } from './layout'
@@ -17,32 +16,37 @@ import { LayoutManager } from './layout'
 export class DomLyricPlayer {
   public config: ConfigClient
 
-  private context: Context
+  private context: CoreContext
   private player: BaseLyricPlayer
-
   private root: Root
 
   private scrollManager: ScrollManager
   private lineManager: LineManager
   private layoutManager: LayoutManager
 
+  private pendingUpdateSize = false
+  private pendingIsSeek = false
+
   constructor(player: BaseLyricPlayer) {
     const config = new ConfigManager(DEFAULT_CONFIG as ConfigRequired, {})
-    const context = new Context(config)
-    const root = new Root(context)
+
+    const componentContext = new ComponentContext(config)
+    const root = new Root(componentContext)
+
+    const context = new CoreContext(player, config, root, componentContext)
 
     this.config = config
     this.context = context
     this.root = root
     this.player = player
 
-    this.lineManager = new LineManager(context, config, root)
-    this.scrollManager = new ScrollManager(this.player, this.root, this.handleScroll.bind(this))
-    this.layoutManager = new LayoutManager(config, this.player, this.root, this.lineManager, this.scrollManager)
+    this.lineManager = new LineManager(context)
+    this.scrollManager = new ScrollManager(context, this.handleScroll)
+    this.layoutManager = new LayoutManager(context, this.lineManager)
 
     this.player.event.add('play', this.onPlay)
     this.player.event.add('pause', this.onPause)
-    this.player.event.add('lyricUpdate', this.onLyricUpadte)
+    this.player.event.add('lyricUpdate', this.onLyricUpdate)
     this.player.event.add('linesUpdate', this.onLinesUpdate)
 
     this.root.event.add('change-size', this.onSizeUpdate)
@@ -50,56 +54,78 @@ export class DomLyricPlayer {
     this.config.event.add('update', this.onConfigUpdate)
   }
 
+  private scheduleLayoutUpdate(options?: { updateSize?: boolean; isSeek?: boolean }) {
+    this.pendingUpdateSize = this.pendingUpdateSize || Boolean(options?.updateSize)
+    this.pendingIsSeek = this.pendingIsSeek || Boolean(options?.isSeek)
+
+    this.context.requestFrame(() => {
+      const updateSize = this.pendingUpdateSize
+      const isSeek = this.pendingIsSeek
+
+      this.pendingUpdateSize = false
+      this.pendingIsSeek = false
+
+      if (updateSize) {
+        this.lineManager.updateSize()
+      }
+
+      this.layoutManager.update(isSeek)
+    })
+  }
+
   private onSizeUpdate = () => {
-    requestAnimationFrame(() => {
-      this.lineManager.updateSize()
-      this.layoutManager.update()
+    this.scheduleLayoutUpdate({
+      updateSize: true,
     })
   }
 
   private onConfigUpdate = () => {
     this.root.updateConfig()
     this.lineManager.updateConfig()
-    requestAnimationFrame(() => {
-      this.lineManager.updateSize()
-      this.layoutManager.update()
+
+    this.scheduleLayoutUpdate({
+      updateSize: true,
     })
   }
 
-  private onPlay = (currentTime: number) => {
-    requestAnimationFrame(() => {
-      this.layoutManager.update()
-    })
+  private onPlay = (_currentTime: number) => {
+    this.scheduleLayoutUpdate()
   }
 
   private onPause = (currentTime: number) => {
+    const activeElementSet = this.lineManager.queryActiveElementSet(this.player.currentIndex)
+
     for (const [index, element] of this.lineManager.elementMap) {
-      const isActive = this.lineManager.isActiveElement(index, this.player.currentIndex)
-      element.pause(currentTime, isActive)
+      element.pause(currentTime, activeElementSet.has(index))
     }
   }
 
-  private onLyricUpadte = (info: Info) => {
+  private onLyricUpdate = (_info: Info) => {
     this.scrollManager.clear()
     this.lineManager.updateLines(this.player.currentInfo.lines)
-    requestAnimationFrame(() => {
-      this.lineManager.updateSize()
-      this.layoutManager.update()
+
+    this.scheduleLayoutUpdate({
+      updateSize: true,
     })
   }
 
-  private onLinesUpdate = (lines: Line[], indexs: number[], index: number, isSeek: boolean) => {
-    requestAnimationFrame(() => {
-      this.layoutManager.update(isSeek)
+  private onLinesUpdate = (_lines: Line[], _indexes: number[], _index: number, isSeek: boolean) => {
+    this.scheduleLayoutUpdate({
+      isSeek,
     })
   }
 
-  private handleScroll(line: number, scrolling: boolean) {
+  private handleScroll = (_line: number, scrolling: boolean) => {
+    if (this.context.destroyed) {
+      return
+    }
+
     if (scrolling) {
       this.root.setAttribute('scrolling')
     } else {
       this.root.removeAttribute('scrolling')
     }
+
     this.layoutManager.update()
   }
 
@@ -110,11 +136,13 @@ export class DomLyricPlayer {
   destroy() {
     this.player.event.remove('play', this.onPlay)
     this.player.event.remove('pause', this.onPause)
-    this.player.event.remove('lyricUpdate', this.onLyricUpadte)
+    this.player.event.remove('lyricUpdate', this.onLyricUpdate)
     this.player.event.remove('linesUpdate', this.onLinesUpdate)
 
     this.root.event.remove('change-size', this.onSizeUpdate)
     this.config.event.remove('update', this.onConfigUpdate)
+
+    this.context.destroy()
 
     this.scrollManager.destroy()
     this.lineManager.destroy()

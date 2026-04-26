@@ -1,4 +1,4 @@
-import { Context } from '@root/context'
+import type { ComponentContext } from '@root/components/context'
 
 import { applyClassName } from '@root/utils'
 
@@ -30,7 +30,7 @@ export abstract class BaseLineElement {
 
   protected readonly status: { active: boolean; played: boolean; position: string }
 
-  constructor(protected readonly context: Context) {
+  constructor(protected readonly context: ComponentContext) {
     this.wrapper = document.createElement('div')
     this.size = { width: 0, height: 0 }
     this.status = { active: false, played: false, position: '' }

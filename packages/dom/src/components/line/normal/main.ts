@@ -1,5 +1,5 @@
 import type { LineNormal, WordNormal, Time } from '@music-lyric-kit/lyric'
-import type { Context } from '@root/context'
+import type { ComponentContext } from '@root/components/context'
 
 import { WordType } from '@music-lyric-kit/lyric'
 
@@ -17,7 +17,7 @@ export class WordNode {
   private maskAnimationDelay = 0
 
   constructor(
-    private readonly context: Context,
+    private readonly context: ComponentContext,
     private readonly wordInfo: WordNormal,
     private readonly lineTime: Time,
   ) {
@@ -145,7 +145,7 @@ export class MainNode {
   private readonly wordFadeWidth = 0.5
 
   constructor(
-    private readonly context: Context,
+    private readonly context: ComponentContext,
     private readonly info: LineNormal,
   ) {
     this.dom = document.createElement('div')

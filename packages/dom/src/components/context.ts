@@ -1,6 +1,6 @@
 import { ConfigClient } from '@root/config'
 
-export class Context {
+export class ComponentContext {
   private client: ConfigClient
 
   constructor(client: ConfigClient) {

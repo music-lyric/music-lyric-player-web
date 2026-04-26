@@ -1,13 +1,14 @@
+import type { ComponentContext } from '@root/components/context'
 import type { ContainerEventMap } from './container'
 
 import { Event } from '@music-lyric-player/utils'
-import { Context } from '@root/context'
 
 import { Container } from './container'
 import { Style } from './style'
 
-import Styles from './style.module.scss'
 import { applyClassName } from '@root/utils'
+
+import Styles from './style.module.scss'
 
 export class Root {
   readonly event: Event<ContainerEventMap>
@@ -17,7 +18,7 @@ export class Root {
 
   private readonly dom: HTMLDivElement
 
-  constructor(private readonly context: Context) {
+  constructor(private readonly context: ComponentContext) {
     this.dom = document.createElement('div')
     applyClassName(this.dom, [Styles.root])
 

@@ -1,23 +1,21 @@
-import type { BaseLyricPlayer } from '@music-lyric-player/base'
-import type { Root } from '@root/components'
+import type { CoreContext } from './context'
 
 export class ScrollManager {
-  private scrolling = false
-  private active: number = -1
-  private timer: any | null = null
+  private timer: ReturnType<typeof setTimeout> | null = null
 
   constructor(
-    private readonly player: BaseLyricPlayer,
-    private readonly root: Root,
+    private readonly context: CoreContext,
     private readonly handleScroll: (line: number, scrolling: boolean) => void,
   ) {
-    this.root.event.add('wheel', this.onWheel)
+    this.context.component.root.event.add('wheel', this.onWheel)
   }
 
   private onWheel = (e: WheelEvent) => {
     e.preventDefault()
 
-    const currentLines = this.player.currentInfo.lines
+    const { player, scroll } = this.context
+
+    const currentLines = player.currentInfo.lines
     if (!currentLines.length) {
       return
     }
@@ -27,50 +25,65 @@ export class ScrollManager {
       return
     }
 
-    if (this.active === -1) {
-      this.active = this.player.currentIndex[0] ?? -1
+    if (scroll.activeIndex === -1) {
+      scroll.activeIndex = player.currentIndex[0] ?? 0
     }
 
-    const nextIndex = this.active + direction
+    const nextIndex = scroll.activeIndex + direction
+
     if (nextIndex < 0 || nextIndex >= currentLines.length) {
+      this.updateTimer()
       return
     }
 
-    this.scrolling = true
-    this.active = nextIndex
+    scroll.active = true
+    scroll.activeIndex = nextIndex
+
     this.handleScroll(nextIndex, true)
     this.updateTimer()
   }
 
   private updateTimer() {
     this.clearTimer()
+
     this.timer = setTimeout(() => {
-      this.scrolling = false
-      this.active = -1
+      const { scroll } = this.context
+
+      scroll.active = false
+      scroll.activeIndex = -1
       this.timer = null
+
       this.handleScroll(-1, false)
     }, 3 * 1000)
   }
+
   private clearTimer() {
     if (this.timer !== null) {
       clearTimeout(this.timer)
+      this.timer = null
     }
   }
 
   clear() {
+    const { scroll } = this.context
+
     this.clearTimer()
-    this.active = -1
+
+    scroll.active = false
+    scroll.activeIndex = -1
+
+    this.handleScroll(-1, false)
   }
 
   destroy() {
-    this.clearTimer()
-    this.root.event.remove('wheel', this.onWheel)
+    this.clear()
+    this.context.component.root.event.remove('wheel', this.onWheel)
   }
 
   get current() {
     return {
-      scrolling: this.scrolling,
-      active: this.active,
+      scrolling: this.context.scroll.active,
+      active: this.context.scroll.activeIndex,
     }
   }
 }

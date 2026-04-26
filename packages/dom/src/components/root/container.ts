@@ -1,5 +1,5 @@
 import { Event } from '@music-lyric-player/utils'
-import { Context } from '@root/context'
+import { ComponentContext } from '@root/components/context'
 
 import { applyClassName } from '@root/utils'
 
@@ -23,7 +23,7 @@ export class Container {
   private isVisible: boolean
 
   constructor(
-    private readonly context: Context,
+    private readonly context: ComponentContext,
     private readonly root: HTMLDivElement,
   ) {
     this.size = { width: 0, height: 0 }

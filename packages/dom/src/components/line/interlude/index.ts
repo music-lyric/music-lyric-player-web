@@ -1,5 +1,5 @@
 import type { LineInterlude } from '@music-lyric-kit/lyric'
-import type { Context } from '@root/context'
+import type { ComponentContext } from '@root/components/context'
 
 import { BaseLineElement, LineElementType } from '../wrapper'
 
@@ -18,7 +18,7 @@ export class InterludeLineElement extends BaseLineElement {
   private dots: HTMLDivElement[]
 
   constructor(
-    context: Context,
+    context: ComponentContext,
     private readonly info: LineInterlude,
   ) {
     super(context)
