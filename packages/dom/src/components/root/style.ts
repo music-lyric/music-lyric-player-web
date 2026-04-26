@@ -1,4 +1,4 @@
-import type { InterludeLineConfig, NormalLineConfig } from '@root/config'
+import type { InterludeLineConfig, NormalLineBaseConfig } from '@root/config'
 import type { ComponentContext } from '@root/components/context'
 
 import Styles from './style.module.scss'
@@ -51,7 +51,7 @@ export class Style {
     }
     return `${value}${unit}`
   }
-  private buildNormalLineConfig(type: string, config: NormalLineConfig.Base | undefined, fallbackType?: string) {
+  private buildNormalLineConfig(type: string, config: NormalLineBaseConfig | undefined, fallbackType?: string) {
     if (!config) {
       return {}
     }

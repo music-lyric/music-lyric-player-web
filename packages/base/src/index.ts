@@ -43,8 +43,8 @@ export class BaseLyricPlayer {
 
   private state: {
     playing: boolean
-    frameId: ReturnType<typeof requestAnimationFrame> | null
-    timerId: ReturnType<typeof setTimeout> | null
+    frameId: number | null
+    timerId: number | null
     scanIndex: number
   }
   private active: {
