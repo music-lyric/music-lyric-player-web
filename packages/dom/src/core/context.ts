@@ -38,6 +38,10 @@ export class CoreContext {
     return this.isDestroyed
   }
 
+  get isHideInterlude() {
+    return this.config.current.line.interlude.style.normal.opacity <= 0
+  }
+
   requestFrame(callback: () => void) {
     if (this.isDestroyed) {
       return

@@ -38,4 +38,10 @@
       transition-timing-function: linear;
     }
   }
+
+  [scrolling] & {
+    .dot {
+      opacity: 0.6;
+    }
+  }
 }

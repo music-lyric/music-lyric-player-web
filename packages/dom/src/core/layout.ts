@@ -180,14 +180,20 @@ export class LayoutManager {
 
       if (element.type === LineElementType.Normal && element.isBackground) {
         const isActiveElement = activeElementSet.has(i)
-
         if (!isInScroll && !isActiveElement) {
           topPositions[i] = baseTop - element.height
         } else {
           topPositions[i] = baseTop + currentSpace * 0.2
         }
-
         continue
+      }
+
+      if (element.type === LineElementType.Interlude && this.context.isHideInterlude) {
+        const isActiveElement = activeElementSet.has(i)
+        if (!isInScroll && !isActiveElement) {
+          topPositions[i] = baseTop - element.height
+          continue
+        }
       }
 
       topPositions[i] = baseTop + currentSpace
@@ -208,7 +214,6 @@ export class LayoutManager {
 
     for (let i = 0; i < elementCount; i++) {
       const element = this.lineManager.queryElement(i)
-
       if (!element) {
         continue
       }
