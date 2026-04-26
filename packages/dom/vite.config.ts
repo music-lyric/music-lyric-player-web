@@ -22,7 +22,7 @@ const cssInlinePlugin = (): Plugin => {
       const styleContent = styleChunks.join('\n')
       for (const chunk of Object.values(bundle)) {
         if (chunk.type === 'chunk' && chunk.isEntry && chunk.fileName.endsWith('.js')) {
-          chunk.code = chunk.code + `\nconst __LYRIC_PLAYER_STYLE__ = ${JSON.stringify(styleContent)};\n`
+          chunk.code = `const __LYRIC_PLAYER_STYLE__ = ${JSON.stringify(styleContent)};\n\n` + chunk.code
           break
         }
       }

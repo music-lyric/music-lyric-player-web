@@ -11,13 +11,14 @@ export class Style {
     private readonly context: ComponentContext,
     private readonly root: HTMLDivElement,
   ) {
-    this.runtime = document.createElement('style')
-    this.runtime.id = 'lyric-player-style-runtime'
     this.embed = document.createElement('style')
     this.embed.id = 'lyric-player-style-embed'
-
-    this.root.appendChild(this.runtime)
+    this.embed.textContent = __LYRIC_PLAYER_STYLE__
     this.root.appendChild(this.embed)
+
+    this.runtime = document.createElement('style')
+    this.runtime.id = 'lyric-player-style-runtime'
+    this.root.appendChild(this.runtime)
   }
 
   private buildKey(key: string) {
