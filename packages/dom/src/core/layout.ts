@@ -213,7 +213,7 @@ export class LayoutManager {
         continue
       }
 
-      const isPlayedLine = activeElementIndexes.length > 0 && i < activeElementIndexes[0]
+      const isPlayedLine = i < activeIndex
       const isActiveLine = activeElementSet.has(i)
       const isAlreadyActive = element.active
 

@@ -52,7 +52,7 @@ export abstract class BaseLineElement {
   }
 
   set played(value: boolean) {
-    if (value === this.status.active) {
+    if (value === this.status.played) {
       return
     }
     if (value) {

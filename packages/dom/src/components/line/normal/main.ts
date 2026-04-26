@@ -48,6 +48,7 @@ export class WordNode {
   updateMaskStyle(image: string, size: string) {
     const style = this.dom.style
     style.maskRepeat = 'no-repeat'
+    style.maskMode = 'alpha'
     style.maskImage = image
     style.maskSize = size
   }
@@ -238,7 +239,7 @@ export class MainNode {
       const widthInTotal = widthRatio / widthSize
       const leftPos = (1 - widthInTotal) / 2
 
-      const maskImage = `linear-gradient(to right, rgba(0, 0, 0, 1.0) ${leftPos * 100}%, rgba(0, 0, 0, 0.4) ${(leftPos + widthInTotal) * 100}%)`
+      const maskImage = `linear-gradient(to right, rgba(0, 0, 0, 1) ${leftPos * 100}%, rgba(0, 0, 0, 0.4) ${(leftPos + widthInTotal) * 100}%)`
       const maskSize = `${widthSize * 100}% 100%`
       word.updateMaskStyle(maskImage, maskSize)
 
