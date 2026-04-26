@@ -1,3 +1,29 @@
+## v0.5.0 (2026-04-26)
+
+### Feature
+
+- `base`
+  - support change driver ([910b40f](https://github.com/music-lyric/music-lyric-player-web/commit/910b40f))
+- `dom`
+  - auto-hide interlude line when the normal style opacity is 0 ([95008f2](https://github.com/music-lyric/music-lyric-player-web/commit/95008f2))
+  - add collapse and expand animations to the background line ([9b03fe1](https://github.com/music-lyric/music-lyric-player-web/commit/9b03fe1))
+  - add stagger mode for scroll animation ([aa54615](https://github.com/music-lyric/music-lyric-player-web/commit/aa54615))
+
+### Bug Fix
+
+- type error ([2cd1ff8](https://github.com/music-lyric/music-lyric-player-web/commit/2cd1ff8))
+- `dom`
+  - first line incorrectly activated after lyrics update ([16964be](https://github.com/music-lyric/music-lyric-player-web/commit/16964be))
+  - embed style do not exist in development mode ([0527e20](https://github.com/music-lyric/music-lyric-player-web/commit/0527e20))
+  - embed style was not applied ([b2aae13](https://github.com/music-lyric/music-lyric-player-web/commit/b2aae13))
+  - line played state was incorrectly set ([190a347](https://github.com/music-lyric/music-lyric-player-web/commit/190a347))
+
+### Code Refactor
+
+- `dom`
+  - config ([503052e](https://github.com/music-lyric/music-lyric-player-web/commit/503052e))
+  - context ([78db468](https://github.com/music-lyric/music-lyric-player-web/commit/78db468))
+
 ## v0.4.0 (2026-04-26)
 
 ### Feature
