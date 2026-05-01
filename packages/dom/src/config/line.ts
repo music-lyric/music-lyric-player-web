@@ -33,15 +33,63 @@ export interface NormalLineBaseConfig {
 }
 
 /**
- * Syllable‑level (word‑by‑word) configuration.
- * Inherits all base properties; these values can be overridden per syllable.
+ * Configuration for the float animation of syllables on a normal lyric line.
+ * The animation makes syllables gently move vertically (float) during playback,
+ * creating a subtle visual effect synchronized with the audio.
  */
-export interface NormalLineSyllableConfig extends NormalLineBaseConfig {
+export interface NormalLineSyllableFloatAnimationConfig {
   /**
-   * Whether to enable syllable‑level highlighting.
+   * Whether to enable the float animation for syllables.
+   * When set to `false`, syllables will remain stationary.
    * @default true
    */
   enabled?: boolean
+  /**
+   * The starting vertical offset of the float animation, relative to the
+   * syllable's original position. Negative values move the syllable upward,
+   * positive values move it downward.
+   * @default 0
+   * @unit px
+   */
+  from?: number
+  /**
+   * The ending vertical offset of the float animation, relative to the
+   * syllable's original position. Negative values move the syllable upward,
+   * positive values move it downward.
+   * @default 2
+   * @unit px
+   */
+  to?: number
+}
+
+/**
+ * Animation configuration for syllable-level effects.
+ */
+export interface NormalLineSyllableAnimationConfig {
+  /**
+   * Float animation configuration. Controls the vertical floating motion
+   * of syllables during playback.
+   */
+  float?: NormalLineSyllableFloatAnimationConfig
+}
+
+/**
+ * Syllable-level (word-by-word) configuration for normal lyric lines.
+ * Inherits all base properties from {@link NormalLineBaseConfig}; these
+ * values can be overridden specifically for syllable-level rendering.
+ */
+export interface NormalLineSyllableConfig extends NormalLineBaseConfig {
+  /**
+   * Whether to enable syllable-level (word-by-word) highlighting.
+   * When disabled, the entire line will be highlighted as a whole instead
+   * of progressing syllable by syllable.
+   * @default true
+   */
+  enabled?: boolean
+  /**
+   * Animation effects applied to individual syllables during playback.
+   */
+  animation?: NormalLineSyllableAnimationConfig
 }
 
 /**

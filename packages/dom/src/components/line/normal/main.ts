@@ -33,16 +33,19 @@ export class WordNode {
     const delay = this.wordInfo.time.start - this.lineTime.start
     const duration = Math.max(1000, this.wordInfo.time.duration)
 
-    const animation = this.dom.animate([{ transform: 'translateY(0px)' }, { transform: 'translateY(-2px)' }], {
+    const config = this.context.config.line.normal.syllable.animation.float
+    if (!config.enabled) {
+      return
+    }
+
+    this.floatAnimation = this.dom.animate([{ transform: `translateY(${config.from ?? 0}px)` }, { transform: `translateY(${config.to ?? 2}px)` }], {
       delay,
       duration,
       fill: 'both',
       composite: 'add',
       easing: 'ease',
     })
-    animation.pause()
-
-    this.floatAnimation = animation
+    this.floatAnimation.pause()
   }
 
   updateMaskStyle(image: string, size: string) {
