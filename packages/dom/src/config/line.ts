@@ -63,6 +63,21 @@ export interface NormalLineSyllableFloatAnimationConfig {
 }
 
 /**
+ * Configuration for the mask (wipe) animation of syllables on a normal lyric line.
+ * The animation reveals each syllable progressively from left to right,
+ * synchronized with the audio playback — similar to a karaoke-style wipe effect.
+ */
+export interface NormalLineSyllableMaskAnimationConfig {
+  /**
+   * Whether to enable the mask animation for syllables.
+   * When set to `false`, syllables will appear fully highlighted at once
+   * instead of being revealed progressively from left to right.
+   * @default true
+   */
+  enabled?: boolean
+}
+
+/**
  * Animation configuration for syllable-level effects.
  */
 export interface NormalLineSyllableAnimationConfig {
@@ -71,6 +86,12 @@ export interface NormalLineSyllableAnimationConfig {
    * of syllables during playback.
    */
   float?: NormalLineSyllableFloatAnimationConfig
+  /**
+   * Mask animation configuration. Controls the karaoke-style wipe effect
+   * that progressively reveals each syllable from left to right,
+   * synchronized with the audio playback.
+   */
+  mask?: NormalLineSyllableMaskAnimationConfig
 }
 
 /**

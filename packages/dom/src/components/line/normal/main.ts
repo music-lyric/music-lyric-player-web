@@ -54,10 +54,10 @@ export class WordNode {
     style.maskSize = size
   }
 
-  updateMaskAnimation(client: Animation) {
+  updateMaskAnimation(client?: Animation) {
     this.maskAnimation?.cancel()
     this.maskAnimation = client
-    this.maskAnimation.pause()
+    this.maskAnimation?.pause()
   }
 
   updateStyle(isPlay: boolean, isActive: boolean, currentTime: number, relativeTime: number, lineDuration: number) {
@@ -202,6 +202,19 @@ export class MainNode {
 
     const wordCount = this.words.length
     if (!wordCount) {
+      return
+    }
+
+    const config = this.context.config.line.normal.syllable.animation.mask
+    if (!config.enabled) {
+      for (let index = 0; index < wordCount; index++) {
+        const word = this.words[index]
+        if (!word) {
+          continue
+        }
+        word.updateMaskStyle('', '')
+        word.updateMaskAnimation()
+      }
       return
     }
 
