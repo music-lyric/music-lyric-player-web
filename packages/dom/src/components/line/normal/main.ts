@@ -47,8 +47,6 @@ export class WordNode {
 
   updateMaskStyle(image: string, size: string) {
     const style = this.dom.style
-    style.maskRepeat = 'no-repeat'
-    style.maskMode = 'alpha'
     style.maskImage = image
     style.maskSize = size
   }
@@ -67,7 +65,7 @@ export class WordNode {
       }
       if (this.maskAnimation) {
         this.maskAnimation.currentTime = 0
-        this.maskAnimation.pause()
+        this.maskAnimation.finish()
       }
       return
     }

@@ -63,8 +63,10 @@
 
   .word {
     display: inline-block;
-    transition-property: opacity;
-    transition-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+    transition: opacity 0.8s ease;
+
+    mask-mode: alpha;
+    mask-repeat: no-repeat;
 
     @include apply-style('syllable');
   }
