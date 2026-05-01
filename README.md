@@ -40,7 +40,7 @@
 npm install music-lyric-player music-lyric-kit
 ```
 
-> [!INFO]
+> [!IMPORTANT]
 >
 > Lyric data is parsed by [`music-lyric-kit`](https://github.com/music-lyric/music-lyric-kit-node), which needs to be installed alongside the player.
 

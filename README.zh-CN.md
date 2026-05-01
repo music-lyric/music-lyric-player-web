@@ -40,7 +40,7 @@
 npm install music-lyric-player music-lyric-kit
 ```
 
-> [!INFO]
+> [!IMPORTANT]
 >
 > 歌词解析由 [`music-lyric-kit`](https://github.com/music-lyric/music-lyric-kit-node) 提供，需要一并安装。
 
