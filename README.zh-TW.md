@@ -4,7 +4,7 @@
   />
 </p>
 
-<p align="center">An animation-rich, highly customizable web lyric player</p>
+<p align="center">一個動畫豐富、高度可自訂的 Web 播放器</p>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/music-lyric-player">
@@ -19,22 +19,22 @@
 </p>
 
 <p align="center">
-  English | <a href="./README.zh-CN.md">简体中文</a> | <a href="./README.zh-TW.md">繁體中文</a>
+  <a href="./README.md">English</a> | <a href="./README.zh-CN.md">简体中文</a> | 繁體中文
 </p>
 
 > [!WARNING]
 >
-> This project is currently under development, and some interfaces are not yet stable.
+> 本專案目前仍在開發中，部分介面（API）尚未穩定。
 
-## Features
+## 特性
 
-- **Built-in animations**: per-syllable float and karaoke wipe, distance-based blur and scale, container edge fade. Every effect is independently toggleable and tunable
-- **Four scroll modes**: smooth, ripple, directional, stagger. A single field changes the entire scroll feel
-- **Lyric-aware rendering**: syllable-level highlighting, translation and romanization sub-lines, interlude markers, and per-state styling for normal / active / played
-- **Configure everything, live**: every visual concern (container / layout / effect / scroll / line) is its own deeply optional slice. Override what matters and update mid-playback without remount or flicker
-- **Pluggable, GPU-friendly**: timing and state live in `base` with zero DOM dependency; rendering uses CSS transforms and filters in `dom`. Plug in your own renderer if needed
+- **內建動畫**：逐字浮動、卡拉OK 風格遮罩、依距離衰減的模糊與縮放、容器邊緣羽化淡出。每一項皆可獨立開關與調整
+- **四種捲動模式**：smooth、ripple、directional、stagger，單一欄位即可改變整體捲動觀感
+- **歌詞結構感知**：逐字級高亮、翻譯與音譯擴展行、間奏佔位符、normal / active / played 三態樣式
+- **配置自由、熱更新**：每個視覺模組（container / layout / effect / scroll / line）皆為層層可選的配置切片，僅需覆寫你在意的欄位，並支援於播放過程中即時修改，無需卸載重新掛載或閃爍
+- **可插拔、GPU 友善**：計時與歌詞狀態位於 `base`，零 DOM 依賴；渲染邏輯位於 `dom`，基於 CSS transform / filter。必要時可替換為自訂渲染層
 
-## Install
+## 安裝
 
 ```shell
 npm install music-lyric-player music-lyric-kit
@@ -42,15 +42,15 @@ npm install music-lyric-player music-lyric-kit
 
 > [!INFO]
 >
-> Lyric data is parsed by [`music-lyric-kit`](https://github.com/music-lyric/music-lyric-kit-node), which needs to be installed alongside the player.
+> 歌詞解析由 [`music-lyric-kit`](https://github.com/music-lyric/music-lyric-kit-node) 提供，需要一併安裝。
 
-## Usage
+## 使用方式
 
-The player is composed of two layers: `BaseLyricPlayer` owns timing and lyric state, while `DomLyricPlayer` renders the result to the DOM. The two are typically used together.
+播放器由兩層組成：`BaseLyricPlayer` 負責計時與歌詞狀態，`DomLyricPlayer` 負責將其渲染至 DOM。兩者通常搭配使用。
 
-### Base player
+### 基礎播放器
 
-If you're building a custom renderer, depend on `@music-lyric-player/base` directly. It contains pure timing and state logic, with no DOM dependency.
+如果你打算自行實作渲染層，可以直接依賴 `@music-lyric-player/base`。它僅包含計時與狀態邏輯，不涉及 DOM。
 
 ```js
 import { BaseLyricPlayer } from '@music-lyric-player/base'
@@ -59,39 +59,39 @@ const base = new BaseLyricPlayer()
 
 const callback = () => {}
 
-// Play event
+// 播放事件
 base.event.add('play', callback)
-// Pause event
+// 暫停事件
 base.event.add('pause', callback)
-// Lyric update event
+// 歌詞更新事件
 base.event.add('lyricUpdate', callback)
-// Lines update event
+// 播放行更新事件
 base.event.add('linesUpdate', callback)
 
-// Update lyric
-// Pass in the parsed result from music-lyric-kit
+// 更新歌詞
+// 需要傳入 music-lyric-kit 的解析結果
 base.updateLyric(result)
 
-// Play
+// 播放
 base.play(0)
 ```
 
-### DOM player
+### DOM播放器
 
 ```js
 import { BaseLyricPlayer } from '@music-lyric-player/base'
 import { DomLyricPlayer } from '@music-lyric-player/dom'
 import { ParserPipeline } from 'music-lyric-kit'
 
-// Create
+// 建立
 const base = new BaseLyricPlayer()
 const dom = new DomLyricPlayer(base)
 
-// Mount
+// 掛載
 const container = window.document.getElementById('lyric-container')
 container.appendChild(dom.element)
 
-// Parse and feed
+// 解析歌詞後傳入
 const { result } = new ParserPipeline({
   content: { original: '[00:01.114]Hello world' },
   format: 'lrc',
@@ -104,14 +104,14 @@ const { result } = new ParserPipeline({
 
 base.updateLyric(result)
 
-// Play
+// 播放
 base.play(0)
 
-// Pause
+// 暫停
 base.pause()
 ```
 
-Every visual aspect is mapped to a config field. Pass only the fields you want to change, leave the rest at their defaults. Updates can be applied at any time, including mid-playback.
+所有視覺相關的設定皆對應一個配置欄位。僅需傳入你想修改的欄位，其餘保持預設即可，並支援於播放過程中即時更新。
 
 ```js
 dom.config.update({
@@ -133,20 +133,20 @@ dom.config.update({
 })
 ```
 
-## Packages
+## 套件一覽
 
-| Package                                       | Description |
-| --------------------------------------------- | ----------- |
-| [music-lyric-player](./main)                  | Main entry  |
-| [@music-lyric-player/utils](./packages/utils) | Utilities   |
-| [@music-lyric-player/base](./packages/base)   | Base player |
-| [@music-lyric-player/dom](./packages/dom)     | DOM player  |
+| 套件名稱                                      | 說明       |
+| --------------------------------------------- | ---------- |
+| [music-lyric-player](./main)                  | 主入口     |
+| [@music-lyric-player/utils](./packages/utils) | 工具庫     |
+| [@music-lyric-player/base](./packages/base)   | 基礎播放器 |
+| [@music-lyric-player/dom](./packages/dom)     | DOM播放器  |
 
-## Contributors
+## 貢獻者
 
 [![Contributors](https://contrib.rocks/image?repo=music-lyric/music-lyric-player-web)](https://github.com/music-lyric/music-lyric-player-web/graphs/contributors)
 
-## License
+## 授權條款
 
 [MIT](./LICENSE)
 
