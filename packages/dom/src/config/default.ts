@@ -79,6 +79,16 @@ export const DEFAULT_CONFIG: Config = {
       syllable: {
         enabled: true,
         className: '',
+        animation: {
+          float: {
+            enabled: true,
+            from: 0,
+            to: -2,
+          },
+          mask: {
+            enabled: true,
+          },
+        },
       },
       extended: {
         visible: true,
