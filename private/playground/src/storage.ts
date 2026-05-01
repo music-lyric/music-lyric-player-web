@@ -2,10 +2,22 @@ import type { Config } from '@music-lyric-player/dom'
 
 import { STORAGE_KEY, SETTINGS_STORAGE_KEY, DB_NAME, STORE_NAME } from './constants'
 
+export type LyricFormat = 'lrc' | 'ttml'
+
+export interface StoredLyric {
+  format: LyricFormat
+  // LRC mode
+  lrcOriginal?: string
+  lrcRoman?: string
+  lrcTranslate?: string
+  // TTML mode
+  ttmlOriginal?: string
+  ttmlFileName?: string
+}
+
 export interface StoredState {
   audioName?: string
-  lyricName?: string
-  lyricContent?: string
+  lyric?: StoredLyric
   volume?: number
 }
 

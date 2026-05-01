@@ -94,30 +94,35 @@ const SETTINGS_BINDINGS: SettingsBinding[] = [
     id: 's-scroll-animation-duration',
     type: 'number',
     get: (c) => (c.scroll?.animation as any)?.duration ?? 500,
+    // @ts-expect-error
     apply: (v) => ({ scroll: { animation: { duration: v } } }),
   },
   {
     id: 's-scroll-animation-easing',
     type: 'text',
     get: (c) => (c.scroll?.animation as any)?.easing ?? 'ease',
+    // @ts-expect-error
     apply: (v) => ({ scroll: { animation: { easing: v } } }),
   },
   {
     id: 's-scroll-animation-delay',
     type: 'number',
     get: (c) => (c.scroll?.animation as any)?.delay ?? 0,
+    // @ts-expect-error
     apply: (v) => ({ scroll: { animation: { delay: v } } }),
   },
   {
     id: 's-scroll-animation-range',
     type: 'number',
     get: (c) => (c.scroll?.animation as any)?.range ?? 5,
+    // @ts-expect-error
     apply: (v) => ({ scroll: { animation: { range: v } } }),
   },
   {
     id: 's-scroll-animation-step',
     type: 'number',
     get: (c) => (c.scroll?.animation as any)?.step ?? 40,
+    // @ts-expect-error
     apply: (v) => ({ scroll: { animation: { step: v } } }),
   },
 

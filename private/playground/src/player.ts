@@ -1,6 +1,7 @@
 import type { Config } from '@music-lyric-player/dom'
+import type { StoredLyric } from './storage'
 
-import { ParserPipeline } from 'music-lyric-kit'
+import { Lyric } from 'music-lyric-kit'
 import { BaseLyricPlayer } from '@music-lyric-player/base'
 import { DomLyricPlayer } from '@music-lyric-player/dom'
 
@@ -10,27 +11,11 @@ import { $, formatTime, clamp, toggleDisplay, deepMerge } from './utils'
 import { loadState, saveState, loadSettings, loadAudioFromDB, saveAudioToDB } from './storage'
 import { createSlider } from './slider'
 import { initSettings } from './settings'
-
-const parseLyricContent = (content: string) => {
-  const format = content.includes('<tt') || content.includes('<TTML') ? 'ttml-amll' : 'lrc'
-  return new ParserPipeline({ content, format })
-    .parse()
-    .pureClean()
-    .pureExtract()
-    .agentExtract()
-    .backgroundExtract()
-    .backgroundClean()
-    .interludeInsert()
-    .spaceInsert()
-    .stressMark()
-    .final()
-}
+import { initLyricInput, parseStoredLyric } from './lyric'
 
 export const initPlayer = (): void => {
   const audioChip = $('audio-chip') as HTMLDivElement
-  const lyricChip = $('lyric-chip') as HTMLDivElement
   const audioInput = $('audio-input') as HTMLInputElement
-  const lyricInput = $('lyric-input') as HTMLInputElement
   const audioNameEl = $('audio-name') as HTMLSpanElement
   const lyricNameEl = $('lyric-name') as HTMLSpanElement
   const lyricContainer = $('lyric-container') as HTMLDivElement
@@ -47,7 +32,6 @@ export const initPlayer = (): void => {
   const base = new BaseLyricPlayer()
   const dom = new DomLyricPlayer(base)
 
-  // Load and apply persisted settings
   const savedSettings = loadSettings()
   const defaultOverrides: Partial<Config> = {
     layout: { gap: 50 },
@@ -56,7 +40,6 @@ export const initPlayer = (): void => {
   const mergedSettings = deepMerge(deepMerge({}, defaultOverrides), savedSettings)
   dom.config.update(mergedSettings)
 
-  // Init settings panel
   initSettings(dom, savedSettings)
 
   const resetBtn = $('reset-settings-btn') as HTMLButtonElement
@@ -136,7 +119,6 @@ export const initPlayer = (): void => {
 
   const togglePlayback = (): void => {
     if (!hasAudio) return
-
     if (isPlaying) {
       audio.pause()
       base.pause()
@@ -167,27 +149,52 @@ export const initPlayer = (): void => {
     dom.element.style.height = '100%'
   }
 
-  const loadLyric = (content: string): void => {
-    const result = parseLyricContent(content)
-    if (result) {
-      base.updateLyric(result.result)
-      emptyState.style.display = 'none'
+  const updateLyricChipName = (lyric: StoredLyric | undefined): void => {
+    if (!lyric) {
+      lyricNameEl.textContent = 'Not selected'
+      lyricNameEl.classList.remove('selected')
+      return
     }
+    if (lyric.format === 'ttml') {
+      lyricNameEl.textContent = lyric.ttmlFileName ?? 'TTML (inline)'
+    } else {
+      const parts: string[] = ['LRC']
+      if (lyric.lrcRoman) parts.push('Roman')
+      if (lyric.lrcTranslate) parts.push('Translate')
+      lyricNameEl.textContent = parts.join(' + ')
+    }
+    lyricNameEl.classList.add('selected')
   }
 
-  const markFileSelected = (el: HTMLSpanElement, name: string): void => {
-    el.textContent = name
-    el.classList.add('selected')
+  const applyLyric = (lyric: StoredLyric): void => {
+    const result = parseStoredLyric(lyric)
+    if (!result) return
+    base.updateLyric(result.result)
+    emptyState.style.display = 'none'
+    mountPlayer()
+    updateLyricChipName(lyric)
+    state.lyric = lyric
+    saveState(state)
   }
+
+  const clearLyric = (): void => {
+    base.updateLyric(new Lyric.Info())
+    emptyState.style.display = ''
+    updateLyricChipName(undefined)
+    delete state.lyric
+    saveState(state)
+  }
+
+  // Init lyric input panel
+  initLyricInput(state.lyric, {
+    onApply: applyLyric,
+    onClear: clearLyric,
+  })
 
   // --- Event bindings ---
 
   audioChip.addEventListener('click', (e) => {
     if ((e.target as HTMLElement).tagName !== 'INPUT') audioInput.click()
-  })
-
-  lyricChip.addEventListener('click', (e) => {
-    if ((e.target as HTMLElement).tagName !== 'INPUT') lyricInput.click()
   })
 
   audioInput.addEventListener('change', async (e) => {
@@ -197,18 +204,6 @@ export const initPlayer = (): void => {
     state.audioName = file.name
     saveState(state)
     await saveAudioToDB(file)
-  })
-
-  lyricInput.addEventListener('change', async (e) => {
-    const file = (e.target as HTMLInputElement).files?.[0]
-    if (!file) return
-    const content = await file.text()
-    markFileSelected(lyricNameEl, file.name)
-    loadLyric(content)
-    mountPlayer()
-    state.lyricName = file.name
-    state.lyricContent = content
-    saveState(state)
   })
 
   playBtn.addEventListener('click', togglePlayback)
@@ -231,14 +226,19 @@ export const initPlayer = (): void => {
 
   // --- Restore persisted state ---
 
-  if (state.lyricName && state.lyricContent) {
-    markFileSelected(lyricNameEl, state.lyricName)
-    loadLyric(state.lyricContent)
-    mountPlayer()
+  if (state.lyric) {
+    const result = parseStoredLyric(state.lyric)
+    if (result) {
+      base.updateLyric(result.result)
+      emptyState.style.display = 'none'
+      mountPlayer()
+      updateLyricChipName(state.lyric)
+    }
   }
 
   if (state.audioName) {
-    markFileSelected(audioNameEl, state.audioName)
+    audioNameEl.textContent = state.audioName
+    audioNameEl.classList.add('selected')
     loadAudioFromDB()
       .then((file) => {
         if (file) setupAudioFile(file, state.audioName!)
