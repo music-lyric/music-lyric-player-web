@@ -123,6 +123,7 @@ export const DEFAULT_CONFIG: Root = {
         normal: {
           color: DEFAULT_COLOR,
           opacity: 0.2,
+          hide: true,
         },
         active: {
           color: DEFAULT_COLOR,

@@ -144,6 +144,8 @@ export class LayoutManager {
       return
     }
 
+    const isHideInterlude = this.context.config.current.line.interlude.style.normal.hide
+
     const isInPlay = player.currentPlaying
     const isInScroll = scroll.active
 
@@ -201,7 +203,7 @@ export class LayoutManager {
         continue
       }
 
-      if (element.type === LineElementType.Interlude && this.context.isHideInterlude) {
+      if (element.type === LineElementType.Interlude && isHideInterlude) {
         const isActiveElement = activeElementSet.has(i)
         if (!isInScroll && !isActiveElement) {
           topPositions[i] = baseTop - element.height
@@ -259,6 +261,7 @@ export class LayoutManager {
       currentStyle.opacity = undefined
       currentStyle.scale = undefined
       currentStyle.blur = undefined
+      currentStyle.hide = false
 
       if (isInScroll) {
         currentStyle.opacity = 1
@@ -273,6 +276,9 @@ export class LayoutManager {
         if (!isActiveLine) {
           currentStyle.scale = this.calcScale(indexOffset)
           currentStyle.blur = this.calcBlur(indexOffset)
+          if (element.type === LineElementType.Interlude && isHideInterlude) {
+            currentStyle.hide = true
+          }
         }
       }
 
