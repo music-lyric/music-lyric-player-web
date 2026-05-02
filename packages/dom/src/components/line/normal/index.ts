@@ -31,7 +31,7 @@ export class NormalLineElement extends BaseLineElement {
     this.isBackgroundLine = isBackground
 
     this.container = document.createElement('div')
-    this.wrapper.appendChild(this.container)
+    this.element.appendChild(this.container)
 
     this.updateConfig()
   }

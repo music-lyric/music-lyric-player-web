@@ -25,88 +25,43 @@ export interface LineElementStyle {
 export abstract class BaseLineElement {
   abstract get type(): LineElementType
 
-  protected readonly wrapper: HTMLDivElement
-
-  protected readonly size: { width: number; height: number }
-
-  protected readonly status: { active: boolean; played: boolean; position: string }
-
-  private readonly currentWrapperStyle: LineElementStyle = {}
+  private readonly wrapper: {
+    dom: HTMLDivElement
+    width: number
+    height: number
+    active: boolean
+    played: boolean
+    position: string
+    style: LineElementStyle
+  }
 
   constructor(protected readonly context: ComponentContext) {
-    this.wrapper = document.createElement('div')
-    this.size = { width: 0, height: 0 }
-    this.status = { active: false, played: false, position: '' }
-  }
-
-  set active(value: boolean) {
-    if (value === this.status.active) {
-      return
+    this.wrapper = {
+      dom: document.createElement('div'),
+      width: 0,
+      height: 0,
+      active: false,
+      played: false,
+      position: '',
+      style: {},
     }
-    if (value) {
-      this.wrapper.setAttribute('active', '')
-    } else {
-      this.wrapper.removeAttribute('active')
-    }
-    this.status.active = value
-  }
-  get active() {
-    return this.status.active
-  }
-
-  set played(value: boolean) {
-    if (value === this.status.played) {
-      return
-    }
-    if (value) {
-      this.wrapper.setAttribute('played', '')
-    } else {
-      this.wrapper.removeAttribute('played')
-    }
-    this.status.played = value
-  }
-  get played() {
-    return this.status.played
-  }
-
-  set position(value: string) {
-    if (value === this.status.position) {
-      return
-    }
-    this.wrapper.setAttribute('position', value)
-    this.status.position = value
-  }
-  get position() {
-    return this.status.position
-  }
-
-  get element() {
-    return this.wrapper
-  }
-
-  get height() {
-    return this.size.height
-  }
-
-  get width() {
-    return this.size.width
   }
 
   updateSize() {
-    this.size.width = this.wrapper.clientWidth
-    this.size.height = this.wrapper.clientHeight
+    this.wrapper.width = this.wrapper.dom.clientWidth
+    this.wrapper.height = this.wrapper.dom.clientHeight
   }
 
   updateConfig(keys?: ConfigKeySet) {
     if (!keys || keys.has('line.className')) {
-      applyClassName(this.wrapper, [Style.wrapper, this.context.config.line.className])
+      applyClassName(this.wrapper.dom, [Style.wrapper, this.context.config.line.className])
     }
   }
 
   updateStyle(current: LineElementStyle) {
-    const prev = this.currentWrapperStyle
+    const prev = this.wrapper.style
 
-    const style = this.wrapper.style
+    const style = this.wrapper.dom.style
 
     // `transform` aggregates left / top / scale; rebuild only if any of them changed.
     if (current.top !== prev.top || current.left !== prev.left || current.scale !== prev.scale) {
@@ -147,7 +102,59 @@ export abstract class BaseLineElement {
   abstract reset(): void
 
   destroy(): void {
-    this.wrapper.replaceChildren()
-    this.wrapper.remove()
+    this.wrapper.dom.replaceChildren()
+    this.wrapper.dom.remove()
+  }
+
+  set active(value: boolean) {
+    if (value === this.wrapper.active) {
+      return
+    }
+    if (value) {
+      this.wrapper.dom.setAttribute('active', '')
+    } else {
+      this.wrapper.dom.removeAttribute('active')
+    }
+    this.wrapper.active = value
+  }
+  get active() {
+    return this.wrapper.active
+  }
+
+  set played(value: boolean) {
+    if (value === this.wrapper.played) {
+      return
+    }
+    if (value) {
+      this.wrapper.dom.setAttribute('played', '')
+    } else {
+      this.wrapper.dom.removeAttribute('played')
+    }
+    this.wrapper.played = value
+  }
+  get played() {
+    return this.wrapper.played
+  }
+
+  set position(value: string) {
+    if (value === this.wrapper.position) {
+      return
+    }
+    this.wrapper.dom.setAttribute('position', value)
+    this.wrapper.position = value
+  }
+  get position() {
+    return this.wrapper.position
+  }
+
+  get height() {
+    return this.wrapper.height
+  }
+  get width() {
+    return this.wrapper.width
+  }
+
+  get element() {
+    return this.wrapper.dom
   }
 }

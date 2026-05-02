@@ -25,7 +25,7 @@ export class InterludeLineElement extends BaseLineElement {
     super(context)
 
     this.container = document.createElement('div')
-    this.wrapper.appendChild(this.container)
+    this.element.appendChild(this.container)
 
     this.dots = []
 
