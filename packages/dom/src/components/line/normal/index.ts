@@ -1,5 +1,6 @@
 import type { LineNormal } from '@music-lyric-kit/lyric'
 import type { ComponentContext } from '@root/components/context'
+import type { ConfigKeySet } from '@root/config'
 
 import { BaseLineElement, LineElementType } from '../wrapper'
 
@@ -20,8 +21,8 @@ export class NormalLineElement extends BaseLineElement {
 
   private container: HTMLDivElement
 
-  private main!: MainNode
-  private extended!: ExtendedNode
+  private main: MainNode | null = null
+  private extended: ExtendedNode | null = null
 
   constructor(context: ComponentContext, info: LineNormal, isBackground: boolean) {
     super(context)
@@ -32,39 +33,84 @@ export class NormalLineElement extends BaseLineElement {
     this.container = document.createElement('div')
     this.wrapper.appendChild(this.container)
 
-    this.init()
     this.updateConfig()
   }
 
-  private init() {
-    this.main = new MainNode(this.context, this.info)
-    this.container.appendChild(this.main.element)
-
-    if (this.info.content.extended.length && this.context.config.line.normal.extended.visible) {
-      this.extended = new ExtendedNode(this.context, this.info)
-      this.container.appendChild(this.extended.element)
-    }
-  }
-
-  override updateConfig() {
+  private buildClassName() {
     const className = [Style.normal, this.context.config.line.normal.base.className, this.isBackgroundLine ? Style.background : '']
     applyClassName(this.container, className)
+  }
 
-    super.updateConfig()
-    this.main?.updateConfig()
-    this.extended?.updateConfig()
+  private buildMain() {
+    this.removeMain()
+    this.main = new MainNode(this.context, this.info)
+    this.container.appendChild(this.main.element)
+  }
+  private removeMain() {
+    this.main?.dispose()
+    this.main = null
+  }
+
+  private buildExtended() {
+    this.removeExtended()
+    this.extended = new ExtendedNode(this.context, this.info)
+    this.container.appendChild(this.extended.element)
+  }
+  private removeExtended() {
+    this.extended?.dispose()
+    this.extended = null
+  }
+  private get showExtended() {
+    return this.info.content.extended.length > 0 && this.context.config.line.normal.extended.visible
+  }
+
+  override updateConfig(keys?: ConfigKeySet) {
+    super.updateConfig(keys)
+
+    if (!keys) {
+      this.container.replaceChildren()
+      this.buildClassName()
+      this.buildMain()
+      if (this.showExtended) {
+        this.buildExtended()
+      } else {
+        this.removeExtended()
+      }
+      return
+    }
+
+    if (keys.has('line.normal.base.className')) {
+      this.buildClassName()
+    }
+
+    if (keys.has('line.normal.extended.visible')) {
+      if (this.showExtended && !this.extended) {
+        this.buildExtended()
+      } else if (!this.showExtended && this.extended) {
+        this.removeExtended()
+      }
+    }
+
+    this.main?.updateConfig(keys)
+    this.extended?.updateConfig(keys)
   }
 
   override play(time: number, isActive: boolean) {
-    this.main.play(time, isActive)
+    this.main?.play(time, isActive)
   }
 
   override pause(time: number, isActive: boolean) {
-    this.main.pause(time, isActive)
+    this.main?.pause(time, isActive)
   }
 
   override reset() {
-    this.main.reset()
+    this.main?.reset()
+  }
+
+  override destroy() {
+    this.removeMain()
+    this.removeExtended()
+    super.destroy()
   }
 
   get isBackground() {

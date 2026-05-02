@@ -1,5 +1,6 @@
 import type { Line } from '@music-lyric-kit/lyric'
 import type { LineElement } from '@root/components'
+import type { ConfigKeySet } from '@root/config'
 import type { CoreContext } from './context'
 
 import { LineType } from '@music-lyric-kit/lyric'
@@ -124,12 +125,12 @@ export class LineManager {
     this.currentIndexMap = newIndexMap
   }
 
-  updateConfig() {
+  updateConfig(keys?: ConfigKeySet) {
     const position = this.context.config.current.layout.align
 
     for (const element of this.currentElementMap.values()) {
       element.position = position
-      element.updateConfig()
+      element.updateConfig(keys)
     }
   }
 

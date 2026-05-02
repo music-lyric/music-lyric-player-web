@@ -1,4 +1,4 @@
-import type { ConfigManager, DeepRequired } from '@music-lyric-player/utils'
+import type { ConfigManager, DeepRequired, NestedKeys } from '@music-lyric-player/utils'
 
 import * as Line from './line'
 import * as Effect from './effect'
@@ -49,5 +49,18 @@ export type ConfigRequired = DeepRequired<Config>
  * Runtime config manager bound to this module's {@link Config} shape.
  */
 export type ConfigClient = ConfigManager<ConfigRequired, Config>
+
+/**
+ * All config keys
+ */
+export type ConfigKeys = NestedKeys<Config>
+
+/**
+ * Set of config key paths that changed since the previous value,
+ * as emitted by `ConfigManager.event['update']`.
+ *
+ * Components consume this to decide which parts to refresh.
+ */
+export type ConfigKeySet = Set<ConfigKeys>
 
 export { Line, Effect, Scroll, Layout, Container }

@@ -1,7 +1,11 @@
-import type { Line } from '@root/config'
+import type { Line, ConfigKeySet, ConfigKeys } from '@root/config'
 import type { ComponentContext } from '@root/components/context'
 
+import { hasKeyContainingAny } from '@music-lyric-player/utils'
+
 import Styles from './style.module.scss'
+
+const WATCH_KEYS: ConfigKeys[] = ['line', 'container.padding', 'container.fade', 'scroll.animation.easing']
 
 export class Style {
   private readonly runtime: HTMLStyleElement
@@ -87,7 +91,11 @@ export class Style {
     return Object.fromEntries(Object.entries(block).filter(([_, v]) => v !== ''))
   }
 
-  updateConfig() {
+  updateConfig(keys?: ConfigKeySet) {
+    if (keys && !hasKeyContainingAny(keys, WATCH_KEYS)) {
+      return
+    }
+
     const scroll = this.context.config.scroll
     const line = this.context.config.line
 

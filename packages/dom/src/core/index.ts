@@ -1,5 +1,5 @@
 import type { Line, Info } from '@music-lyric-kit/lyric'
-import type { ConfigRequired } from '@root/config'
+import type { ConfigKeySet, ConfigRequired } from '@root/config'
 
 import { DEFAULT_CONFIG } from '@root/config'
 import { BaseLyricPlayer } from '@music-lyric-player/base'
@@ -79,9 +79,9 @@ export class DomLyricPlayer {
     })
   }
 
-  private onConfigUpdate = () => {
-    this.root.updateConfig()
-    this.lineManager.updateConfig()
+  private onConfigUpdate = (keys: ConfigKeySet) => {
+    this.root.updateConfig(keys)
+    this.lineManager.updateConfig(keys)
 
     this.scheduleLayoutUpdate({
       updateSize: true,

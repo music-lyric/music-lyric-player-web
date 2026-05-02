@@ -1,5 +1,6 @@
 import type { LineNormal } from '@music-lyric-kit/lyric'
 import type { ComponentContext } from '@root/components/context'
+import type { ConfigKeySet } from '@root/config'
 
 import { ExtendedType } from '@music-lyric-kit/lyric'
 
@@ -21,7 +22,11 @@ export class ExtendedNode {
     this.updateConfig()
   }
 
-  private init() {
+  private buildClassName() {
+    applyClassName(this.content, [Style.extended])
+  }
+
+  private buildContent() {
     const config = this.context.config.line.normal.extended
 
     this.content.replaceChildren()
@@ -62,9 +67,21 @@ export class ExtendedNode {
     }
   }
 
-  updateConfig() {
-    this.init()
-    applyClassName(this.content, [Style.extended])
+  updateConfig(keys?: ConfigKeySet) {
+    if (!keys) {
+      this.buildClassName()
+      this.buildContent()
+      return
+    }
+
+    if (keys.has('line.normal.extended.translate') || keys.has('line.normal.extended.roman')) {
+      this.buildContent()
+    }
+  }
+
+  dispose() {
+    this.content.replaceChildren()
+    this.content.remove()
   }
 
   get element() {

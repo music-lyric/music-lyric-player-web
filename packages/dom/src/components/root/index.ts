@@ -1,4 +1,5 @@
 import type { ComponentContext } from '@root/components/context'
+import type { ConfigKeySet } from '@root/config'
 import type { ContainerEventMap } from './container'
 
 import { Event } from '@music-lyric-player/utils'
@@ -32,9 +33,9 @@ export class Root {
     this.updateConfig()
   }
 
-  updateConfig() {
+  updateConfig(keys?: ConfigKeySet) {
     this.container.updateConfig()
-    this.style.updateConfig()
+    this.style.updateConfig(keys)
   }
 
   setAttribute(name: string, value?: string) {

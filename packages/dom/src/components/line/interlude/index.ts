@@ -1,5 +1,6 @@
 import type { LineInterlude } from '@music-lyric-kit/lyric'
 import type { ComponentContext } from '@root/components/context'
+import type { ConfigKeySet } from '@root/config'
 
 import { BaseLineElement, LineElementType } from '../wrapper'
 
@@ -28,11 +29,15 @@ export class InterludeLineElement extends BaseLineElement {
 
     this.dots = []
 
-    this.init()
+    this.buildDots()
     this.updateConfig()
   }
 
-  private init() {
+  private buildClassName() {
+    applyClassName(this.container, [Style.interlude, this.context.config.line.interlude.className])
+  }
+
+  private buildDots() {
     for (let i = 0; i < DOT_COUNT; i++) {
       const dot = document.createElement('div')
       applyClassName(dot, [Style.dot])
@@ -85,9 +90,12 @@ export class InterludeLineElement extends BaseLineElement {
     }
   }
 
-  override updateConfig() {
-    super.updateConfig()
-    applyClassName(this.container, [Style.interlude, this.context.config.line.interlude.className])
+  override updateConfig(keys?: ConfigKeySet) {
+    super.updateConfig(keys)
+
+    if (!keys || keys.has('line.interlude.className')) {
+      this.buildClassName()
+    }
   }
 
   override play(time: number, isActive: boolean) {

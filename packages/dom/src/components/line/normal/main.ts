@@ -1,5 +1,6 @@
 import type { LineNormal, WordNormal, Time } from '@music-lyric-kit/lyric'
 import type { ComponentContext } from '@root/components/context'
+import type { ConfigKeySet } from '@root/config'
 
 import { WordType } from '@music-lyric-kit/lyric'
 
@@ -26,17 +27,19 @@ export class WordNode {
     this.size = { width: 0, height: 0 }
 
     this.updateConfig()
-    this.init()
   }
 
-  private init() {
-    const delay = this.wordInfo.time.start - this.lineTime.start
-    const duration = Math.max(1000, this.wordInfo.time.duration)
+  private buildFloatAnimation() {
+    this.floatAnimation?.cancel()
+    this.floatAnimation = undefined
 
     const config = this.context.config.line.normal.syllable.animation.float
     if (!config.enabled) {
       return
     }
+
+    const delay = this.wordInfo.time.start - this.lineTime.start
+    const duration = Math.max(1000, this.wordInfo.time.duration)
 
     this.floatAnimation = this.dom.animate([{ transform: `translateY(${config.from ?? 0}px)` }, { transform: `translateY(${config.to ?? 2}px)` }], {
       delay,
@@ -114,8 +117,16 @@ export class WordNode {
     this.size.height = this.dom.clientHeight
   }
 
-  updateConfig() {
-    applyClassName(this.dom, [Style.word])
+  updateConfig(keys?: ConfigKeySet) {
+    if (!keys) {
+      applyClassName(this.dom, [Style.word])
+      this.buildFloatAnimation()
+      return
+    }
+
+    if (keys.has('line.normal.syllable.animation.float')) {
+      this.buildFloatAnimation()
+    }
   }
 
   dispose() {
@@ -156,7 +167,10 @@ export class MainNode {
     this.updateConfig()
   }
 
-  private init() {
+  private buildWords() {
+    for (const word of this.words) {
+      word.dispose()
+    }
     this.dom.replaceChildren()
     this.words = []
 
@@ -180,9 +194,22 @@ export class MainNode {
     this.updateSize()
   }
 
-  updateConfig() {
-    applyClassName(this.dom, [Style.syllable])
-    this.init()
+  updateConfig(keys?: ConfigKeySet) {
+    if (!keys) {
+      applyClassName(this.dom, [Style.syllable])
+      this.buildWords()
+      return
+    }
+
+    if (keys.has('line.normal.syllable.animation.float')) {
+      for (const word of this.words) {
+        word.updateConfig(keys)
+      }
+    }
+
+    if (keys.has('line.normal.syllable.animation.mask')) {
+      this.updateMaskAnimations()
+    }
   }
 
   updateSize() {
@@ -359,6 +386,14 @@ export class MainNode {
     for (const word of this.words) {
       word.updateStyle(false, false, 0, 0, this.info.time.duration)
     }
+  }
+
+  dispose() {
+    for (const word of this.words) {
+      word.dispose()
+    }
+    this.words = []
+    this.dom.replaceChildren()
   }
 
   get element() {
