@@ -31,6 +31,8 @@ export abstract class BaseLineElement {
 
   protected readonly status: { active: boolean; played: boolean; position: string }
 
+  private readonly currentWrapperStyle: LineElementStyle = {}
+
   constructor(protected readonly context: ComponentContext) {
     this.wrapper = document.createElement('div')
     this.size = { width: 0, height: 0 }
@@ -102,26 +104,40 @@ export abstract class BaseLineElement {
   }
 
   updateStyle(current: LineElementStyle) {
-    const domStyle = this.wrapper.style
+    const prev = this.currentWrapperStyle
 
-    domStyle.transform = `translate(${current.left || 0}px, ${current.top || 0}px) scale(${current.scale || 1})`
+    const style = this.wrapper.style
 
-    domStyle.transitionDuration = `${current.transitionDuration || 0}ms`
-    domStyle.transitionDelay = `${current.transitionDelay || 0}ms`
-
-    if (current.hide) {
-      domStyle.opacity = '0'
-    } else if (current.opacity) {
-      domStyle.opacity = `${current.opacity}`
-    } else {
-      domStyle.opacity = ''
+    // `transform` aggregates left / top / scale; rebuild only if any of them changed.
+    if (current.top !== prev.top || current.left !== prev.left || current.scale !== prev.scale) {
+      style.transform = `translate(${current.left || 0}px, ${current.top || 0}px) scale(${current.scale || 1})`
     }
 
-    if (current.blur) {
-      domStyle.filter = `blur(${current.blur}px)`
-    } else {
-      domStyle.filter = ''
+    if (current.transitionDuration !== prev.transitionDuration) {
+      style.transitionDuration = `${current.transitionDuration || 0}ms`
     }
+
+    if (current.transitionDelay !== prev.transitionDelay) {
+      style.transitionDelay = `${current.transitionDelay || 0}ms`
+    }
+
+    // `opacity` depends on both `hide` (override to 0) and `opacity` itself.
+    if (current.hide !== prev.hide || current.opacity !== prev.opacity) {
+      style.opacity = current.hide ? '0' : current.opacity ? `${current.opacity}` : ''
+    }
+
+    if (current.blur !== prev.blur) {
+      style.filter = current.blur ? `blur(${current.blur}px)` : ''
+    }
+
+    prev.top = current.top
+    prev.left = current.left
+    prev.scale = current.scale
+    prev.opacity = current.opacity
+    prev.blur = current.blur
+    prev.hide = current.hide
+    prev.transitionDelay = current.transitionDelay
+    prev.transitionDuration = current.transitionDuration
   }
 
   abstract play(time: number, isActive: boolean): void
