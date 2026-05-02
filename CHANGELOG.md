@@ -1,3 +1,46 @@
+## v0.6.0 (2026-05-02)
+
+### Document
+
+- fix readme alerts ([a9fcbdd](https://github.com/music-lyric/music-lyric-player-web/commit/a9fcbdd))
+- update readme ([cfac337](https://github.com/music-lyric/music-lyric-player-web/commit/cfac337))
+
+### Feature
+
+- `dom`
+  - add mask animation config for syllable line ([a48609b](https://github.com/music-lyric/music-lyric-player-web/commit/a48609b))
+  - add float animation config for syllable line ([a76588f](https://github.com/music-lyric/music-lyric-player-web/commit/a76588f))
+  - add transition for line active state changes ([61e35d2](https://github.com/music-lyric/music-lyric-player-web/commit/61e35d2))
+- `utils`
+  - add substring matching helpers for collections ([8b5a46a](https://github.com/music-lyric/music-lyric-player-web/commit/8b5a46a))
+
+### Fix
+
+- `dom`
+  - root component was not properly destroyed ([c2ce566](https://github.com/music-lyric/music-lyric-player-web/commit/c2ce566))
+  - incorrect max in line blur ([224a92d](https://github.com/music-lyric/music-lyric-player-web/commit/224a92d))
+  - scroll direction in stagger animation ([0b5f4f9](https://github.com/music-lyric/music-lyric-player-web/commit/0b5f4f9))
+  - default config ([e42f130](https://github.com/music-lyric/music-lyric-player-web/commit/e42f130))
+
+### Performance
+
+- `dom`
+  - skip style writes when value unchanged on line element ([565583a](https://github.com/music-lyric/music-lyric-player-web/commit/565583a))
+  - reuse style object when update line layout ([8fa7d02](https://github.com/music-lyric/music-lyric-player-web/commit/8fa7d02))
+  - snapshot elements when update line layout ([a19148a](https://github.com/music-lyric/music-lyric-player-web/commit/a19148a))
+  - cache active set when query active elements ([8c4f8e9](https://github.com/music-lyric/music-lyric-player-web/commit/8c4f8e9))
+  - skip element rebuild when no watched config key changed ([1a9cbc4](https://github.com/music-lyric/music-lyric-player-web/commit/1a9cbc4))
+
+### Refactor
+
+- `dom`
+  - rename base line element fields ([099ca42](https://github.com/music-lyric/music-lyric-player-web/commit/099ca42))
+  - modularize config ([e01fecf](https://github.com/music-lyric/music-lyric-player-web/commit/e01fecf))
+- `playground`
+  - lyric select ([8932e39](https://github.com/music-lyric/music-lyric-player-web/commit/8932e39))
+- `utils`
+  - config compare ([81f2ab7](https://github.com/music-lyric/music-lyric-player-web/commit/81f2ab7))
+
 ## v0.5.0 (2026-04-26)
 
 ### Feature
@@ -9,7 +52,7 @@
   - add collapse and expand animations to the background line ([9b03fe1](https://github.com/music-lyric/music-lyric-player-web/commit/9b03fe1))
   - add stagger mode for scroll animation ([aa54615](https://github.com/music-lyric/music-lyric-player-web/commit/aa54615))
 
-### Bug Fix
+### Fix
 
 - type error ([2cd1ff8](https://github.com/music-lyric/music-lyric-player-web/commit/2cd1ff8))
 - `dom`
@@ -18,7 +61,7 @@
   - embed style was not applied ([b2aae13](https://github.com/music-lyric/music-lyric-player-web/commit/b2aae13))
   - line played state was incorrectly set ([190a347](https://github.com/music-lyric/music-lyric-player-web/commit/190a347))
 
-### Code Refactor
+### Refactor
 
 - `dom`
   - config ([503052e](https://github.com/music-lyric/music-lyric-player-web/commit/503052e))
@@ -33,7 +76,7 @@
 - `dom`
   - add mask animation for line word ([e1b76c3](https://github.com/music-lyric/music-lyric-player-web/commit/e1b76c3))
 
-### Bug Fix
+### Fix
 
 - `dom`
   - the position of a completed word was incorrect when switch play state ([e62f821](https://github.com/music-lyric/music-lyric-player-web/commit/e62f821))
@@ -42,7 +85,7 @@
   - played background line not show when scrolling ([f1044b4](https://github.com/music-lyric/music-lyric-player-web/commit/f1044b4))
   - an incorrect function call occurred while multiple lines play ([a08dccb](https://github.com/music-lyric/music-lyric-player-web/commit/a08dccb))
 
-### Code Refactor
+### Refactor
 
 - `dom`
   - optimize code ([9ef62e4](https://github.com/music-lyric/music-lyric-player-web/commit/9ef62e4))
@@ -64,13 +107,13 @@
 - `playground`
   - support custom scroll animation config ([e1387f4](https://github.com/music-lyric/music-lyric-player-web/commit/e1387f4))
 
-### Bug Fix
+### Fix
 
 - `dom`
   - unable to scroll lyrics immediately after loading ([fcf8442](https://github.com/music-lyric/music-lyric-player-web/commit/fcf8442))
   - background line not show when scrolling ([73e75fc](https://github.com/music-lyric/music-lyric-player-web/commit/73e75fc))
 
-### Code Refactor
+### Refactor
 
 - `base`
   - optimize code ([93b7a5c](https://github.com/music-lyric/music-lyric-player-web/commit/93b7a5c))
@@ -96,13 +139,13 @@
 - `utils`
   - compare object support return parent path ([085fa52](https://github.com/music-lyric/music-lyric-player-web/commit/085fa52))
 
-### Bug Fix
+### Fix
 
 - `dom`
   - prevent main line from being pushed out of viewport ([8090c65](https://github.com/music-lyric/music-lyric-player-web/commit/8090c65))
   - background line not show when scrolling ([a424553](https://github.com/music-lyric/music-lyric-player-web/commit/a424553))
 
-### Code Refactor
+### Refactor
 
 - `dom`
   - optimize background line gap ([03de27b](https://github.com/music-lyric/music-lyric-player-web/commit/03de27b))
@@ -140,14 +183,14 @@
   - add event client ([a3d143d](https://github.com/music-lyric/music-lyric-player-web/commit/a3d143d))
   - add util tools ([862b867](https://github.com/music-lyric/music-lyric-player-web/commit/862b867))
 
-### Bug Fix
+### Fix
 
 - tsconfig ([bfd7c7d](https://github.com/music-lyric/music-lyric-player-web/commit/bfd7c7d))
 - `dom`
   - incorrect variable name ([dcb8a55](https://github.com/music-lyric/music-lyric-player-web/commit/dcb8a55))
   - incorrect attribute ([7f0548e](https://github.com/music-lyric/music-lyric-player-web/commit/7f0548e))
 
-### Code Refactor
+### Refactor
 
 - `base`
   - event call ([68430b1](https://github.com/music-lyric/music-lyric-player-web/commit/68430b1))
