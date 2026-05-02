@@ -13,6 +13,8 @@ export interface TransitionResult {
 }
 
 export class LayoutManager {
+  private previousLineIndex = -1
+
   constructor(
     private readonly context: CoreContext,
     private readonly lineManager: LineManager,
@@ -55,28 +57,28 @@ export class LayoutManager {
     return this.round(min + (max - min) * (1 - gaussian))
   }
 
-  private calcTransition(offset: number, played: boolean): TransitionResult {
-    const animConfig = this.context.config.current.scroll.animation
+  private calcTransition(offset: number, played: boolean, direction: number): TransitionResult {
+    const config = this.context.config.current.scroll.animation
 
-    if (!animConfig) {
+    if (!config) {
       return {
         duration: 0,
         delay: 0,
       }
     }
 
-    const duration = Math.max(animConfig.duration ?? 0, 0)
+    const duration = Math.max(config.duration ?? 0, 0)
 
-    switch (animConfig.mode) {
+    switch (config.mode) {
       case Scroll.Animation.Mode.Smooth: {
         return {
           duration,
-          delay: Math.max(animConfig.delay ?? 0, 0),
+          delay: Math.max(config.delay ?? 0, 0),
         }
       }
       case Scroll.Animation.Mode.Ripple: {
-        const step = Math.max(animConfig.step ?? 20, 10)
-        const range = Math.max(animConfig.range ?? 3, 1)
+        const step = Math.max(config.step ?? 20, 10)
+        const range = Math.max(config.range ?? 3, 1)
         const distance = Math.min(Math.abs(offset), range)
         const normalized = distance / range
         const eased = 1 - (1 - normalized) ** 2
@@ -87,8 +89,8 @@ export class LayoutManager {
         }
       }
       case Scroll.Animation.Mode.Directional: {
-        const step = Math.max(animConfig.step ?? 40, 10)
-        const range = Math.max(animConfig.range ?? 5, 1)
+        const step = Math.max(config.step ?? 40, 10)
+        const range = Math.max(config.range ?? 5, 1)
         const distance = Math.min(Math.abs(offset), range)
         const normalized = distance / range
 
@@ -107,12 +109,18 @@ export class LayoutManager {
         }
       }
       case Scroll.Animation.Mode.Stagger: {
-        const range = Math.max(animConfig.range ?? 4, 1)
-        const step = Math.max(animConfig.step ?? 50, 1)
+        if (direction === 0) {
+          return {
+            duration,
+            delay: 0,
+          }
+        }
 
-        const sign = 1
+        const range = Math.max(config.range ?? 4, 1)
+        const step = Math.max(config.step ?? 50, 1)
+
         const clamped = Math.max(-range, Math.min(range, offset))
-        const result = (range + sign * clamped) * step
+        const result = (range + direction * clamped) * step
 
         return {
           duration,
@@ -212,6 +220,14 @@ export class LayoutManager {
 
     const activeIndex = activeElementIndexes[0] ?? 0
 
+    const currentLineIndex = player.currentIndex[0] ?? -1
+    const currentDirection =
+      !isInScroll && this.previousLineIndex !== -1 && currentLineIndex !== this.previousLineIndex
+        ? currentLineIndex > this.previousLineIndex
+          ? 1
+          : -1
+        : 0
+
     for (let i = 0; i < elementCount; i++) {
       const element = this.lineManager.queryElement(i)
       if (!element) {
@@ -238,7 +254,7 @@ export class LayoutManager {
         style.transitionDelay = 0
         style.transitionDuration = 200
       } else {
-        const transition = this.calcTransition(indexOffset, isPlayedLine)
+        const transition = this.calcTransition(indexOffset, isPlayedLine, currentDirection)
 
         style.transitionDuration = transition.duration
         style.transitionDelay = transition.delay
@@ -264,5 +280,11 @@ export class LayoutManager {
         }
       }
     }
+
+    this.previousLineIndex = currentLineIndex
+  }
+
+  reset() {
+    this.previousLineIndex = -1
   }
 }
