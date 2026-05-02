@@ -10,6 +10,9 @@ export class LineManager {
   private currentElementMap: Map<number, LineElement> = new Map()
   private currentIndexMap: Map<number, number[]> = new Map()
 
+  private cachedActiveLineIndexes: number[] = []
+  private cachedActiveSet: ReadonlySet<number> = new Set()
+
   constructor(private readonly context: CoreContext) {}
 
   get elementMap(): ReadonlyMap<number, LineElement> {
@@ -34,7 +37,21 @@ export class LineManager {
     return false
   }
 
-  queryActiveElementSet(lineIndexes: number[]): Set<number> {
+  queryActiveElementSet(lineIndexes: number[]): ReadonlySet<number> {
+    const cachedKeys = this.cachedActiveLineIndexes
+    if (cachedKeys.length === lineIndexes.length) {
+      let same = true
+      for (let i = 0; i < lineIndexes.length; i++) {
+        if (lineIndexes[i] !== cachedKeys[i]) {
+          same = false
+          break
+        }
+      }
+      if (same) {
+        return this.cachedActiveSet
+      }
+    }
+
     const result = new Set<number>()
 
     for (const lineIndex of lineIndexes) {
@@ -47,6 +64,8 @@ export class LineManager {
       }
     }
 
+    this.cachedActiveLineIndexes = lineIndexes.slice()
+    this.cachedActiveSet = result
     return result
   }
 
@@ -147,6 +166,9 @@ export class LineManager {
 
     this.currentElementMap.clear()
     this.currentIndexMap.clear()
+
+    this.cachedActiveLineIndexes = []
+    this.cachedActiveSet = new Set()
   }
 
   destroy() {
