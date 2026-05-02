@@ -56,6 +56,7 @@ export class Root {
 
   destroy() {
     this.container.destroy()
+    this.style.destroy()
 
     this.dom.replaceChildren()
     this.dom.remove()

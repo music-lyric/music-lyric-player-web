@@ -146,5 +146,7 @@ export class DomLyricPlayer {
 
     this.scrollManager.destroy()
     this.lineManager.destroy()
+
+    this.root.destroy()
   }
 }

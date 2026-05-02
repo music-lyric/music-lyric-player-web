@@ -118,4 +118,9 @@ export class Style {
 
     this.apply(result)
   }
+
+  destroy() {
+    this.runtime.remove()
+    this.embed.remove()
+  }
 }
