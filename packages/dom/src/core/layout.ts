@@ -233,6 +233,10 @@ export class LayoutManager {
           : -1
         : 0
 
+    // Reuse a single style object across iterations of the per-element loop
+    // below to avoid allocating a fresh one per line on every layout pass.
+    const currentStyle: LineElementStyle = {}
+
     for (let i = 0; i < elementCount; i++) {
       const element = elements[i]
       if (!element) {
@@ -250,27 +254,29 @@ export class LayoutManager {
 
       const indexOffset = i - activeIndex
 
-      const style: LineElementStyle = {
-        top: topPositions[i] + currentOffset,
-      }
+      // reset style
+      currentStyle.top = topPositions[i] + currentOffset
+      currentStyle.opacity = undefined
+      currentStyle.scale = undefined
+      currentStyle.blur = undefined
 
       if (isInScroll) {
-        style.opacity = 1
-        style.transitionDelay = 0
-        style.transitionDuration = 200
+        currentStyle.opacity = 1
+        currentStyle.transitionDelay = 0
+        currentStyle.transitionDuration = 200
       } else {
         const transition = this.calcTransition(indexOffset, isPlayedLine, currentDirection)
 
-        style.transitionDuration = transition.duration
-        style.transitionDelay = transition.delay
+        currentStyle.transitionDuration = transition.duration
+        currentStyle.transitionDelay = transition.delay
 
         if (!isActiveLine) {
-          style.scale = this.calcScale(indexOffset)
-          style.blur = this.calcBlur(indexOffset)
+          currentStyle.scale = this.calcScale(indexOffset)
+          currentStyle.blur = this.calcBlur(indexOffset)
         }
       }
 
-      element.updateStyle(style)
+      element.updateStyle(currentStyle)
 
       if (!isActiveLine) {
         element.reset()
