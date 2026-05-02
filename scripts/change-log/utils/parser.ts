@@ -2,15 +2,16 @@ import type { CommitInfo } from './git'
 
 import { formatDate } from '../../utils'
 
-const ALLOW_TYPES = ['feat', 'fix', 'revert', 'docs', 'refactor']
+const ALLOW_TYPES = ['fix', 'feat', 'perf', 'revert', 'docs', 'refactor']
 
 const TYPE_TITLE_MAP: Record<string, string> = {
+  fix: 'Fix',
   feat: 'Feature',
-  fix: 'Bug Fix',
+  perf: 'Performance',
   docs: 'Document',
-  revert: 'Revert Chnage',
-  refactor: 'Code Refactor',
-  breaking: 'Breaking Change',
+  revert: 'Revert',
+  refactor: 'Refactor',
+  breaking: 'Breaking',
 }
 
 const BREAKING_CHANGE_REGEXP = /^breaking:\s*(.*)/i
@@ -26,7 +27,7 @@ const extractBreakingChangeInfo = (text: string): string[] => {
   }
 
   const result: string[] = []
-  for (const line of trimed.split('\n') || []) {
+  for (const line of trimed.split('\n')) {
     const trimed = line.trim()
     if (!trimed) {
       continue
@@ -98,7 +99,7 @@ const buildTypeContents = (data: Map<string, CommitInfo[]>, repo: RepoInfo): str
       const body = buildBody(commit, repo, isCommon)
       result.push(body)
       const breakingChange = extractBreakingChangeInfo(commit.body)
-      if (breakingChange) {
+      if (breakingChange.length) {
         breaking.push(...breakingChange)
       }
     }

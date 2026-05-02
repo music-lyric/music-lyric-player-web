@@ -21,19 +21,16 @@ export interface CommitInfo extends ParsedCommit {
 
 export const runGitCommand = (command: string): Promise<string> => {
   return new Promise((resolve, reject) => {
-    exec(command, (error, stdout, stderr) => {
+    exec(command, { maxBuffer: 64 * 1024 * 1024 }, (error, stdout, stderr) => {
       if (error) {
-        reject(`Error: ${error.message}`)
-      }
-      if (stderr) {
-        reject(`stderr: ${stderr}`)
+        return reject(new Error(`failed: ${command}\n${error.message}${stderr ? `\nstderr: ${stderr}` : ''}`))
       }
       resolve(stdout)
     })
   })
 }
 
-const COMMIT_MESSAGE_REGEXP = /^(feat|fix|chore|docs|revert|refactor|test|release)(\([a-zA-Z0-9-_]+\))?:\s(.*)$/
+const COMMIT_MESSAGE_REGEXP = /^(feat|fix|perf|chore|docs|revert|refactor|test|release)(\([a-zA-Z0-9-_]+\))?:\s(.*)$/
 
 export const parseCommitMessage = (message: string): ParsedCommit | null => {
   const match = message?.match(COMMIT_MESSAGE_REGEXP)
@@ -76,38 +73,33 @@ export const getRepoInfo = async (): Promise<{ owner: string; name: string } | n
   }
 }
 
-const COMMIT_BLOCK_REGEXP = /---block---\s*([\s\S]*?)\s*---block---/g
-
-const parseCommitBlocks = (text: string): CommitInfo[] => {
+const parseCommitRecords = (text: string): CommitInfo[] => {
   const commits: CommitInfo[] = []
 
-  let match
-  while ((match = COMMIT_BLOCK_REGEXP.exec(text)) !== null) {
-    const block = match[1].trim()
+  // `-z` makes git separate commits with NUL; `%n` separates fields within each
+  // commit. Body (`%b`) may itself contain newlines, captured via rest spread.
+  const records = text.split('\0').filter((r) => r.length > 0)
 
-    const lines = block.split('\n').map((line) => line.trim())
-
+  for (const record of records) {
+    const lines = record.split('\n')
     const [shortHash, fullHash, author, date, subject, ...bodyLines] = lines
-    const body = bodyLines?.join('\n').trim()
-
-    const result = parseCommitMessage(subject)
-    if (!result) {
+    if (!shortHash || !subject) {
       continue
     }
 
-    const commit: CommitInfo = {
-      hash: {
-        short: shortHash,
-        full: fullHash,
-      },
-      author,
-      date,
-      subject,
-      body,
-      ...result,
+    const parsed = parseCommitMessage(subject)
+    if (!parsed) {
+      continue
     }
 
-    commits.push(commit)
+    commits.push({
+      hash: { short: shortHash, full: fullHash ?? '' },
+      author: author ?? '',
+      date: date ?? '',
+      subject,
+      body: bodyLines.join('\n').trim(),
+      ...parsed,
+    })
   }
 
   return commits
@@ -116,15 +108,14 @@ const parseCommitBlocks = (text: string): CommitInfo[] => {
 export const getCommitInfo = async (start: string, end: string = 'HEAD'): Promise<CommitInfo[]> => {
   try {
     const range = !start && end ? `${end}` : start || end ? `${start}..${end}` : ''
-    const command = `git log ${range} --pretty=format:"---block---%n %h%n %H%n %an%n %ad%n %s%n %b%n ---block---%n" --date=short`
+    const command = `git log ${range} -z --pretty=format:"%h%n%H%n%an%n%ad%n%s%n%b" --date=short`
 
     const result = await runGitCommand(command)
-    const trimed = result?.trim()
-    if (!trimed) {
+    if (!result?.length) {
       return []
     }
 
-    return parseCommitBlocks(trimed).filter((item) => !!item)
+    return parseCommitRecords(result)
   } catch (err) {
     console.error('Error getting commit info:', err)
     return []
@@ -149,19 +140,18 @@ export const getLatestTag = async (): Promise<string | null> => {
 
 export const getAllTags = async (): Promise<string[]> => {
   try {
-    const command = 'git tag'
+    // Sort by version number (descending), so v0.10.0 correctly outranks v0.9.0.
+    const command = 'git tag --sort=-version:refname'
 
     const result = await runGitCommand(command)
     if (!result) {
       return []
     }
 
-    return result
-      .split('\n')
-      .filter((item) => !!item)
-      .reverse()
+    return result.split('\n').filter((item) => !!item)
   } catch (err) {
     console.error('Error getting tags:', err)
     return []
   }
 }
+

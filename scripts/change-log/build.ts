@@ -38,9 +38,13 @@ const handleBuild = async (start: string, end: string, repo: { owner: string; na
   for (const item of commits) {
     if (item.type === 'release') {
       key = item.message
+      // If a bucket already exists for this key (e.g. `mainVersion` happened
+      // to match a release commit's version), preserve previously collected
+      // commits instead of overwriting them.
+      const existing = wait[key]
       wait[key] = {
         head: item,
-        list: [],
+        list: existing?.list ?? [],
       }
       continue
     }
@@ -95,7 +99,15 @@ const main = async () => {
     result = await handleBuild(old || '', latest, repo, args.showCurrentHead)
     file = CURRENT_CHANGE_LOG_FILE
   } else {
-    result = await handleBuild('', '', repo)
+    // Tags mark the release boundary: commits past the latest tag are
+    // unreleased and intentionally excluded from the changelog. With no
+    // tag at all, there is nothing released to record.
+    const [latest] = await getAllTags()
+    if (!latest) {
+      console.log('No tags found; skipping changelog generation.')
+      return
+    }
+    result = await handleBuild('', latest, repo)
     file = CHANGE_LOG_FILE
   }
 
