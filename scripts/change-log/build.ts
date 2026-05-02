@@ -99,15 +99,7 @@ const main = async () => {
     result = await handleBuild(old || '', latest, repo, args.showCurrentHead)
     file = CURRENT_CHANGE_LOG_FILE
   } else {
-    // Tags mark the release boundary: commits past the latest tag are
-    // unreleased and intentionally excluded from the changelog. With no
-    // tag at all, there is nothing released to record.
-    const [latest] = await getAllTags()
-    if (!latest) {
-      console.log('No tags found; skipping changelog generation.')
-      return
-    }
-    result = await handleBuild('', latest, repo)
+    result = await handleBuild('', '', repo)
     file = CHANGE_LOG_FILE
   }
 
