@@ -3,8 +3,6 @@ import type { ComponentContext } from '@root/components/context'
 
 import { hasKeyContainingAny } from '@music-lyric-player/utils'
 
-import Styles from './style.module.scss'
-
 const WATCH_KEYS: ConfigKeys[] = ['line', 'container.padding', 'container.fade', 'scroll.animation.easing']
 
 export class Style {
@@ -13,16 +11,17 @@ export class Style {
 
   constructor(
     private readonly context: ComponentContext,
-    private readonly root: HTMLDivElement,
+    private readonly host: HTMLElement,
+    private readonly scope: string,
   ) {
     this.embed = document.createElement('style')
     this.embed.id = 'lyric-player-style-embed'
     this.embed.textContent = globalThis?.__LYRIC_PLAYER_STYLE__ || ''
-    this.root.appendChild(this.embed)
+    this.host.appendChild(this.embed)
 
     this.runtime = document.createElement('style')
     this.runtime.id = 'lyric-player-style-runtime'
-    this.root.appendChild(this.runtime)
+    this.host.appendChild(this.runtime)
   }
 
   private buildKey(key: string) {
@@ -42,7 +41,7 @@ export class Style {
       return
     }
 
-    const target = `.${Styles.root} {\n${result}\n}`
+    const target = `${this.scope} {\n${result}\n}`
 
     this.runtime.textContent = target
   }

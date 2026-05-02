@@ -137,7 +137,7 @@ export class LineManager {
     this.clear()
 
     for (const element of newElementMap.values()) {
-      component.root.appendChild(element.element)
+      component.container.appendChild(element.element)
     }
 
     this.currentElementMap = newElementMap

@@ -148,7 +148,7 @@ export class LayoutManager {
     const isInScroll = scroll.active
 
     const currentSpace = Math.max(0, config.current.layout.gap)
-    const currentContainerHeight = Math.max(0, component.root.height)
+    const currentContainerHeight = Math.max(0, component.container.height)
 
     const activePercent = Math.min(Math.max(config.current.scroll.anchor, 0), 100)
     const activePosition = currentContainerHeight * (activePercent / 100)

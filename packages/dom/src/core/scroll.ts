@@ -7,7 +7,7 @@ export class ScrollManager {
     private readonly context: CoreContext,
     private readonly handleScroll: (line: number, scrolling: boolean) => void,
   ) {
-    this.context.component.root.event.add('wheel', this.onWheel)
+    this.context.component.container.event.add('wheel', this.onWheel)
   }
 
   private onWheel = (e: WheelEvent) => {
@@ -77,7 +77,7 @@ export class ScrollManager {
 
   destroy() {
     this.clear()
-    this.context.component.root.event.remove('wheel', this.onWheel)
+    this.context.component.container.event.remove('wheel', this.onWheel)
   }
 
   get current() {

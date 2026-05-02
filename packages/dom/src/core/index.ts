@@ -6,7 +6,7 @@ import { BaseLyricPlayer } from '@music-lyric-player/base'
 import { ConfigManager } from '@music-lyric-player/utils'
 
 import { ConfigClient } from '@root/config'
-import { ComponentContext, Root } from '@root/components'
+import { ComponentContext, Root, Container, Style } from '@root/components'
 
 import { CoreContext } from './context'
 import { ScrollManager } from './scroll'
@@ -18,7 +18,10 @@ export class DomLyricPlayer {
 
   private context: CoreContext
   private player: BaseLyricPlayer
+
   private root: Root
+  private container: Container
+  private style: Style
 
   private scrollManager: ScrollManager
   private lineManager: LineManager
@@ -31,14 +34,20 @@ export class DomLyricPlayer {
     const config = new ConfigManager(DEFAULT_CONFIG as ConfigRequired, {})
 
     const componentContext = new ComponentContext(config)
-    const root = new Root(componentContext)
 
-    const context = new CoreContext(player, config, root, componentContext)
+    const root = new Root()
+    const container = new Container(componentContext, root.element)
+    const style = new Style(componentContext, root.element, root.scope)
+
+    const context = new CoreContext(player, config, root, container, style, componentContext)
 
     this.config = config
     this.context = context
-    this.root = root
     this.player = player
+
+    this.root = root
+    this.container = container
+    this.style = style
 
     this.lineManager = new LineManager(context)
     this.scrollManager = new ScrollManager(context, this.handleScroll)
@@ -49,7 +58,7 @@ export class DomLyricPlayer {
     this.player.event.add('lyricUpdate', this.onLyricUpdate)
     this.player.event.add('linesUpdate', this.onLinesUpdate)
 
-    this.root.event.add('change-size', this.onSizeUpdate)
+    this.container.event.add('change-size', this.onSizeUpdate)
 
     this.config.event.add('update', this.onConfigUpdate)
   }
@@ -80,7 +89,8 @@ export class DomLyricPlayer {
   }
 
   private onConfigUpdate = (keys: ConfigKeySet) => {
-    this.root.updateConfig(keys)
+    this.container.updateConfig()
+    this.style.updateConfig(keys)
     this.lineManager.updateConfig(keys)
 
     this.scheduleLayoutUpdate({
@@ -121,9 +131,9 @@ export class DomLyricPlayer {
     }
 
     if (scrolling) {
-      this.root.setAttribute('scrolling')
+      this.container.setAttribute('scrolling')
     } else {
-      this.root.removeAttribute('scrolling')
+      this.container.removeAttribute('scrolling')
     }
 
     this.layoutManager.update()
@@ -139,7 +149,7 @@ export class DomLyricPlayer {
     this.player.event.remove('lyricUpdate', this.onLyricUpdate)
     this.player.event.remove('linesUpdate', this.onLinesUpdate)
 
-    this.root.event.remove('change-size', this.onSizeUpdate)
+    this.container.event.remove('change-size', this.onSizeUpdate)
     this.config.event.remove('update', this.onConfigUpdate)
 
     this.context.destroy()
@@ -147,6 +157,8 @@ export class DomLyricPlayer {
     this.scrollManager.destroy()
     this.lineManager.destroy()
 
+    this.style.destroy()
+    this.container.destroy()
     this.root.destroy()
   }
 }

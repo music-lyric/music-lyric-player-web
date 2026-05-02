@@ -24,7 +24,7 @@ export class Container {
 
   constructor(
     private readonly context: ComponentContext,
-    private readonly root: HTMLDivElement,
+    host: HTMLElement,
   ) {
     this.size = { width: 0, height: 0 }
     this.isVisible = false
@@ -40,7 +40,7 @@ export class Container {
     this.dom.addEventListener('scroll', this.handleScroll, { passive: false })
     this.dom.addEventListener('wheel', this.handleWheel, { passive: false })
 
-    this.root.appendChild(this.dom)
+    host.appendChild(this.dom)
 
     this.updateConfig()
   }
@@ -130,5 +130,9 @@ export class Container {
 
   get visible() {
     return this.isVisible
+  }
+
+  get element() {
+    return this.dom
   }
 }

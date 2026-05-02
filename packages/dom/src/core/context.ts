@@ -1,6 +1,6 @@
 import type { BaseLyricPlayer } from '@music-lyric-player/base'
 import type { ConfigClient } from '@root/config'
-import type { ComponentContext, Root } from '@root/components'
+import type { ComponentContext, Root, Container, Style } from '@root/components'
 
 interface ScrollState {
   active: boolean
@@ -11,6 +11,8 @@ interface LayoutState {
 }
 interface ComponentState {
   root: Root
+  container: Container
+  style: Style
   context: ComponentContext
 }
 
@@ -28,10 +30,17 @@ export class CoreContext {
     frameId: null,
   }
 
-  constructor(player: BaseLyricPlayer, config: ConfigClient, root: Root, componentContext: ComponentContext) {
+  constructor(
+    player: BaseLyricPlayer,
+    config: ConfigClient,
+    root: Root,
+    container: Container,
+    style: Style,
+    componentContext: ComponentContext,
+  ) {
     this.player = player
     this.config = config
-    this.component = { root, context: componentContext }
+    this.component = { root, container, style, context: componentContext }
   }
 
   get destroyed() {
