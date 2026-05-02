@@ -153,23 +153,28 @@ export class LayoutManager {
     const activePercent = Math.min(Math.max(config.current.scroll.anchor, 0), 100)
     const activePosition = currentContainerHeight * (activePercent / 100)
 
-    const activeElementSet = this.lineManager.queryActiveElementSet(player.currentIndex)
-    const activeElementIndexes = [...activeElementSet]
+    // Snapshot the element map into an array once so the rest of `update`
+    // can use O(1) array indexing instead of `Map.get` per line.
+    const elements = Array.from(this.lineManager.elementMap.values())
 
-    if (!activeElementIndexes.length) {
-      const firstElementIndexes = this.lineManager.queryElementIndexes(0) ?? [0]
+    let activeElementSet: ReadonlySet<number>
+    let activeElementIndexes: number[]
 
-      activeElementIndexes.push(...firstElementIndexes)
-
-      for (const elementIndex of firstElementIndexes) {
-        activeElementSet.add(elementIndex)
-      }
+    const cachedActiveSet = this.lineManager.queryActiveElementSet(player.currentIndex)
+    if (cachedActiveSet.size > 0) {
+      activeElementSet = cachedActiveSet
+      activeElementIndexes = [...cachedActiveSet]
+    } else {
+      // No active elements (e.g. before the song starts). Fall back to line 0
+      const fallback = this.lineManager.queryElementIndexes(0) ?? [0]
+      activeElementSet = new Set(fallback)
+      activeElementIndexes = fallback.slice()
     }
 
     const topPositions: number[] = new Array(elementCount)
 
     for (let i = 0; i < elementCount; i++) {
-      const element = this.lineManager.queryElement(i)
+      const element = elements[i]
 
       if (!element) {
         topPositions[i] = 0
@@ -211,7 +216,7 @@ export class LayoutManager {
       ? (this.lineManager.queryElementIndexes(scroll.activeIndex)?.[0] ?? activeElementIndexes[0] ?? 0)
       : (activeElementIndexes[0] ?? 0)
 
-    const firstElement = this.lineManager.queryElement(firstActiveIndex)
+    const firstElement = elements[firstActiveIndex]
     const firstElementHeight = firstElement?.height ?? 0
 
     const currentActiveOffset = topPositions[firstActiveIndex] + firstElementHeight / 2
@@ -229,7 +234,7 @@ export class LayoutManager {
         : 0
 
     for (let i = 0; i < elementCount; i++) {
-      const element = this.lineManager.queryElement(i)
+      const element = elements[i]
       if (!element) {
         continue
       }
