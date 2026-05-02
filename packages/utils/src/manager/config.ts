@@ -5,7 +5,7 @@ import { Event } from '@root/event'
 import { mergeObject, cloneObjectDeep, compareObject } from '@root/object'
 
 export interface ConfigManagerEventMap<Full, Keys> {
-  update: (changeKeys: Keys[], config: Full) => void
+  update: (changeKeys: Set<Keys>, config: Full) => void
   reset: (config: Full) => void
 }
 
@@ -31,8 +31,8 @@ export class ConfigManager<Full, Init, Keys = NestedKeys<Full>> {
     const prev = this.now
     this.now = mergeObject(cloneObjectDeep(prev), target)
 
-    const changed = compareObject(prev, this.now) as Keys[]
-    if (changed.length) {
+    const changed = compareObject(prev, this.now) as Set<Keys>
+    if (changed.size) {
       this.event.emit('update', changed, this.now)
     }
   }
@@ -41,8 +41,8 @@ export class ConfigManager<Full, Init, Keys = NestedKeys<Full>> {
     const prev = cloneObjectDeep(this.now)
     this.now = cloneObjectDeep(this.def)
 
-    const changed = compareObject(prev, this.now) as Keys[]
-    if (changed.length) {
+    const changed = compareObject(prev, this.now) as Set<Keys>
+    if (changed.size) {
       this.event.emit('update', changed, this.now)
     }
 
