@@ -12,7 +12,7 @@ import * as Container from './container'
  * Every field is optional — values not provided fall back to `DEFAULT_CONFIG`.
  * The shape is split by concern; each domain lives in its own sub‑module.
  */
-export interface Config {
+export interface Root {
   /**
    * Outer wrapper: class name, padding and edge fade.
    */
@@ -43,17 +43,17 @@ export interface Config {
  * Fully‑resolved config in which every field is required,
  * produced by deep‑requiring the user‑facing {@link Config}.
  */
-export type ConfigRequired = DeepRequired<Config>
+export type ConfigRequired = DeepRequired<Root>
 
 /**
  * Runtime config manager bound to this module's {@link Config} shape.
  */
-export type ConfigClient = ConfigManager<ConfigRequired, Config>
+export type ConfigClient = ConfigManager<ConfigRequired, Root>
 
 /**
  * All config keys
  */
-export type ConfigKeys = NestedKeys<Config>
+export type ConfigKeys = NestedKeys<Root>
 
 /**
  * Set of config key paths that changed since the previous value,
