@@ -7,6 +7,8 @@ import { ConfigManager } from '@music-lyric-player/utils'
 
 import { ComponentContext, Root, Container, Style } from '@root/components'
 
+import { FrameScheduler } from '@root/utils'
+
 import { CoreContext } from './context'
 import { ScrollManager } from './scroll'
 import { LineManager } from './line'
@@ -25,6 +27,8 @@ export class DomLyricPlayer {
   private scrollManager: ScrollManager
   private lineManager: LineManager
   private layoutManager: LayoutManager
+
+  private frameScheduler: FrameScheduler
 
   private pendingUpdateSize = false
   private pendingIsSeek = false
@@ -52,6 +56,8 @@ export class DomLyricPlayer {
     this.scrollManager = new ScrollManager(context, this.handleScroll)
     this.layoutManager = new LayoutManager(context, this.lineManager)
 
+    this.frameScheduler = new FrameScheduler()
+
     this.player.event.add('play', this.onPlay)
     this.player.event.add('pause', this.onPause)
     this.player.event.add('lyricUpdate', this.onLyricUpdate)
@@ -66,7 +72,7 @@ export class DomLyricPlayer {
     this.pendingUpdateSize = this.pendingUpdateSize || Boolean(options?.updateSize)
     this.pendingIsSeek = this.pendingIsSeek || Boolean(options?.isSeek)
 
-    this.context.requestFrame(() => {
+    this.frameScheduler.request(() => {
       const updateSize = this.pendingUpdateSize
       const isSeek = this.pendingIsSeek
 
@@ -152,6 +158,8 @@ export class DomLyricPlayer {
     this.config.event.remove('update', this.onConfigUpdate)
 
     this.context.destroy()
+
+    this.frameScheduler.destroy()
 
     this.scrollManager.destroy()
     this.lineManager.destroy()
