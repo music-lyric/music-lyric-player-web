@@ -51,7 +51,7 @@ export class LayoutManager {
     }
 
     const min = Math.max(blurConfig.min, 0)
-    const max = Math.max(Math.min(blurConfig.max, 4.5), min)
+    const max = Math.max(blurConfig.max, min)
     const gaussian = this.gaussian(offset)
 
     return this.round(min + (max - min) * (1 - gaussian))
