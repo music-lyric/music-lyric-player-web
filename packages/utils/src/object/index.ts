@@ -7,3 +7,5 @@ export { merge as mergeObject } from 'lodash-es'
 export * from './freeze'
 
 export * from './compare'
+
+export * from './match'
