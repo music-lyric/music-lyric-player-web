@@ -1,6 +1,6 @@
 import type { LineNormal, WordNormal, Time } from '@music-lyric-kit/lyric'
 import type { ComponentContext } from '@root/components/context'
-import type { ConfigKeySet } from '@root/config'
+import type { Config } from '@root/config'
 
 import { WordType } from '@music-lyric-kit/lyric'
 
@@ -117,7 +117,7 @@ export class WordNode {
     this.size.height = this.dom.clientHeight
   }
 
-  updateConfig(keys?: ConfigKeySet) {
+  updateConfig(keys?: Config.RootKeySet) {
     if (!keys) {
       applyClassName(this.dom, [Style.word])
       this.buildFloatAnimation()
@@ -194,7 +194,7 @@ export class MainNode {
     this.updateSize()
   }
 
-  updateConfig(keys?: ConfigKeySet) {
+  updateConfig(keys?: Config.RootKeySet) {
     if (!keys) {
       applyClassName(this.dom, [Style.syllable])
       this.buildWords()

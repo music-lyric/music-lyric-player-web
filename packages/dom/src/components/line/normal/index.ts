@@ -1,6 +1,6 @@
 import type { LineNormal } from '@music-lyric-kit/lyric'
 import type { ComponentContext } from '@root/components/context'
-import type { ConfigKeySet } from '@root/config'
+import type { Config } from '@root/config'
 
 import { BaseLineElement, LineElementType } from '../wrapper'
 
@@ -64,7 +64,7 @@ export class NormalLineElement extends BaseLineElement {
     return this.info.content.extended.length > 0 && this.context.config.line.normal.extended.visible
   }
 
-  override updateConfig(keys?: ConfigKeySet) {
+  override updateConfig(keys?: Config.RootKeySet) {
     super.updateConfig(keys)
 
     if (!keys) {

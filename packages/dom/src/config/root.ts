@@ -43,17 +43,17 @@ export interface Root {
  * Fully‑resolved config in which every field is required,
  * produced by deep‑requiring the user‑facing {@link Config}.
  */
-export type ConfigRequired = DeepRequired<Root>
+export type RootRequired = DeepRequired<Root>
 
 /**
  * Runtime config manager bound to this module's {@link Config} shape.
  */
-export type ConfigClient = ConfigManager<ConfigRequired, Root>
+export type RootManager = ConfigManager<RootRequired, Root>
 
 /**
  * All config keys
  */
-export type ConfigKeys = NestedKeys<Root>
+export type RootKeys = NestedKeys<Root>
 
 /**
  * Set of config key paths that changed since the previous value,
@@ -61,6 +61,6 @@ export type ConfigKeys = NestedKeys<Root>
  *
  * Components consume this to decide which parts to refresh.
  */
-export type ConfigKeySet = Set<ConfigKeys>
+export type RootKeySet = Set<RootKeys>
 
 export { Line, Effect, Scroll, Layout, Container }

@@ -1,6 +1,6 @@
 import type { LineNormal } from '@music-lyric-kit/lyric'
 import type { ComponentContext } from '@root/components/context'
-import type { ConfigKeySet } from '@root/config'
+import type { Config } from '@root/config'
 
 import { ExtendedType } from '@music-lyric-kit/lyric'
 
@@ -67,7 +67,7 @@ export class ExtendedNode {
     }
   }
 
-  updateConfig(keys?: ConfigKeySet) {
+  updateConfig(keys?: Config.RootKeySet) {
     if (!keys) {
       this.buildClassName()
       this.buildContent()

@@ -1,11 +1,10 @@
 import type { Line, Info } from '@music-lyric-kit/lyric'
-import type { ConfigKeySet, ConfigRequired } from '@root/config'
+import type { Config } from '@root/config'
 
 import { DEFAULT_CONFIG } from '@root/config'
 import { BaseLyricPlayer } from '@music-lyric-player/base'
 import { ConfigManager } from '@music-lyric-player/utils'
 
-import { ConfigClient } from '@root/config'
 import { ComponentContext, Root, Container, Style } from '@root/components'
 
 import { CoreContext } from './context'
@@ -14,7 +13,7 @@ import { LineManager } from './line'
 import { LayoutManager } from './layout'
 
 export class DomLyricPlayer {
-  public config: ConfigClient
+  public config: Config.RootManager
 
   private context: CoreContext
   private player: BaseLyricPlayer
@@ -31,7 +30,7 @@ export class DomLyricPlayer {
   private pendingIsSeek = false
 
   constructor(player: BaseLyricPlayer) {
-    const config = new ConfigManager(DEFAULT_CONFIG as ConfigRequired, {})
+    const config = new ConfigManager(DEFAULT_CONFIG as Config.RootRequired, {})
 
     const componentContext = new ComponentContext(config)
 
@@ -88,7 +87,7 @@ export class DomLyricPlayer {
     })
   }
 
-  private onConfigUpdate = (keys: ConfigKeySet) => {
+  private onConfigUpdate = (keys: Config.RootKeySet) => {
     this.container.updateConfig()
     this.style.updateConfig(keys)
     this.lineManager.updateConfig(keys)

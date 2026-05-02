@@ -1,6 +1,6 @@
 import type { LineInterlude } from '@music-lyric-kit/lyric'
 import type { ComponentContext } from '@root/components/context'
-import type { ConfigKeySet } from '@root/config'
+import type { Config } from '@root/config'
 
 import { BaseLineElement, LineElementType } from '../wrapper'
 
@@ -90,7 +90,7 @@ export class InterludeLineElement extends BaseLineElement {
     }
   }
 
-  override updateConfig(keys?: ConfigKeySet) {
+  override updateConfig(keys?: Config.RootKeySet) {
     super.updateConfig(keys)
 
     if (!keys || keys.has('line.interlude.className')) {

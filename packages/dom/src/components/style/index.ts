@@ -1,9 +1,9 @@
-import type { Line, ConfigKeySet, ConfigKeys } from '@root/config'
+import type { Config } from '@root/config'
 import type { ComponentContext } from '@root/components/context'
 
 import { hasKeyContainingAny } from '@music-lyric-player/utils'
 
-const WATCH_KEYS: ConfigKeys[] = ['line', 'container.padding', 'container.fade', 'scroll.animation.easing']
+const WATCH_KEYS: Config.RootKeys[] = ['line', 'container.padding', 'container.fade', 'scroll.animation.easing']
 
 export class Style {
   private readonly runtime: HTMLStyleElement
@@ -55,7 +55,7 @@ export class Style {
     }
     return `${value}${unit}`
   }
-  private buildNormalLineConfig(type: string, config: Line.Normal.Base | undefined, fallbackType?: string) {
+  private buildNormalLineConfig(type: string, config: Config.Line.Normal.Base | undefined, fallbackType?: string) {
     if (!config) {
       return {}
     }
@@ -73,7 +73,7 @@ export class Style {
     return Object.fromEntries(Object.entries(block).filter(([_, v]) => v !== ''))
   }
 
-  private buildInterludeConfig(config: Line.Interlude.Root) {
+  private buildInterludeConfig(config: Config.Line.Interlude.Root) {
     if (!config) {
       return {}
     }
@@ -90,7 +90,7 @@ export class Style {
     return Object.fromEntries(Object.entries(block).filter(([_, v]) => v !== ''))
   }
 
-  updateConfig(keys?: ConfigKeySet) {
+  updateConfig(keys?: Config.RootKeySet) {
     if (keys && !hasKeyContainingAny(keys, WATCH_KEYS)) {
       return
     }

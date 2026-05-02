@@ -1,5 +1,5 @@
 import type { ComponentContext } from '@root/components/context'
-import type { ConfigKeySet } from '@root/config'
+import type { Config } from '@root/config'
 
 import { applyClassName } from '@root/utils'
 
@@ -52,7 +52,7 @@ export abstract class BaseLineElement {
     this.wrapper.height = this.wrapper.dom.clientHeight
   }
 
-  updateConfig(keys?: ConfigKeySet) {
+  updateConfig(keys?: Config.RootKeySet) {
     if (!keys || keys.has('line.className')) {
       applyClassName(this.wrapper.dom, [Style.wrapper, this.context.config.line.className])
     }

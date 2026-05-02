@@ -1,5 +1,5 @@
 import { FontConfig } from './common'
-import { Config, Scroll } from './root'
+import { Root, Scroll } from './root'
 
 const DEFAULT_COLOR = '#000000' as const
 
@@ -16,7 +16,7 @@ const DEFAULT_EXTENDED_FONT_SIZE = Math.round(DEFAULT_FONT_CONFIG.size! * 0.6)
  *
  * Used as the fallback when a user‑supplied {@link Config} omits fields.
  */
-export const DEFAULT_CONFIG: Config = {
+export const DEFAULT_CONFIG: Root = {
   container: {
     className: '',
     padding: '20px',

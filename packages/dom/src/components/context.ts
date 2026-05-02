@@ -1,9 +1,9 @@
-import { ConfigClient } from '@root/config'
+import { Config } from '@root/config'
 
 export class ComponentContext {
-  private client: ConfigClient
+  private client: Config.RootManager
 
-  constructor(client: ConfigClient) {
+  constructor(client: Config.RootManager) {
     this.client = client
   }
 
