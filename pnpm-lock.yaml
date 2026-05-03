@@ -89,8 +89,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/dom
       music-lyric-kit:
-        specifier: ^0.11.0
-        version: 0.11.0
+        specifier: ^0.11.2
+        version: 0.11.2
 
 packages:
 
@@ -292,8 +292,8 @@ packages:
   '@music-lyric-kit/plugin-format-lrc@0.5.1':
     resolution: {integrity: sha512-2iJCx3i4CZ4prJmYpxVsKWxybgoSuf/cfJvAPnaKEMjloS57R387lorN/OyefZYlNLWlcqfgjPqBdrydU4n+GQ==}
 
-  '@music-lyric-kit/plugin-format-ttml@0.1.4':
-    resolution: {integrity: sha512-KJTG7VJqKqkSCy2wJ90Iv9ufogHv95VZaR0+02LYEgSyhdt9KC4ms+8PtqTLUKab44y3RaUZqRnlZrM71wd0Kw==}
+  '@music-lyric-kit/plugin-format-ttml@0.1.6':
+    resolution: {integrity: sha512-BeuNHhL2+nAq2kqf4yyrsfXUMxsEltnqXeeobXAr0cGeyEa6qEfPO2IxLJq/YUjAqDwjJDJ8XhWywOkKePHdVQ==}
 
   '@music-lyric-kit/plugin-transform-agent@0.3.3':
     resolution: {integrity: sha512-1+PAOWb5VVNkUsz9fhmyXkBsbkvUsXF2v/NnNwF7HdEs6vK54vCW1hH6sM/D1+iI9IirWO1p+acbqlynNkxhdg==}
@@ -844,8 +844,8 @@ packages:
   muggle-string@0.4.1:
     resolution: {integrity: sha512-VNTrAak/KhO2i8dqqnqnAHOa3cYBwXEZe9h+D5h/1ZqFSTEFHdM65lR7RoIqq3tBBYavsOXV84NoHXZ0AkPyqQ==}
 
-  music-lyric-kit@0.11.0:
-    resolution: {integrity: sha512-uzdBr5TAwqXfXFyLet98DniRKQfmFCaA2yZu/3zPM/+tvtvQOst+uyYTQs4F+rv9eXDp5CWv2F0GgbJchOl2Fg==}
+  music-lyric-kit@0.11.2:
+    resolution: {integrity: sha512-Ddh+qxvGm29QNLfGHIyF0IR+Gc0AqgD45rPFHeQ5aJRXJkJAhJEcvqBILhh5vAIPLXEEo+A8s1B6mWAmUP3lDQ==}
 
   nanoid@3.3.11:
     resolution: {integrity: sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==}
@@ -1196,7 +1196,7 @@ snapshots:
       '@music-lyric-kit/lyric': 0.4.0
       '@music-lyric-kit/utils': 0.5.0
 
-  '@music-lyric-kit/plugin-format-ttml@0.1.4':
+  '@music-lyric-kit/plugin-format-ttml@0.1.6':
     dependencies:
       '@music-lyric-kit/core': 0.7.0
       '@music-lyric-kit/lyric': 0.4.0
@@ -1695,12 +1695,12 @@ snapshots:
 
   muggle-string@0.4.1: {}
 
-  music-lyric-kit@0.11.0:
+  music-lyric-kit@0.11.2:
     dependencies:
       '@music-lyric-kit/core': 0.7.0
       '@music-lyric-kit/lyric': 0.4.0
       '@music-lyric-kit/plugin-format-lrc': 0.5.1
-      '@music-lyric-kit/plugin-format-ttml': 0.1.4
+      '@music-lyric-kit/plugin-format-ttml': 0.1.6
       '@music-lyric-kit/plugin-transform-agent': 0.3.3
       '@music-lyric-kit/plugin-transform-background': 0.3.0
       '@music-lyric-kit/plugin-transform-interlude': 0.3.5

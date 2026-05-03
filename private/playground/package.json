@@ -21,6 +21,6 @@
   "dependencies": {
     "@music-lyric-player/base": "workspace:*",
     "@music-lyric-player/dom": "workspace:*",
-    "music-lyric-kit": "^0.11.0"
+    "music-lyric-kit": "^0.11.2"
   }
 }
