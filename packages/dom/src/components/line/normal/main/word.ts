@@ -98,10 +98,8 @@ class MaskAnimation {
     style.maskImage = image
     style.maskSize = size
 
-    this.animation?.cancel()
-    if (!animation) {
-      this.animation = null
-    } else {
+    this.dispose()
+    if (animation) {
       this.animation = animation
       this.animation.pause()
     }
@@ -144,6 +142,7 @@ class MaskAnimation {
 
   dispose() {
     this.animation?.cancel()
+    this.animation = null
     this.delay = 0
   }
 }

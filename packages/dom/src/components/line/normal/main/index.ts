@@ -233,10 +233,12 @@ export class MainElement {
   }
 
   updateSize() {
-    for (const word of this.words) {
-      word.updateSize()
-    }
-    this.updateMaskInfo()
+    requestAnimationFrame(() => {
+      for (const word of this.words) {
+        word.updateSize()
+      }
+      this.updateMaskInfo()
+    })
   }
 
   play(currentTime: number, isActive: boolean) {
