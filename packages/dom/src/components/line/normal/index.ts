@@ -3,13 +3,12 @@ import type { ComponentContext } from '@root/components/context'
 import type { Config } from '@root/config'
 
 import { BaseLineElement, LineElementType } from '../wrapper'
-
-import { MainNode } from './main'
-import { ExtendedNode } from './extended'
+import { MainElement } from './main'
+import { ExtendedElement } from './extended'
 
 import { applyClassName } from '@root/utils'
 
-import Style from './style.module.scss'
+import styles from './index.module.scss'
 
 export class NormalLineElement extends BaseLineElement {
   override get type() {
@@ -21,8 +20,8 @@ export class NormalLineElement extends BaseLineElement {
 
   private container: HTMLDivElement
 
-  private main: MainNode | null = null
-  private extended: ExtendedNode | null = null
+  private main: MainElement | null = null
+  private extended: ExtendedElement | null = null
 
   constructor(context: ComponentContext, info: LineNormal, isBackground: boolean) {
     super(context)
@@ -36,14 +35,14 @@ export class NormalLineElement extends BaseLineElement {
     this.updateConfig()
   }
 
-  private buildClassName() {
-    const className = [Style.normal, this.context.config.line.normal.base.className, this.isBackgroundLine ? Style.background : '']
+  private applyClassName() {
+    const className = [styles.normal, this.context.config.line.normal.base.className, this.isBackgroundLine ? styles.background : '']
     applyClassName(this.container, className)
   }
 
   private buildMain() {
     this.removeMain()
-    this.main = new MainNode(this.context, this.info)
+    this.main = new MainElement(this.context, this.info)
     this.container.appendChild(this.main.element)
   }
   private removeMain() {
@@ -53,14 +52,14 @@ export class NormalLineElement extends BaseLineElement {
 
   private buildExtended() {
     this.removeExtended()
-    this.extended = new ExtendedNode(this.context, this.info)
+    this.extended = new ExtendedElement(this.context, this.info)
     this.container.appendChild(this.extended.element)
   }
   private removeExtended() {
     this.extended?.dispose()
     this.extended = null
   }
-  private get showExtended() {
+  private get needShowExtended() {
     return this.info.content.extended.length > 0 && this.context.config.line.normal.extended.visible
   }
 
@@ -69,9 +68,9 @@ export class NormalLineElement extends BaseLineElement {
 
     if (!keys) {
       this.container.replaceChildren()
-      this.buildClassName()
+      this.applyClassName()
       this.buildMain()
-      if (this.showExtended) {
+      if (this.needShowExtended) {
         this.buildExtended()
       } else {
         this.removeExtended()
@@ -80,13 +79,13 @@ export class NormalLineElement extends BaseLineElement {
     }
 
     if (keys.has('line.normal.base.className')) {
-      this.buildClassName()
+      this.applyClassName()
     }
 
     if (keys.has('line.normal.extended.visible')) {
-      if (this.showExtended && !this.extended) {
+      if (this.needShowExtended && !this.extended) {
         this.buildExtended()
-      } else if (!this.showExtended && this.extended) {
+      } else if (!this.needShowExtended && this.extended) {
         this.removeExtended()
       }
     }

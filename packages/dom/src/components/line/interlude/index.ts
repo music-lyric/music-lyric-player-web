@@ -6,7 +6,7 @@ import { BaseLineElement, LineElementType } from '../wrapper'
 
 import { applyClassName } from '@root/utils'
 
-import Style from './style.module.scss'
+import styles from './index.module.scss'
 
 const DOT_COUNT = 3
 
@@ -34,13 +34,13 @@ export class InterludeLineElement extends BaseLineElement {
   }
 
   private buildClassName() {
-    applyClassName(this.container, [Style.interlude, this.context.config.line.interlude.className])
+    applyClassName(this.container, [styles.interlude, this.context.config.line.interlude.className])
   }
 
   private buildDots() {
     for (let i = 0; i < DOT_COUNT; i++) {
       const dot = document.createElement('div')
-      applyClassName(dot, [Style.dot])
+      applyClassName(dot, [styles.dot])
       this.dots.push(dot)
       this.container.appendChild(dot)
     }

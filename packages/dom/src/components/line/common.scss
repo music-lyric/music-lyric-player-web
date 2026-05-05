@@ -11,3 +11,24 @@ $positions: left, center, right;
     @return build-player-var('line-#{$module}-#{$sub}-#{$suffix}');
   }
 }
+
+@mixin apply-line-font($element) {
+  font-size: build-line-var('normal', $element, 'font-size');
+  font-weight: build-line-var('normal', $element, 'font-weight');
+  font-family: build-line-var('normal', $element, 'font-family');
+}
+
+@mixin apply-line-style($element) {
+  color: build-line-var('normal', $element, 'color');
+  opacity: build-line-var('normal', $element, 'opacity');
+
+  [active] & {
+    color: build-line-var('normal', '#{$element}-active', 'color');
+    opacity: build-line-var('normal', '#{$element}-active', 'opacity');
+  }
+
+  [played] & {
+    color: build-line-var('normal', '#{$element}-played', 'color');
+    opacity: build-line-var('normal', '#{$element}-played', 'opacity');
+  }
+}

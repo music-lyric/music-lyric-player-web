@@ -1,0 +1,58 @@
+@use '../common.scss' as *;
+
+.normal {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  pointer-events: auto;
+  transition: opacity 0.6s ease;
+
+  @include apply-line-font('base');
+  @include apply-line-style('base');
+
+  &::before {
+    content: '';
+    display: block;
+    position: absolute;
+    inset: -14px;
+    transform: scale(1);
+    border-radius: 12px;
+    background-color: currentColor;
+    opacity: 0;
+    z-index: 0;
+    pointer-events: none;
+    transition:
+      opacity 0.2s ease,
+      inset 0.15s ease,
+      transform 0.2s ease;
+  }
+
+  &:hover::before {
+    opacity: 0.08;
+  }
+
+  &:active::before {
+    inset: -10px -10px -8px -8px;
+    opacity: 0.16;
+  }
+}
+
+.background {
+  opacity: 0;
+  transform: scale(0.6);
+  transform-origin: var(--lyric-player-line-position) center;
+
+  transition-property: opacity, transform;
+  transition-duration: 0.2s, 0.4s;
+  transition-delay: 0.1s, 0s;
+  transition-timing-function: ease, cubic-bezier(0.68, -0.55, 0.27, 1.55);
+
+  :is([played]) & {
+    opacity: 0;
+  }
+
+  :is([active], [scrolling]) & {
+    opacity: 1;
+    transform: scale(0.7);
+  }
+}

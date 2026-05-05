@@ -3,7 +3,7 @@ import type { Config } from '@root/config'
 
 import { applyClassName } from '@root/utils'
 
-import Style from './style.module.scss'
+import styles from './index.module.scss'
 
 export enum LineElementType {
   Normal,
@@ -54,7 +54,7 @@ export abstract class BaseLineElement {
 
   updateConfig(keys?: Config.RootKeySet) {
     if (!keys || keys.has('line.className')) {
-      applyClassName(this.wrapper.dom, [Style.wrapper, this.context.config.line.className])
+      applyClassName(this.wrapper.dom, [styles.wrapper, this.context.config.line.className])
     }
   }
 

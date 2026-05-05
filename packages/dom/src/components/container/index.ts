@@ -3,7 +3,7 @@ import { ComponentContext } from '@root/components/context'
 
 import { applyClassName } from '@root/utils'
 
-import Styles from './style.module.scss'
+import styles from './index.module.scss'
 
 export interface ContainerEventMap {
   'change-visible': (visible: boolean) => void
@@ -83,7 +83,7 @@ export class Container {
   }
 
   updateConfig() {
-    applyClassName(this.dom, [Styles.container, this.context.config.container.className])
+    applyClassName(this.dom, [styles.container, this.context.config.container.className])
 
     if (this.context.config.container.fade.enabled) {
       this.dom.setAttribute('enable-fade', '')

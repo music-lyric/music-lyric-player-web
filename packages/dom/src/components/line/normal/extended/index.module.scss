@@ -1,0 +1,23 @@
+@use '../../common.scss' as *;
+
+.extended {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 8px;
+
+  > :first-child {
+    margin-top: 10px;
+  }
+
+  .translate {
+    display: inline-block;
+    @include apply-line-font('extended-translate');
+    @include apply-line-style('extended-translate');
+  }
+
+  .roman {
+    display: inline-block;
+    @include apply-line-font('extended-roman');
+    @include apply-line-style('extended-roman');
+  }
+}

@@ -1,13 +1,13 @@
 import { applyClassName } from '@root/utils'
 
-import Styles from './style.module.scss'
+import styles from './index.module.scss'
 
 export class Root {
   private readonly dom: HTMLDivElement
 
   constructor() {
     this.dom = document.createElement('div')
-    applyClassName(this.dom, [Styles.root])
+    applyClassName(this.dom, [styles.root])
   }
 
   destroy() {
@@ -27,6 +27,6 @@ export class Root {
    * runtime CSS variables.
    */
   get scope() {
-    return `.${Styles.root}`
+    return `.${styles.root}`
   }
 }

@@ -6,9 +6,9 @@ import { ExtendedType } from '@music-lyric-kit/lyric'
 
 import { applyClassName } from '@root/utils'
 
-import Style from './style.module.scss'
+import styles from './index.module.scss'
 
-export class ExtendedNode {
+export class ExtendedElement {
   private context: ComponentContext
 
   private info: LineNormal
@@ -23,7 +23,7 @@ export class ExtendedNode {
   }
 
   private buildClassName() {
-    applyClassName(this.content, [Style.extended])
+    applyClassName(this.content, [styles.extended])
   }
 
   private buildContent() {
@@ -43,7 +43,7 @@ export class ExtendedNode {
           const element = document.createElement('div')
           element.innerText = item.content
 
-          const className = [Style.translate, config.translate.className]
+          const className = [styles.translate, config.translate.className]
           applyClassName(element, className)
 
           this.content.appendChild(element)
@@ -57,7 +57,7 @@ export class ExtendedNode {
           const element = document.createElement('div')
           element.innerText = item.content
 
-          const className = [Style.roman, config.roman.className]
+          const className = [styles.roman, config.roman.className]
           applyClassName(element, className)
 
           this.content.appendChild(element)

@@ -1,0 +1,22 @@
+@use '../../common.scss' as *;
+
+.syllable {
+  @include apply-line-font('syllable');
+
+  .word {
+    display: inline-block;
+    transition: opacity 0.8s ease;
+
+    mask-mode: alpha;
+    mask-repeat: no-repeat;
+
+    @include apply-line-style('syllable');
+  }
+
+  .space {
+    display: inline-block;
+    width: 0.3em;
+    white-space: pre;
+    user-select: none;
+  }
+}
