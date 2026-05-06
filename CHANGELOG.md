@@ -1,3 +1,27 @@
+## v0.7.0 (2026-05-07)
+
+### Feature
+
+- `dom`
+  - add hide config in interlude line normal style ([70c9f58](https://github.com/music-lyric/music-lyric-player-web/commit/70c9f58))
+  - add config interface export ([fda7596](https://github.com/music-lyric/music-lyric-player-web/commit/fda7596))
+
+### Fix
+
+- `dom`
+  - mask animation was not applied to syllable words ([f53365e](https://github.com/music-lyric/music-lyric-player-web/commit/f53365e))
+
+### Refactor
+
+- `dom`
+  - move style component to style manager ([54e6239](https://github.com/music-lyric/music-lyric-player-web/commit/54e6239))
+  - rename wrapper line to base line ([1253994](https://github.com/music-lyric/music-lyric-player-web/commit/1253994))
+  - word space in syllable line ([255f925](https://github.com/music-lyric/music-lyric-player-web/commit/255f925))
+  - optimize components code ([3e6f968](https://github.com/music-lyric/music-lyric-player-web/commit/3e6f968))
+  - extract frame scheduler to utils ([da7ce86](https://github.com/music-lyric/music-lyric-player-web/commit/da7ce86))
+  - root config export name ([8948c70](https://github.com/music-lyric/music-lyric-player-web/commit/8948c70))
+  - extract container and style from root component ([671a626](https://github.com/music-lyric/music-lyric-player-web/commit/671a626))
+
 ## v0.6.0 (2026-05-02)
 
 ### Document
