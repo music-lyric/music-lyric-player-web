@@ -5,7 +5,7 @@ import { DEFAULT_CONFIG } from '@root/config'
 import { BaseLyricPlayer } from '@music-lyric-player/base'
 import { ConfigManager } from '@music-lyric-player/utils'
 
-import { ComponentContext, Root, Container, Style } from '@root/components'
+import { ComponentContext, Root, Container } from '@root/components'
 
 import { FrameScheduler } from '@root/utils'
 
@@ -13,6 +13,7 @@ import { CoreContext } from './context'
 import { ScrollManager } from './scroll'
 import { LineManager } from './line'
 import { LayoutManager } from './layout'
+import { StyleManager } from './style'
 
 export class DomLyricPlayer {
   public config: Config.RootManager
@@ -22,11 +23,11 @@ export class DomLyricPlayer {
 
   private root: Root
   private container: Container
-  private style: Style
 
   private scrollManager: ScrollManager
   private lineManager: LineManager
   private layoutManager: LayoutManager
+  private styleManager: StyleManager
 
   private frameScheduler: FrameScheduler
 
@@ -40,9 +41,8 @@ export class DomLyricPlayer {
 
     const root = new Root()
     const container = new Container(componentContext, root.element)
-    const style = new Style(componentContext, root.element, root.scope)
 
-    const context = new CoreContext(player, config, root, container, style, componentContext)
+    const context = new CoreContext(player, config, root, container, componentContext)
 
     this.config = config
     this.context = context
@@ -50,11 +50,11 @@ export class DomLyricPlayer {
 
     this.root = root
     this.container = container
-    this.style = style
 
     this.lineManager = new LineManager(context)
     this.scrollManager = new ScrollManager(context, this.handleScroll)
     this.layoutManager = new LayoutManager(context, this.lineManager)
+    this.styleManager = new StyleManager(context)
 
     this.frameScheduler = new FrameScheduler()
 
@@ -95,7 +95,7 @@ export class DomLyricPlayer {
 
   private onConfigUpdate = (keys: Config.RootKeySet) => {
     this.container.updateConfig()
-    this.style.updateConfig(keys)
+    this.styleManager.updateConfig(keys)
     this.lineManager.updateConfig(keys)
 
     this.scheduleLayoutUpdate({
@@ -164,7 +164,7 @@ export class DomLyricPlayer {
     this.scrollManager.destroy()
     this.lineManager.destroy()
 
-    this.style.destroy()
+    this.styleManager.destroy()
     this.container.destroy()
     this.root.destroy()
   }

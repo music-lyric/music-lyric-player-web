@@ -23,7 +23,7 @@ export class Root {
   }
 
   /**
-   * CSS selector that targets this root element. Used by Style to scope
+   * CSS selector that targets this root element. Used by StyleManager to scope
    * runtime CSS variables.
    */
   get scope() {

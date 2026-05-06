@@ -1,27 +1,27 @@
 import type { Config } from '@root/config'
-import type { ComponentContext } from '@root/components/context'
+import type { CoreContext } from './context'
 
 import { hasKeyContainingAny } from '@music-lyric-player/utils'
 
 const WATCH_KEYS: Config.RootKeys[] = ['line', 'container.padding', 'container.fade', 'scroll.animation.easing']
 
-export class Style {
+export class StyleManager {
   private readonly runtime: HTMLStyleElement
   private readonly embed: HTMLStyleElement
+  private readonly scope: string
 
-  constructor(
-    private readonly context: ComponentContext,
-    private readonly host: HTMLElement,
-    private readonly scope: string,
-  ) {
+  constructor(private readonly context: CoreContext) {
+    const host = context.component.root.element
+    this.scope = context.component.root.scope
+
     this.embed = document.createElement('style')
     this.embed.id = 'lyric-player-style-embed'
     this.embed.textContent = globalThis?.__LYRIC_PLAYER_STYLE__ || ''
-    this.host.appendChild(this.embed)
+    host.appendChild(this.embed)
 
     this.runtime = document.createElement('style')
     this.runtime.id = 'lyric-player-style-runtime'
-    this.host.appendChild(this.runtime)
+    host.appendChild(this.runtime)
   }
 
   private buildKey(key: string) {
@@ -95,8 +95,9 @@ export class Style {
       return
     }
 
-    const scroll = this.context.config.scroll
-    const line = this.context.config.line
+    const config = this.context.config.current
+    const scroll = config.scroll
+    const line = config.line
 
     const result = {
       // line
@@ -108,9 +109,9 @@ export class Style {
       // interlude
       ...this.buildInterludeConfig(line.interlude),
       // container
-      'container-padding': `${this.context.config.container.padding}`,
-      'container-fade-top': `${this.context.config.container.fade.top}`,
-      'container-fade-bottom': `${this.context.config.container.fade.bottom}`,
+      'container-padding': `${config.container.padding}`,
+      'container-fade-top': `${config.container.fade.top}`,
+      'container-fade-bottom': `${config.container.fade.bottom}`,
       // scroll
       'scroll-easing': scroll.animation?.easing,
     }
