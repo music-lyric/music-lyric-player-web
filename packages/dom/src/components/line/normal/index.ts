@@ -2,7 +2,7 @@ import type { LineNormal } from '@music-lyric-kit/lyric'
 import type { ComponentContext } from '@root/components/context'
 import type { Config } from '@root/config'
 
-import { BaseLineElement, LineElementType } from '../wrapper'
+import { BaseLineElement, LineElementType } from '../base'
 import { MainElement } from './main'
 import { ExtendedElement } from './extended'
 
