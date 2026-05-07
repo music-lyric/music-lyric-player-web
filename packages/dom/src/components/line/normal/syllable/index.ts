@@ -9,7 +9,7 @@ import { applyClassName } from '@root/utils'
 
 import styles from './index.module.scss'
 
-export class MainElement {
+export class SyllableElement {
   private readonly dom: HTMLDivElement
 
   private readonly wordFadeWidth = 0.5

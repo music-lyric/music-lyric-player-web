@@ -3,7 +3,7 @@ import type { ComponentContext } from '@root/components/context'
 import type { Config } from '@root/config'
 
 import { BaseLineElement, LineElementType } from '../base'
-import { MainElement } from './main'
+import { SyllableElement } from './syllable'
 import { ExtendedElement } from './extended'
 
 import { applyClassName } from '@root/utils'
@@ -20,7 +20,7 @@ export class NormalLineElement extends BaseLineElement {
 
   private container: HTMLDivElement
 
-  private main: MainElement | null = null
+  private syllable: SyllableElement | null = null
   private extended: ExtendedElement | null = null
 
   constructor(context: ComponentContext, info: LineNormal, isBackground: boolean) {
@@ -40,14 +40,14 @@ export class NormalLineElement extends BaseLineElement {
     applyClassName(this.container, className)
   }
 
-  private buildMain() {
-    this.removeMain()
-    this.main = new MainElement(this.context, this.info)
-    this.container.appendChild(this.main.element)
+  private buildSyllable() {
+    this.removeSyllable()
+    this.syllable = new SyllableElement(this.context, this.info)
+    this.container.appendChild(this.syllable.element)
   }
-  private removeMain() {
-    this.main?.dispose()
-    this.main = null
+  private removeSyllable() {
+    this.syllable?.dispose()
+    this.syllable = null
   }
 
   private buildExtended() {
@@ -69,7 +69,7 @@ export class NormalLineElement extends BaseLineElement {
     if (!keys) {
       this.container.replaceChildren()
       this.applyClassName()
-      this.buildMain()
+      this.buildSyllable()
       if (this.needShowExtended) {
         this.buildExtended()
       } else {
@@ -90,24 +90,24 @@ export class NormalLineElement extends BaseLineElement {
       }
     }
 
-    this.main?.updateConfig(keys)
+    this.syllable?.updateConfig(keys)
     this.extended?.updateConfig(keys)
   }
 
   override play(time: number, isActive: boolean) {
-    this.main?.play(time, isActive)
+    this.syllable?.play(time, isActive)
   }
 
   override pause(time: number, isActive: boolean) {
-    this.main?.pause(time, isActive)
+    this.syllable?.pause(time, isActive)
   }
 
   override reset() {
-    this.main?.reset()
+    this.syllable?.reset()
   }
 
   override destroy() {
-    this.removeMain()
+    this.removeSyllable()
     this.removeExtended()
     super.destroy()
   }
