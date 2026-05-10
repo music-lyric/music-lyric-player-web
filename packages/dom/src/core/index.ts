@@ -31,6 +31,7 @@ export class DomLyricPlayer {
 
   private frameScheduler: FrameScheduler
 
+  private pendingUpdateLayout = false
   private pendingUpdateSize = false
   private pendingIsSeek = false
 
@@ -68,23 +69,33 @@ export class DomLyricPlayer {
     this.config.event.add('update', this.onConfigUpdate)
   }
 
+  private flushLayoutUpdate = () => {
+    this.pendingUpdateLayout = false
+
+    const updateSize = this.pendingUpdateSize
+    const isSeek = this.pendingIsSeek
+    this.pendingUpdateSize = false
+    this.pendingIsSeek = false
+
+    if (updateSize) {
+      this.lineManager.updateSize()
+    }
+    this.layoutManager.update(isSeek)
+  }
   private scheduleLayoutUpdate(options?: { updateSize?: boolean; isSeek?: boolean }) {
-    this.pendingUpdateSize = this.pendingUpdateSize || Boolean(options?.updateSize)
-    this.pendingIsSeek = this.pendingIsSeek || Boolean(options?.isSeek)
+    if (options?.updateSize) {
+      this.pendingUpdateSize = true
+    }
+    if (options?.isSeek) {
+      this.pendingIsSeek = true
+    }
 
-    this.frameScheduler.request(() => {
-      const updateSize = this.pendingUpdateSize
-      const isSeek = this.pendingIsSeek
+    if (this.pendingUpdateLayout) {
+      return
+    }
+    this.pendingUpdateLayout = true
 
-      this.pendingUpdateSize = false
-      this.pendingIsSeek = false
-
-      if (updateSize) {
-        this.lineManager.updateSize()
-      }
-
-      this.layoutManager.update(isSeek)
-    })
+    this.frameScheduler.request(this.flushLayoutUpdate)
   }
 
   private onSizeUpdate = () => {
