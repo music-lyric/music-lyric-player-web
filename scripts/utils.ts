@@ -1,4 +1,6 @@
-import { spawn, type SpawnOptions } from 'node:child_process'
+import type { SpawnOptions } from 'node:child_process'
+
+import { spawn } from 'node:child_process'
 
 export const exec = (command: string, args: string[], options?: SpawnOptions) => {
   return new Promise<{ ok: boolean; code: number | null; stderr: string; stdout: string }>((resolve, reject) => {

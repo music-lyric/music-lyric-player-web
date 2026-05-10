@@ -28,7 +28,7 @@ const handleFindTarget = (dir: string): Target | null => {
     return null
   }
 
-  const name: string = pkg.name
+  const name: string = pkg.name || ''
   const version: string = pkg.version
   const id = name === 'music-lyric-player' ? 'main' : name.replace('@music-lyric-player/', '')
 
@@ -43,11 +43,18 @@ const handleFindTargets = (root: string): Target[] => {
 
 const mainRoot = join(root, 'main')
 const mainPackge = handleFindTarget(mainRoot)
-
 if (!mainPackge) {
   console.log('main package not found')
   process.exit(1)
 }
+
+const rootPackage = handleFindTarget(root)
+if (!rootPackage) {
+  console.log('root package not found')
+  process.exit(1)
+}
+
+export const rootVersion = rootPackage.version
 
 export const mainVersion = mainPackge.version
 
