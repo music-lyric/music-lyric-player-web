@@ -87,6 +87,11 @@ export const DEFAULT_CONFIG: Root = {
           },
           mask: {
             enabled: true,
+            feather: {
+              normal: 0.5,
+              first: 1.5,
+              last: 0.5,
+            },
           },
         },
       },

@@ -9,9 +9,6 @@ export interface MaskGenerateInput {
 }
 
 export class MaskAnimationHost {
-  // Fade region width as a multiple of font height.
-  private readonly fadeWidth = 0.5
-
   // Word info buffers
   private wordStartTimes!: Float64Array
   private wordDurations!: Float64Array
@@ -76,7 +73,14 @@ export class MaskAnimationHost {
       return
     }
 
-    const fadeWidth = this.fadeWidth
+    // Feather is read on every call so config changes (auto-rebuild via SyllableElement.updateConfig) take effect immediately.
+    // Values are clamped here to guard against malformed user input. Negative values would invert the cursor direction;
+    // excessive values produce visually broken envelopes.
+    const featherConfig = this.context.config.line.normal.syllable.animation.mask.feather
+    const featherNormal = Math.max(0, Math.min(2, featherConfig.normal))
+    const featherFirst = Math.max(0, Math.min(5, featherConfig.first))
+    const featherLast = Math.max(0, Math.min(5, featherConfig.last))
+
     const lineStart = this.lineInfo.time.start
     const invLineDuration = 1 / lineDuration
     const lastIndex = wordCount - 1
@@ -142,9 +146,9 @@ export class MaskAnimationHost {
 
       // The fade region scales with the word's font height.
       // First and last words use an asymmetric envelope so the wipe enters and leaves the line smoothly without a visible cut at either edge.
-      const widthFade = wordHeights[index] * fadeWidth
-      const widthFadeFirst = widthFade * 1.5
-      const widthFadeLast = widthFade * 0.5
+      const widthFade = wordHeights[index] * featherNormal
+      const widthFadeFirst = widthFade * featherFirst
+      const widthFadeLast = widthFade * featherLast
       const widthFront = wordFrontWidths[index] + widthFade
 
       // Mask geometry, expressed as ratios of the word box.
