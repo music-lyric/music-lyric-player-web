@@ -12,21 +12,55 @@ export class MaskAnimationHost {
   // Fade region width as a multiple of font height.
   private readonly fadeWidth = 0.5
 
-  constructor(private readonly context: ComponentContext) {}
+  // Word info buffers
+  private wordStartTimes!: Float64Array
+  private wordDurations!: Float64Array
+  private wordFrontWidths!: Float64Array
 
-  // get is enbale mask animation
+  // Progress info buffers
+  private pauseProgress!: Float64Array
+  private moveProgress!: Float64Array
+  private hasPause!: Uint8Array
+  private hasMove!: Uint8Array
+
+  private inited = false
+
+  constructor(
+    private readonly context: ComponentContext,
+    private readonly lineInfo: LineNormal,
+    private readonly wordCount: number,
+  ) {
+    this.init()
+  }
+
   private get isEnable() {
     return this.context.config.line.normal.syllable.animation.mask.enabled
   }
 
-  // Build per-word mask gradients and karaoke-style wipe keyframes for a single vocal line.
-  generate(
-    wordInfos: ReadonlyArray<MaskGenerateInput>,
-    lineInfo: LineNormal,
-    callback: (index: number, image: string, size: string, frames?: Keyframe[]) => void,
-  ): void {
-    const wordCount = wordInfos.length
-    const lineDuration = lineInfo.time.duration
+  private init() {
+    if (this.inited) {
+      return true
+    }
+    if (!this.isEnable) {
+      return false
+    }
+
+    const count = this.wordCount
+    this.wordStartTimes = new Float64Array(count)
+    this.wordDurations = new Float64Array(count)
+    this.wordFrontWidths = new Float64Array(count + 1)
+    this.pauseProgress = new Float64Array(count)
+    this.moveProgress = new Float64Array(count)
+    this.hasPause = new Uint8Array(count)
+    this.hasMove = new Uint8Array(count)
+
+    this.inited = true
+    return true
+  }
+
+  generate(wordInfos: ReadonlyArray<MaskGenerateInput>, callback: (index: number, image: string, size: string, frames?: Keyframe[]) => void): void {
+    const wordCount = this.wordCount
+    const lineDuration = this.lineInfo.time.duration
     if (lineDuration <= 0 || wordCount === 0) {
       return
     }
@@ -38,32 +72,40 @@ export class MaskAnimationHost {
       return
     }
 
+    if (!this.init()) {
+      return
+    }
+
     const fadeWidth = this.fadeWidth
-    const lineStart = lineInfo.time.start
+    const lineStart = this.lineInfo.time.start
     const invLineDuration = 1 / lineDuration
     const lastIndex = wordCount - 1
 
-    // Per-word geometry buffers.
-    const wordStartTimes = new Float64Array(wordCount)
-    const wordDurations = new Float64Array(wordCount)
+    // Layout-dependent buffers — width/height come from the latest DOM measurements,
+    // so these are sized and filled fresh on every call (which only fires on layout change).
     const wordWidths = new Float64Array(wordCount)
+    const wordHeights = new Float64Array(wordCount)
+
+    const wordStartTimes = this.wordStartTimes
+    const wordDurations = this.wordDurations
     // `wordFrontWidths[i]` is the prefix sum of widths over [0, i): the distance from the line's left edge to where word `i` begins.
-    const wordFrontWidths = new Float64Array(wordCount + 1)
+    const wordFrontWidths = this.wordFrontWidths
 
     for (let i = 0; i < wordCount; i++) {
       const word = wordInfos[i]
       wordStartTimes[i] = word.info.time.start - lineStart
       wordDurations[i] = word.info.time.duration
       wordWidths[i] = word.width
+      wordHeights[i] = word.height
       wordFrontWidths[i + 1] = wordFrontWidths[i] + word.width
     }
 
     // Precompute timing-only progress: for each word, the normalized [0, 1] offsets at which its leading pause ends and at which the word finishes singing.
     // Since these depend solely on timing, lifting them out of the keyframe loop reduces total work from O(N^2) to O(N).
-    const pauseProgress = new Float64Array(wordCount)
-    const moveProgress = new Float64Array(wordCount)
-    const hasPause = new Uint8Array(wordCount)
-    const hasMove = new Uint8Array(wordCount)
+    const pauseProgress = this.pauseProgress
+    const moveProgress = this.moveProgress
+    const hasPause = this.hasPause
+    const hasMove = this.hasMove
     {
       let progress = 0
       let offset = 0
@@ -74,6 +116,8 @@ export class MaskAnimationHost {
           progress += gap * invLineDuration
           pauseProgress[i] = progress > 1 ? 1 : progress < 0 ? 0 : progress
           hasPause[i] = 1
+        } else {
+          hasPause[i] = 0
         }
         offset = startTime
 
@@ -82,6 +126,8 @@ export class MaskAnimationHost {
         if (duration > 0) {
           moveProgress[i] = progress > 1 ? 1 : progress < 0 ? 0 : progress
           hasMove[i] = 1
+        } else {
+          hasMove[i] = 0
         }
         offset += duration
       }
@@ -94,11 +140,9 @@ export class MaskAnimationHost {
         continue
       }
 
-      const word = wordInfos[index]
-
       // The fade region scales with the word's font height.
       // First and last words use an asymmetric envelope so the wipe enters and leaves the line smoothly without a visible cut at either edge.
-      const widthFade = word.height * fadeWidth
+      const widthFade = wordHeights[index] * fadeWidth
       const widthFadeFirst = widthFade * 1.5
       const widthFadeLast = widthFade * 0.5
       const widthFront = wordFrontWidths[index] + widthFade

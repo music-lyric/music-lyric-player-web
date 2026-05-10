@@ -22,7 +22,13 @@ export class SyllableElement {
     private readonly info: LineNormal,
   ) {
     this.dom = document.createElement('div')
-    this.maskHost = new MaskAnimationHost(context)
+
+    let wordCount = 0
+    for (const item of info.content.words) {
+      if (item.type === WordType.Normal) wordCount++
+    }
+    this.maskHost = new MaskAnimationHost(context, info, wordCount)
+
     this.words = []
 
     this.updateConfig()
@@ -48,7 +54,7 @@ export class SyllableElement {
       }
     }
 
-    this.maskHost.generate(inputs, this.info, this.updateMaskWord)
+    this.maskHost.generate(inputs, this.updateMaskWord)
   }
 
   private init() {
