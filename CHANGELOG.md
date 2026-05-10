@@ -1,3 +1,30 @@
+## v0.8.0 (2026-05-11)
+
+### Feature
+
+- `dom`
+  - add word mask feather config for syllable line ([ef422f6](https://github.com/music-lyric/music-lyric-player-web/commit/ef422f6))
+
+### Fix
+
+- `dom`
+  - play or pause not dispatched after mask rebuild ([7940ba4](https://github.com/music-lyric/music-lyric-player-web/commit/7940ba4))
+  - syllable word mask animation not rebuild when update size ([9600c59](https://github.com/music-lyric/music-lyric-player-web/commit/9600c59))
+
+### Performance
+
+- `dom`
+  - use document fragment to cache element when init syllable line words ([be8f965](https://github.com/music-lyric/music-lyric-player-web/commit/be8f965))
+  - skip size recalc on non-font config changes ([f85ff15](https://github.com/music-lyric/music-lyric-player-web/commit/f85ff15))
+  - dedupe scheduled layout updates ([762f1f0](https://github.com/music-lyric/music-lyric-player-web/commit/762f1f0))
+  - reuse scratch buffers in mask animtion host ([62107ec](https://github.com/music-lyric/music-lyric-player-web/commit/62107ec))
+
+### Refactor
+
+- `dom`
+  - extract word mask animation generation to common utils ([5dd03ad](https://github.com/music-lyric/music-lyric-player-web/commit/5dd03ad))
+  - extract syllable line mode from normal line ([1f9fbcf](https://github.com/music-lyric/music-lyric-player-web/commit/1f9fbcf))
+
 ## v0.7.0 (2026-05-07)
 
 ### Feature
