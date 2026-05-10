@@ -60,18 +60,20 @@ export class SyllableElement {
   private init() {
     this.clear()
 
-    let pending = false
+    let isInSpace = false
+    const frag = document.createDocumentFragment()
     for (const item of this.info.content.words) {
       switch (item.type) {
         case WordType.Normal: {
           const node = new WordElement(this.context, item, this.info)
 
-          if (pending) {
+          if (isInSpace) {
             node.element.classList.add(styles.spaceStart)
-            pending = false
+            isInSpace = false
           }
 
           this.words.push(node)
+          frag.appendChild(node.element)
           break
         }
         case WordType.Space: {
@@ -79,17 +81,13 @@ export class SyllableElement {
           if (prev) {
             prev.element.classList.add(styles.spaceEnd)
           }
-          pending = true
+          isInSpace = true
           break
         }
       }
     }
 
-    for (const word of this.words) {
-      this.dom.appendChild(word.element)
-    }
-
-    this.updateSize()
+    this.dom.appendChild(frag)
   }
 
   private clear() {
