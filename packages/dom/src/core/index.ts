@@ -3,7 +3,7 @@ import type { Config } from '@root/config'
 
 import { DEFAULT_CONFIG } from '@root/config'
 import { BaseLyricPlayer } from '@music-lyric-player/base'
-import { ConfigManager } from '@music-lyric-player/utils'
+import { ConfigManager, hasKeyContaining } from '@music-lyric-player/utils'
 
 import { ComponentContext, Root, Container } from '@root/components'
 
@@ -109,9 +109,7 @@ export class DomLyricPlayer {
     this.styleManager.updateConfig(keys)
     this.lineManager.updateConfig(keys)
 
-    this.scheduleLayoutUpdate({
-      updateSize: true,
-    })
+    this.scheduleLayoutUpdate({ updateSize: hasKeyContaining(keys, 'font') })
   }
 
   private onPlay = (_currentTime: number) => {
