@@ -2,6 +2,193 @@ import type { LineNormal, WordNormal } from '@music-lyric-kit/lyric'
 import type { ComponentContext } from '@root/components/context'
 import type { Config } from '@root/config'
 
+export interface MaskGenerateInput {
+  info: WordNormal
+  width: number
+  height: number
+}
+
+export class MaskAnimationHost {
+  // Fade region width as a multiple of font height.
+  private readonly fadeWidth = 0.5
+
+  constructor(private readonly context: ComponentContext) {}
+
+  // get is enbale mask animation
+  private get isEnable() {
+    return this.context.config.line.normal.syllable.animation.mask.enabled
+  }
+
+  // Build per-word mask gradients and karaoke-style wipe keyframes for a single vocal line.
+  generate(
+    wordInfos: ReadonlyArray<MaskGenerateInput>,
+    lineInfo: LineNormal,
+    callback: (index: number, image: string, size: string, frames?: Keyframe[]) => void,
+  ): void {
+    const wordCount = wordInfos.length
+    const lineDuration = lineInfo.time.duration
+    if (lineDuration <= 0 || wordCount === 0) {
+      return
+    }
+
+    if (!this.isEnable) {
+      for (let i = 0; i < wordCount; i++) {
+        callback(i, '', '')
+      }
+      return
+    }
+
+    const fadeWidth = this.fadeWidth
+    const lineStart = lineInfo.time.start
+    const invLineDuration = 1 / lineDuration
+    const lastIndex = wordCount - 1
+
+    // Per-word geometry buffers.
+    const wordStartTimes = new Float64Array(wordCount)
+    const wordDurations = new Float64Array(wordCount)
+    const wordWidths = new Float64Array(wordCount)
+    // `wordFrontWidths[i]` is the prefix sum of widths over [0, i): the distance from the line's left edge to where word `i` begins.
+    const wordFrontWidths = new Float64Array(wordCount + 1)
+
+    for (let i = 0; i < wordCount; i++) {
+      const word = wordInfos[i]
+      wordStartTimes[i] = word.info.time.start - lineStart
+      wordDurations[i] = word.info.time.duration
+      wordWidths[i] = word.width
+      wordFrontWidths[i + 1] = wordFrontWidths[i] + word.width
+    }
+
+    // Precompute timing-only progress: for each word, the normalized [0, 1] offsets at which its leading pause ends and at which the word finishes singing.
+    // Since these depend solely on timing, lifting them out of the keyframe loop reduces total work from O(N^2) to O(N).
+    const pauseProgress = new Float64Array(wordCount)
+    const moveProgress = new Float64Array(wordCount)
+    const hasPause = new Uint8Array(wordCount)
+    const hasMove = new Uint8Array(wordCount)
+    {
+      let progress = 0
+      let offset = 0
+      for (let i = 0; i < wordCount; i++) {
+        const startTime = wordStartTimes[i]
+        const gap = startTime - offset
+        if (gap > 0) {
+          progress += gap * invLineDuration
+          pauseProgress[i] = progress > 1 ? 1 : progress < 0 ? 0 : progress
+          hasPause[i] = 1
+        }
+        offset = startTime
+
+        const duration = wordDurations[i]
+        progress += duration * invLineDuration
+        if (duration > 0) {
+          moveProgress[i] = progress > 1 ? 1 : progress < 0 ? 0 : progress
+          hasMove[i] = 1
+        }
+        offset += duration
+      }
+    }
+
+    // Per-word keyframe.
+    for (let index = 0; index < wordCount; index++) {
+      const wordWidth = wordWidths[index]
+      if (wordWidth <= 0) {
+        continue
+      }
+
+      const word = wordInfos[index]
+
+      // The fade region scales with the word's font height.
+      // First and last words use an asymmetric envelope so the wipe enters and leaves the line smoothly without a visible cut at either edge.
+      const widthFade = word.height * fadeWidth
+      const widthFadeFirst = widthFade * 1.5
+      const widthFadeLast = widthFade * 0.5
+      const widthFront = wordFrontWidths[index] + widthFade
+
+      // Mask geometry, expressed as ratios of the word box.
+      // The mask is intentionally wider than the word (`widthSize`) so sliding never exposes the gradient's hard edge.
+      const widthRatio = widthFade / wordWidth
+      const widthSize = 2 + widthRatio
+      const widthInTotal = widthRatio / widthSize
+      const leftPos = (1 - widthInTotal) / 2
+
+      const maskImage = `linear-gradient(to right, rgba(0, 0, 0, 1) ${leftPos * 100}%, rgba(0, 0, 0, 0.4) ${(leftPos + widthInTotal) * 100}%)`
+      const maskSize = `${widthSize * 100}% 100%`
+
+      // Leftmost mask position: the mask sits fully to the left of the word box, leaving the entire word unrevealed.
+      const positionMin = -(wordWidth + widthFade)
+      const positionMinPx = `${positionMin}px 0`
+
+      // The cursor advances through [positionMin, 0] as the wipe progresses across the word.
+      // It starts far into the negative range so the keyframe at offset 0 unambiguously represents the fully unrevealed state.
+      let cursor = -widthFront - wordWidth - widthFade
+      let prevCursor = cursor
+      let prevProgress = 0
+
+      // Initial keyframe at offset = 0, with the cursor clamped to [positionMin, 0].
+      const initial = cursor < positionMin ? positionMin : cursor > 0 ? 0 : cursor
+      const frames: Keyframe[] = [{ offset: 0, maskPosition: `${initial}px 0` }]
+
+      for (let i = 0; i < wordCount; i++) {
+        // Pause segment: the cursor stays in place and only a holding keyframe at the current offset is emitted.
+        if (hasPause[i]) {
+          prevProgress = pauseProgress[i]
+          const clamped = cursor < positionMin ? positionMin : cursor > 0 ? 0 : cursor
+          frames.push({ offset: prevProgress, maskPosition: `${clamped}px 0` })
+        }
+
+        // Advance the cursor by word i's contribution to the wipe distance.
+        cursor += wordWidths[i]
+
+        // The first word extends the leading envelope.
+        if (i === 0) {
+          cursor += widthFadeFirst
+        }
+        // The last word extends the trailing envelope.
+        if (i === lastIndex) {
+          cursor += widthFadeLast
+        }
+
+        if (hasMove[i]) {
+          const target = moveProgress[i]
+          const dt = target - prevProgress
+          const dx = cursor - prevCursor
+
+          // When the cursor crosses `positionMin` or `0` mid-segment, insert an extra keyframe at the exact crossing time.
+          // Without these boundary keyframes, the inline clamp above forms a kink whose timing depends on segment length.
+          // Splitting the segment at the crossing keeps the visible portion of the mask strictly linear in time.
+          if (dx !== 0 && dt > 0) {
+            const rate = dt / dx
+            // Entering the visible range: the mask's leading edge reaches the word.
+            if (prevCursor < positionMin && cursor > positionMin) {
+              frames.push({
+                offset: prevProgress + (positionMin - prevCursor) * rate,
+                maskPosition: positionMinPx,
+              })
+            }
+            // Fully revealed: the mask's trailing edge passes the word.
+            if (prevCursor < 0 && cursor > 0) {
+              frames.push({
+                offset: prevProgress - prevCursor * rate,
+                maskPosition: '0px 0',
+              })
+            }
+          }
+
+          prevCursor = cursor
+          prevProgress = target
+
+          const clamped = cursor < positionMin ? positionMin : cursor > 0 ? 0 : cursor
+          frames.push({ offset: target, maskPosition: `${clamped}px 0` })
+        } else {
+          // Zero-duration word emits no keyframe of its own, but `prevCursor` must still advance so subsequent boundary checks see the correct baseline.
+          prevCursor = cursor
+        }
+      }
+
+      callback(index, maskImage, maskSize, frames)
+    }
+  }
+}
+
 export class MaskAnimation {
   private animation: Animation | null = null
   private delay: number = 0
@@ -13,15 +200,19 @@ export class MaskAnimation {
     private readonly lineInfo: LineNormal,
   ) {}
 
-  updateInfo(image: string, size: string, animation?: Animation) {
+  updateInfo(image: string, size: string, frames?: Keyframe[]) {
     const style = this.host.style
     style.maskImage = image
     style.maskSize = size
 
     this.dispose()
-    if (animation) {
+    if (frames) {
+      const animation = this.host.animate(frames, {
+        duration: this.lineInfo.time.duration,
+        fill: 'both',
+      })
+      animation.pause()
       this.animation = animation
-      this.animation.pause()
     }
   }
 
