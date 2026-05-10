@@ -136,7 +136,7 @@ export class LayoutManager {
     }
   }
 
-  update(isSeek = false) {
+  update(force = false) {
     const { player, config, component, scroll } = this.context
 
     const elementCount = this.lineManager.elementSize
@@ -289,7 +289,7 @@ export class LayoutManager {
         continue
       }
 
-      if (isSeek || !isAlreadyActive) {
+      if (force || !isAlreadyActive) {
         if (isInPlay) {
           element.play(currentTime, true)
         } else {

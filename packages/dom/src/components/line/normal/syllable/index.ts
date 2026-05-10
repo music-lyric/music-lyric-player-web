@@ -117,12 +117,10 @@ export class SyllableElement {
   }
 
   updateSize() {
-    requestAnimationFrame(() => {
-      for (const word of this.words) {
-        word.updateSize()
-      }
-      this.updateMaskInfo()
-    })
+    for (const word of this.words) {
+      word.updateSize()
+    }
+    this.updateMaskInfo()
   }
 
   play(currentTime: number, isActive: boolean) {

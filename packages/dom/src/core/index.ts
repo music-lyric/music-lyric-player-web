@@ -80,7 +80,9 @@ export class DomLyricPlayer {
     if (updateSize) {
       this.lineManager.updateSize()
     }
-    this.layoutManager.update(isSeek)
+
+    // If update size or seek, need force call play or pause.
+    this.layoutManager.update(isSeek || updateSize)
   }
   private scheduleLayoutUpdate(options?: { updateSize?: boolean; isSeek?: boolean }) {
     if (options?.updateSize) {
