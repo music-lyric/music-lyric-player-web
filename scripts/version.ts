@@ -1,9 +1,26 @@
+import { readFile, writeFile } from 'node:fs/promises'
+import { join } from 'node:path'
+import { valid, gt } from 'semver'
+
 import { parseArgs } from 'node:util'
-import fs from 'node:fs/promises'
-import path from 'node:path'
-import semver from 'semver'
 import { exec } from './utils'
-import { mainVersion, targets } from './target'
+import { rootVersion, root, targets } from './target'
+
+const handleUpdate = async (id: string, root: string, newVersion: string) => {
+  try {
+    const pkgPath = join(root, 'package.json')
+    const pkgContent = await readFile(pkgPath, 'utf-8')
+    const pkg = JSON.parse(pkgContent)
+
+    pkg.version = newVersion
+
+    await writeFile(pkgPath, JSON.stringify(pkg, null, 2) + '\n', 'utf-8')
+    console.log(`update success id=${id}`)
+  } catch (err) {
+    console.error(`update failed id=${id} err=${err}`)
+    process.exit(1)
+  }
+}
 
 const main = async () => {
   const { values } = parseArgs({
@@ -33,33 +50,22 @@ const main = async () => {
     process.exit(1)
   }
 
-  if (!semver.valid(newVersion)) {
+  if (!valid(newVersion)) {
     console.error(`bad target version`)
     process.exit(1)
   }
 
-  if (!semver.gt(newVersion, mainVersion) && !values.force) {
-    console.log(`bad target version, old=${mainVersion} new=${newVersion}`)
+  if (!gt(newVersion, rootVersion) && !values.force) {
+    console.log(`bad target version, old=${rootVersion} new=${newVersion}`)
     process.exit(0)
   }
 
-  console.log(`prepare: ${mainVersion} -> ${newVersion}`)
+  console.log(`prepare: ${rootVersion} -> ${newVersion}`)
   console.log('\n')
 
+  handleUpdate('root', root, newVersion)
   for (const target of targets) {
-    try {
-      const pkgPath = path.join(target.root, 'package.json')
-      const pkgContent = await fs.readFile(pkgPath, 'utf-8')
-      const pkg = JSON.parse(pkgContent)
-
-      pkg.version = newVersion
-
-      await fs.writeFile(pkgPath, JSON.stringify(pkg, null, 2) + '\n', 'utf-8')
-      console.log(`update success id=${target.id}`)
-    } catch (err) {
-      console.error(`update failed id=${target.id} err=${err}`)
-      process.exit(1)
-    }
+    handleUpdate(target.id, target.root, newVersion)
   }
 
   console.log('\n')
