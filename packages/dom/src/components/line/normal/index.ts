@@ -63,7 +63,7 @@ export class NormalLineElement extends BaseLineElement {
     return this.info.content.extended.length > 0 && this.context.config.line.normal.extended.visible
   }
 
-  override updateConfig(keys?: Config.RootKeySet) {
+  override updateConfig(keys?: Config.RootKeySet): void {
     super.updateConfig(keys)
 
     if (!keys) {
@@ -92,6 +92,11 @@ export class NormalLineElement extends BaseLineElement {
 
     this.syllable?.updateConfig(keys)
     this.extended?.updateConfig(keys)
+  }
+
+  override updateSize(): void {
+    super.updateSize()
+    this.syllable?.updateSize()
   }
 
   override play(time: number, isActive: boolean) {
