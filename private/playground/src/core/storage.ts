@@ -6,11 +6,9 @@ export type LyricFormat = 'lrc' | 'ttml'
 
 export interface StoredLyric {
   format: LyricFormat
-  // LRC mode
   lrcOriginal?: string
   lrcRoman?: string
   lrcTranslate?: string
-  // TTML mode
   ttmlOriginal?: string
   ttmlFileName?: string
 }
@@ -33,7 +31,7 @@ export const saveState = (state: StoredState): void => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
 }
 
-export const loadSettings = (): Partial<Config> => {
+export const loadSettings = (): Partial<Config.Root> => {
   try {
     return JSON.parse(localStorage.getItem(SETTINGS_STORAGE_KEY) ?? '{}')
   } catch {
@@ -41,8 +39,12 @@ export const loadSettings = (): Partial<Config> => {
   }
 }
 
-export const saveSettings = (settings: Partial<Config>): void => {
+export const saveSettings = (settings: Partial<Config.Root>): void => {
   localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings))
+}
+
+export const clearSettings = (): void => {
+  localStorage.removeItem(SETTINGS_STORAGE_KEY)
 }
 
 const openDB = async (): Promise<IDBDatabase> =>
