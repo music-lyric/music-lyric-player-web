@@ -15,7 +15,7 @@ export class NormalLineElement extends BaseLineElement {
     return LineElementType.Normal as const
   }
 
-  private readonly info: LineNormal
+  private readonly content: LineNormal
 
   private container: HTMLDivElement
   private syllable: SyllableElement | null = null
@@ -28,7 +28,7 @@ export class NormalLineElement extends BaseLineElement {
   constructor(context: ComponentContext, info: LineNormal, isBackground: boolean) {
     super(context)
 
-    this.info = info
+    this.content = info
     this.backgroundEnable = isBackground
 
     this.container = document.createElement('div')
@@ -70,7 +70,7 @@ export class NormalLineElement extends BaseLineElement {
 
   private buildSyllable() {
     this.removeSyllable()
-    this.syllable = new SyllableElement(this.context, this.info)
+    this.syllable = new SyllableElement(this.context, this.content)
     this.container.appendChild(this.syllable.element)
   }
   private removeSyllable() {
@@ -80,7 +80,7 @@ export class NormalLineElement extends BaseLineElement {
 
   private buildExtended() {
     this.removeExtended()
-    this.extended = new ExtendedElement(this.context, this.info)
+    this.extended = new ExtendedElement(this.context, this.content)
     this.container.appendChild(this.extended.element)
   }
   private removeExtended() {
@@ -88,7 +88,7 @@ export class NormalLineElement extends BaseLineElement {
     this.extended = null
   }
   private get needShowExtended() {
-    return this.info.content.extended.length > 0 && this.context.config.line.normal.extended.visible
+    return this.content.content.extended.length > 0 && this.context.config.line.normal.extended.visible
   }
 
   override updateConfig(keys?: Config.RootKeySet): void {
@@ -143,6 +143,10 @@ export class NormalLineElement extends BaseLineElement {
     this.removeSyllable()
     this.removeExtended()
     super.destroy()
+  }
+
+  get info() {
+    return this.content
   }
 
   get isBackground() {

@@ -30,6 +30,9 @@ export const DEFAULT_CONFIG: Root = {
   layout: {
     align: 'left',
     gap: 30,
+    duet: {
+      enabled: true,
+    },
   },
 
   effect: {

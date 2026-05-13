@@ -4,7 +4,8 @@ import type { Config } from '@root/config'
 import type { CoreContext } from './context'
 
 import { LineType } from '@music-lyric-kit/lyric'
-import { NormalLineElement, InterludeLineElement } from '@root/components'
+import { hasKeyContaining } from '@music-lyric-player/utils'
+import { NormalLineElement, InterludeLineElement, LineElementType } from '@root/components'
 
 export class LineManager {
   private currentElementMap: Map<number, LineElement> = new Map()
@@ -78,9 +79,7 @@ export class LineManager {
   }
 
   updateLines(lines: Line[]) {
-    const { config, component } = this.context
-
-    const position = config.current.layout.align
+    const { component } = this.context
 
     const newElementMap = new Map<number, LineElement>()
     const newIndexMap = new Map<number, number[]>()
@@ -99,31 +98,20 @@ export class LineManager {
       switch (line.type) {
         case LineType.Interlude: {
           const element = new InterludeLineElement(component.context, line)
-
-          element.position = position
-
           newElementMap.set(currentElementIndex, element)
           indexes.push(currentElementIndex)
-
           break
         }
 
         case LineType.Normal: {
           const element = new NormalLineElement(component.context, line, false)
-
-          element.position = position
-
           newElementMap.set(currentElementIndex, element)
           indexes.push(currentElementIndex)
 
           for (const background of line.background ?? []) {
             const backgroundElement = new NormalLineElement(component.context, background, true)
-
-            backgroundElement.position = position
-
             newElementMap.set(elementIndex, backgroundElement)
             indexes.push(elementIndex)
-
             elementIndex++
           }
 
@@ -142,13 +130,48 @@ export class LineManager {
 
     this.currentElementMap = newElementMap
     this.currentIndexMap = newIndexMap
+
+    this.updateAlign()
+  }
+
+  updateAlign() {
+    const { layout } = this.context.config.current
+
+    const align = layout.align
+    if (!layout.duet.enabled) {
+      for (const element of this.currentElementMap.values()) {
+        element.position = align
+      }
+      return
+    }
+
+    let current: Config.Layout.AlignValue = align
+    let lastId: string | undefined = undefined
+    for (const element of this.currentElementMap.values()) {
+      if (element.type === LineElementType.Interlude) {
+        element.position = align
+        continue
+      }
+
+      if (!element.isBackground) {
+        const agentId = element.info.agent?.id
+        if (agentId !== undefined) {
+          if (lastId !== undefined && agentId !== lastId) {
+            current = current === 'left' ? 'right' : current === 'right' ? 'left' : current
+          }
+          lastId = agentId
+        }
+      }
+
+      element.position = current
+    }
   }
 
   updateConfig(keys?: Config.RootKeySet) {
-    const position = this.context.config.current.layout.align
-
+    if (keys && (hasKeyContaining(keys, 'layout.align') || hasKeyContaining(keys, 'layout.duet'))) {
+      this.updateAlign()
+    }
     for (const element of this.currentElementMap.values()) {
-      element.position = position
       element.updateConfig(keys)
     }
   }
