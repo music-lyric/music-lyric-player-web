@@ -2,8 +2,8 @@
   <div class="audio-tab">
     <section class="section">
       <header class="section-head">
-        <h3 class="section-title">Audio</h3>
-        <span class="section-hint">Local file, persisted in browser storage</span>
+        <h3 class="section-title">{{ t('audio.title') }}</h3>
+        <span class="section-hint">{{ t('audio.hint') }}</span>
       </header>
       <button class="picker" :class="{ filled: player.hasAudio.value }" @click="pickAudio">
         <span class="picker-icon">
@@ -14,9 +14,9 @@
           </svg>
         </span>
         <span class="picker-body">
-          <span class="picker-label">{{ player.hasAudio.value ? 'Audio file' : 'Choose an audio file' }}</span>
+          <span class="picker-label">{{ player.hasAudio.value ? t('audio.fileFilled') : t('audio.filePick') }}</span>
           <span class="picker-meta" :title="player.audioName.value">
-            {{ player.audioName.value || 'No file selected' }}
+            {{ player.audioName.value || t('audio.noFile') }}
           </span>
         </span>
       </button>
@@ -29,8 +29,11 @@
 import type { usePlayer } from '@root/composables/usePlayer'
 
 import { inject, useTemplateRef } from 'vue'
+import { useI18n } from '@root/composables/useI18n'
 
 const player = inject<ReturnType<typeof usePlayer>>('player')!
+
+const { t } = useI18n()
 
 const audioInputRef = useTemplateRef<HTMLInputElement>('audioInput')
 

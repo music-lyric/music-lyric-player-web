@@ -6,12 +6,12 @@
           <polyline points="9 18 15 12 9 6" />
         </svg>
       </span>
-      <span class="section-title">{{ section.title }}</span>
+      <span class="section-title">{{ t(section.titleKey) }}</span>
     </button>
 
     <div v-show="open" class="section-body">
-      <div v-for="(group, i) in section.groups" :key="i" class="group" :class="{ titled: !!group.title }">
-        <div v-if="group.title" class="group-title">{{ group.title }}</div>
+      <div v-for="(group, i) in section.groups" :key="i" class="group" :class="{ titled: !!group.titleKey }">
+        <div v-if="group.titleKey" class="group-title">{{ t(group.titleKey) }}</div>
         <div class="group-rows">
           <SettingField v-for="field in group.fields" :key="field.path" :field="field" />
         </div>
@@ -28,12 +28,15 @@
 import type { SectionBinding } from '@root/core/bindings'
 
 import { ref } from 'vue'
+import { useI18n } from '@root/composables/useI18n'
 
 import SettingField from './setting-field.vue'
 
 defineOptions({ name: 'SettingSection' })
 
 withDefaults(defineProps<{ section: SectionBinding; level?: number }>(), { level: 0 })
+
+const { t } = useI18n()
 
 const open = ref(false)
 const toggle = () => (open.value = !open.value)

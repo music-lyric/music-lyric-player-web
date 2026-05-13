@@ -4,12 +4,12 @@ export type FieldType = 'number' | 'text' | 'select' | 'toggle' | 'padding'
 
 export interface SelectOption {
   value: string
-  label: string
+  labelKey: string
 }
 
 export interface FieldBinding {
   path: string
-  label: string
+  labelKey: string
   type: FieldType
   step?: number
   min?: number
@@ -20,47 +20,47 @@ export interface FieldBinding {
 }
 
 export interface GroupBinding {
-  title?: string
+  titleKey?: string
   fields: FieldBinding[]
 }
 
 export interface SectionBinding {
   id: string
-  title: string
+  titleKey: string
   groups: GroupBinding[]
   children?: SectionBinding[]
 }
 
 const SCROLL_MODES: SelectOption[] = [
-  { value: 'smooth', label: 'Smooth' },
-  { value: 'ripple', label: 'Ripple' },
-  { value: 'directional', label: 'Directional' },
-  { value: 'stagger', label: 'Stagger' },
+  { value: 'smooth', labelKey: 'settings.field.scrollModeSmooth' },
+  { value: 'ripple', labelKey: 'settings.field.scrollModeRipple' },
+  { value: 'directional', labelKey: 'settings.field.scrollModeDirectional' },
+  { value: 'stagger', labelKey: 'settings.field.scrollModeStagger' },
 ]
 
 const stateFields = (prefix: string, includePlayed = false): GroupBinding[] => {
   const groups: GroupBinding[] = [
     {
-      title: 'Normal State',
+      titleKey: 'settings.group.normalState',
       fields: [
-        { path: `${prefix}.style.normal.color`, label: 'Color', type: 'text', placeholder: 'Inherit' },
-        { path: `${prefix}.style.normal.opacity`, label: 'Opacity', type: 'number', placeholder: 'Inherit', step: 0.05, min: 0, max: 1 },
+        { path: `${prefix}.style.normal.color`, labelKey: 'settings.field.color', type: 'text', placeholder: 'Inherit' },
+        { path: `${prefix}.style.normal.opacity`, labelKey: 'settings.field.opacity', type: 'number', placeholder: 'Inherit', step: 0.05, min: 0, max: 1 },
       ],
     },
     {
-      title: 'Active State',
+      titleKey: 'settings.group.activeState',
       fields: [
-        { path: `${prefix}.style.active.color`, label: 'Color', type: 'text', placeholder: 'Inherit' },
-        { path: `${prefix}.style.active.opacity`, label: 'Opacity', type: 'number', placeholder: 'Inherit', step: 0.05, min: 0, max: 1 },
+        { path: `${prefix}.style.active.color`, labelKey: 'settings.field.color', type: 'text', placeholder: 'Inherit' },
+        { path: `${prefix}.style.active.opacity`, labelKey: 'settings.field.opacity', type: 'number', placeholder: 'Inherit', step: 0.05, min: 0, max: 1 },
       ],
     },
   ]
   if (includePlayed) {
     groups.push({
-      title: 'Played State',
+      titleKey: 'settings.group.playedState',
       fields: [
-        { path: `${prefix}.style.played.color`, label: 'Color', type: 'text', placeholder: 'Inherit' },
-        { path: `${prefix}.style.played.opacity`, label: 'Opacity', type: 'number', placeholder: 'Inherit', step: 0.05, min: 0, max: 1 },
+        { path: `${prefix}.style.played.color`, labelKey: 'settings.field.color', type: 'text', placeholder: 'Inherit' },
+        { path: `${prefix}.style.played.opacity`, labelKey: 'settings.field.opacity', type: 'number', placeholder: 'Inherit', step: 0.05, min: 0, max: 1 },
       ],
     })
   }
@@ -68,17 +68,17 @@ const stateFields = (prefix: string, includePlayed = false): GroupBinding[] => {
 }
 
 const fontFields = (prefix: string): GroupBinding => ({
-  title: 'Font',
+  titleKey: 'settings.group.font',
   fields: [
-    { path: `${prefix}.font.size`, label: 'Size', type: 'number', placeholder: 'Inherit', min: 8, max: 200, step: 1 },
-    { path: `${prefix}.font.weight`, label: 'Weight', type: 'number', placeholder: 'Inherit', min: 100, max: 900, step: 100 },
-    { path: `${prefix}.font.family`, label: 'Family', type: 'text', placeholder: 'Inherit' },
+    { path: `${prefix}.font.size`, labelKey: 'settings.field.fontSize', type: 'number', placeholder: 'Inherit', min: 8, max: 200, step: 1 },
+    { path: `${prefix}.font.weight`, labelKey: 'settings.field.fontWeight', type: 'number', placeholder: 'Inherit', min: 100, max: 900, step: 100 },
+    { path: `${prefix}.font.family`, labelKey: 'settings.field.fontFamily', type: 'text', placeholder: 'Inherit' },
   ],
 })
 
 const classNameField = (prefix: string): FieldBinding => ({
   path: `${prefix}.className`,
-  label: 'CSS Class',
+  labelKey: 'settings.field.className',
   type: 'text',
   placeholder: 'Inherit',
 })
@@ -86,83 +86,83 @@ const classNameField = (prefix: string): FieldBinding => ({
 export const SECTIONS: SectionBinding[] = [
   {
     id: 'container',
-    title: 'Container',
+    titleKey: 'settings.section.container',
     groups: [
       {
         fields: [
-          { path: 'container.className', label: 'CSS Class', type: 'text', placeholder: '""' },
-          { path: 'container.padding', label: 'Padding', type: 'padding', placeholder: '20px' },
+          { path: 'container.className', labelKey: 'settings.field.className', type: 'text', placeholder: '""' },
+          { path: 'container.padding', labelKey: 'settings.field.padding', type: 'padding', placeholder: '20px' },
         ],
       },
       {
-        title: 'Edge Fade',
+        titleKey: 'settings.group.edgeFade',
         fields: [
-          { path: 'container.fade.enabled', label: 'Enabled', type: 'toggle' },
-          { path: 'container.fade.top', label: 'Top (%)', type: 'text', placeholder: '5%' },
-          { path: 'container.fade.bottom', label: 'Bottom (%)', type: 'text', placeholder: '10%' },
+          { path: 'container.fade.enabled', labelKey: 'settings.field.enabled', type: 'toggle' },
+          { path: 'container.fade.top', labelKey: 'settings.field.fadeTop', type: 'text', placeholder: '5%' },
+          { path: 'container.fade.bottom', labelKey: 'settings.field.fadeBottom', type: 'text', placeholder: '10%' },
         ],
       },
     ],
   },
   {
     id: 'layout',
-    title: 'Layout',
+    titleKey: 'settings.section.layout',
     groups: [
       {
         fields: [
           {
             path: 'layout.align',
-            label: 'Align',
+            labelKey: 'settings.field.align',
             type: 'select',
             options: [
-              { value: 'left', label: 'Left' },
-              { value: 'center', label: 'Center' },
-              { value: 'right', label: 'Right' },
+              { value: 'left', labelKey: 'settings.field.alignLeft' },
+              { value: 'center', labelKey: 'settings.field.alignCenter' },
+              { value: 'right', labelKey: 'settings.field.alignRight' },
             ],
           },
-          { path: 'layout.gap', label: 'Line Gap', type: 'number', min: 0, max: 200, step: 1 },
+          { path: 'layout.gap', labelKey: 'settings.field.lineGap', type: 'number', min: 0, max: 200, step: 1 },
         ],
       },
     ],
   },
   {
     id: 'effect',
-    title: 'Effect',
+    titleKey: 'settings.section.effect',
     groups: [
       {
-        title: 'Scale',
+        titleKey: 'settings.group.scale',
         fields: [
-          { path: 'effect.scale.enabled', label: 'Enabled', type: 'toggle' },
-          { path: 'effect.scale.min', label: 'Min', type: 'number', min: 0, max: 1, step: 0.05 },
-          { path: 'effect.scale.max', label: 'Max', type: 'number', min: 0, max: 1, step: 0.05 },
+          { path: 'effect.scale.enabled', labelKey: 'settings.field.enabled', type: 'toggle' },
+          { path: 'effect.scale.min', labelKey: 'settings.field.scaleMin', type: 'number', min: 0, max: 1, step: 0.05 },
+          { path: 'effect.scale.max', labelKey: 'settings.field.scaleMax', type: 'number', min: 0, max: 1, step: 0.05 },
         ],
       },
       {
-        title: 'Blur',
+        titleKey: 'settings.group.blur',
         fields: [
-          { path: 'effect.blur.enabled', label: 'Enabled', type: 'toggle' },
-          { path: 'effect.blur.min', label: 'Min (px)', type: 'number', min: 0, max: 20, step: 0.1 },
-          { path: 'effect.blur.max', label: 'Max (px)', type: 'number', min: 0, max: 20, step: 0.1 },
+          { path: 'effect.blur.enabled', labelKey: 'settings.field.enabled', type: 'toggle' },
+          { path: 'effect.blur.min', labelKey: 'settings.field.blurMin', type: 'number', min: 0, max: 20, step: 0.1 },
+          { path: 'effect.blur.max', labelKey: 'settings.field.blurMax', type: 'number', min: 0, max: 20, step: 0.1 },
         ],
       },
     ],
   },
   {
     id: 'scroll',
-    title: 'Scroll',
+    titleKey: 'settings.section.scroll',
     groups: [
       {
-        fields: [{ path: 'scroll.anchor', label: 'Anchor (%)', type: 'number', min: 0, max: 100, step: 1 }],
+        fields: [{ path: 'scroll.anchor', labelKey: 'settings.field.scrollAnchor', type: 'number', min: 0, max: 100, step: 1 }],
       },
       {
-        title: 'Animation',
+        titleKey: 'settings.group.animation',
         fields: [
-          { path: 'scroll.animation.mode', label: 'Mode', type: 'select', options: SCROLL_MODES },
-          { path: 'scroll.animation.duration', label: 'Duration (ms)', type: 'number', min: 0, max: 2000, step: 50 },
-          { path: 'scroll.animation.easing', label: 'Easing', type: 'text', placeholder: 'ease' },
+          { path: 'scroll.animation.mode', labelKey: 'settings.field.scrollMode', type: 'select', options: SCROLL_MODES },
+          { path: 'scroll.animation.duration', labelKey: 'settings.field.scrollDuration', type: 'number', min: 0, max: 2000, step: 50 },
+          { path: 'scroll.animation.easing', labelKey: 'settings.field.scrollEasing', type: 'text', placeholder: 'ease' },
           {
             path: 'scroll.animation.delay',
-            label: 'Delay (ms)',
+            labelKey: 'settings.field.scrollDelay',
             type: 'number',
             min: 0,
             max: 1000,
@@ -171,7 +171,7 @@ export const SECTIONS: SectionBinding[] = [
           },
           {
             path: 'scroll.animation.range',
-            label: 'Range (lines)',
+            labelKey: 'settings.field.scrollRange',
             type: 'number',
             min: 1,
             max: 30,
@@ -180,7 +180,7 @@ export const SECTIONS: SectionBinding[] = [
           },
           {
             path: 'scroll.animation.step',
-            label: 'Step (ms)',
+            labelKey: 'settings.field.scrollStep',
             type: 'number',
             min: 1,
             max: 200,
@@ -193,38 +193,38 @@ export const SECTIONS: SectionBinding[] = [
   },
   {
     id: 'line',
-    title: 'Line',
+    titleKey: 'settings.section.line',
     groups: [{ fields: [classNameField('line')] }],
     children: [
       {
         id: 'line.normal.base',
-        title: 'Normal Line',
+        titleKey: 'settings.section.lineNormalBase',
         groups: [{ fields: [classNameField('line.normal.base')] }, fontFields('line.normal.base'), ...stateFields('line.normal.base', true)],
       },
       {
         id: 'line.normal.syllable',
-        title: 'Syllable',
+        titleKey: 'settings.section.lineNormalSyllable',
         groups: [
           {
-            fields: [{ path: 'line.normal.syllable.enabled', label: 'Enabled', type: 'toggle' }, classNameField('line.normal.syllable')],
+            fields: [{ path: 'line.normal.syllable.enabled', labelKey: 'settings.field.enabled', type: 'toggle' }, classNameField('line.normal.syllable')],
           },
           fontFields('line.normal.syllable'),
           ...stateFields('line.normal.syllable', true),
           {
-            title: 'Float Animation',
+            titleKey: 'settings.group.floatAnimation',
             fields: [
-              { path: 'line.normal.syllable.animation.float.enabled', label: 'Enabled', type: 'toggle' },
-              { path: 'line.normal.syllable.animation.float.from', label: 'From (px)', type: 'number', step: 0.5, min: -50, max: 50 },
-              { path: 'line.normal.syllable.animation.float.to', label: 'To (px)', type: 'number', step: 0.5, min: -50, max: 50 },
+              { path: 'line.normal.syllable.animation.float.enabled', labelKey: 'settings.field.enabled', type: 'toggle' },
+              { path: 'line.normal.syllable.animation.float.from', labelKey: 'settings.field.floatFrom', type: 'number', step: 0.5, min: -50, max: 50 },
+              { path: 'line.normal.syllable.animation.float.to', labelKey: 'settings.field.floatTo', type: 'number', step: 0.5, min: -50, max: 50 },
             ],
           },
           {
-            title: 'Mask Animation',
+            titleKey: 'settings.group.maskAnimation',
             fields: [
-              { path: 'line.normal.syllable.animation.mask.enabled', label: 'Enabled', type: 'toggle' },
+              { path: 'line.normal.syllable.animation.mask.enabled', labelKey: 'settings.field.enabled', type: 'toggle' },
               {
                 path: 'line.normal.syllable.animation.mask.feather.normal',
-                label: 'Feather Normal',
+                labelKey: 'settings.field.maskFeatherNormal',
                 type: 'number',
                 min: 0,
                 max: 2,
@@ -232,7 +232,7 @@ export const SECTIONS: SectionBinding[] = [
               },
               {
                 path: 'line.normal.syllable.animation.mask.feather.first',
-                label: 'Feather First',
+                labelKey: 'settings.field.maskFeatherFirst',
                 type: 'number',
                 min: 0,
                 max: 5,
@@ -240,7 +240,7 @@ export const SECTIONS: SectionBinding[] = [
               },
               {
                 path: 'line.normal.syllable.animation.mask.feather.last',
-                label: 'Feather Last',
+                labelKey: 'settings.field.maskFeatherLast',
                 type: 'number',
                 min: 0,
                 max: 5,
@@ -252,20 +252,20 @@ export const SECTIONS: SectionBinding[] = [
       },
       {
         id: 'line.normal.extended',
-        title: 'Extended',
+        titleKey: 'settings.section.lineNormalExtended',
         groups: [
-          { fields: [{ path: 'line.normal.extended.visible', label: 'Visible', type: 'toggle' }, classNameField('line.normal.extended.base')] },
+          { fields: [{ path: 'line.normal.extended.visible', labelKey: 'settings.field.visible', type: 'toggle' }, classNameField('line.normal.extended.base')] },
           fontFields('line.normal.extended.base'),
           ...stateFields('line.normal.extended.base', true),
         ],
         children: [
           {
             id: 'line.normal.extended.translate',
-            title: 'Translation',
+            titleKey: 'settings.section.lineNormalExtendedTranslate',
             groups: [
               {
                 fields: [
-                  { path: 'line.normal.extended.translate.visible', label: 'Visible', type: 'toggle' },
+                  { path: 'line.normal.extended.translate.visible', labelKey: 'settings.field.visible', type: 'toggle' },
                   classNameField('line.normal.extended.translate'),
                 ],
               },
@@ -275,10 +275,13 @@ export const SECTIONS: SectionBinding[] = [
           },
           {
             id: 'line.normal.extended.roman',
-            title: 'Romanization',
+            titleKey: 'settings.section.lineNormalExtendedRoman',
             groups: [
               {
-                fields: [{ path: 'line.normal.extended.roman.visible', label: 'Visible', type: 'toggle' }, classNameField('line.normal.extended.roman')],
+                fields: [
+                  { path: 'line.normal.extended.roman.visible', labelKey: 'settings.field.visible', type: 'toggle' },
+                  classNameField('line.normal.extended.roman'),
+                ],
               },
               fontFields('line.normal.extended.roman'),
               ...stateFields('line.normal.extended.roman', true),
@@ -288,24 +291,24 @@ export const SECTIONS: SectionBinding[] = [
       },
       {
         id: 'line.interlude',
-        title: 'Interlude',
+        titleKey: 'settings.section.lineInterlude',
         groups: [
           {
-            fields: [classNameField('line.interlude'), { path: 'line.interlude.size', label: 'Dot Size', type: 'number', min: 4, max: 64, step: 1 }],
+            fields: [classNameField('line.interlude'), { path: 'line.interlude.size', labelKey: 'settings.field.interludeSize', type: 'number', min: 4, max: 64, step: 1 }],
           },
           {
-            title: 'Normal State',
+            titleKey: 'settings.group.normalState',
             fields: [
-              { path: 'line.interlude.style.normal.color', label: 'Color', type: 'text', placeholder: 'Inherit' },
-              { path: 'line.interlude.style.normal.opacity', label: 'Opacity', type: 'number', placeholder: 'Inherit', step: 0.05, min: 0, max: 1 },
-              { path: 'line.interlude.style.normal.hide', label: 'Hide When Inactive', type: 'toggle' },
+              { path: 'line.interlude.style.normal.color', labelKey: 'settings.field.color', type: 'text', placeholder: 'Inherit' },
+              { path: 'line.interlude.style.normal.opacity', labelKey: 'settings.field.opacity', type: 'number', placeholder: 'Inherit', step: 0.05, min: 0, max: 1 },
+              { path: 'line.interlude.style.normal.hide', labelKey: 'settings.field.interludeHide', type: 'toggle' },
             ],
           },
           {
-            title: 'Active State',
+            titleKey: 'settings.group.activeState',
             fields: [
-              { path: 'line.interlude.style.active.color', label: 'Color', type: 'text', placeholder: 'Inherit' },
-              { path: 'line.interlude.style.active.opacity', label: 'Opacity', type: 'number', placeholder: 'Inherit', step: 0.05, min: 0, max: 1 },
+              { path: 'line.interlude.style.active.color', labelKey: 'settings.field.color', type: 'text', placeholder: 'Inherit' },
+              { path: 'line.interlude.style.active.opacity', labelKey: 'settings.field.opacity', type: 'number', placeholder: 'Inherit', step: 0.05, min: 0, max: 1 },
             ],
           },
         ],

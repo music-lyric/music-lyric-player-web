@@ -1,6 +1,6 @@
 <template>
   <div v-if="visible" class="row">
-    <label class="row-label">{{ field.label }}</label>
+    <label class="row-label">{{ t(field.labelKey) }}</label>
 
     <div class="row-control">
       <template v-if="field.type === 'number'">
@@ -28,7 +28,7 @@
 
       <template v-else-if="field.type === 'select'">
         <select class="ctrl select" :value="value" @change="settings.apply(field.path, ($event.target as HTMLSelectElement).value)">
-          <option v-for="o in field.options" :key="o.value" :value="o.value">{{ o.label }}</option>
+          <option v-for="o in field.options" :key="o.value" :value="o.value">{{ t(o.labelKey) }}</option>
         </select>
       </template>
 
@@ -46,10 +46,13 @@ import type { FieldBinding } from '@root/core/bindings'
 import type { useSettings } from '@root/composables/useSettings'
 
 import { computed, inject } from 'vue'
+import { useI18n } from '@root/composables/useI18n'
 
 const props = defineProps<{ field: FieldBinding }>()
 
 const settings = inject<ReturnType<typeof useSettings>>('settings')!
+
+const { t } = useI18n()
 
 const value = computed(() => settings.get(props.field.path))
 

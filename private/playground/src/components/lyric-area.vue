@@ -7,8 +7,8 @@
         <circle cx="6" cy="18" r="3" />
         <circle cx="18" cy="16" r="3" />
       </svg>
-      <p class="lyric-empty-title">No lyrics loaded</p>
-      <p class="lyric-empty-hint">Open the sidebar to select audio and lyric</p>
+      <p class="lyric-empty-title">{{ t('lyricArea.empty') }}</p>
+      <p class="lyric-empty-hint">{{ t('lyricArea.emptyHint') }}</p>
     </div>
   </div>
 </template>
@@ -17,8 +17,11 @@
 import type { usePlayer } from '@root/composables/usePlayer'
 
 import { inject, watch, onMounted, useTemplateRef } from 'vue'
+import { useI18n } from '@root/composables/useI18n'
 
 const player = inject<ReturnType<typeof usePlayer>>('player')!
+
+const { t } = useI18n()
 
 const containerRef = useTemplateRef<HTMLDivElement>('container')
 

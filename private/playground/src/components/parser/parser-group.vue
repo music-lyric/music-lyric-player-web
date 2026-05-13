@@ -2,8 +2,8 @@
   <div class="group" :class="{ open: isEnabled }">
     <header class="group-head">
       <div class="group-title-wrap">
-        <span class="group-title">{{ group.label }}</span>
-        <span class="group-hint">{{ group.hint }}</span>
+        <span class="group-title">{{ t(group.labelKey) }}</span>
+        <span class="group-hint">{{ t(group.hintKey) }}</span>
       </div>
       <button class="toggle" :class="{ active: isEnabled }" :aria-pressed="isEnabled" @click="toggleEnabled">
         <span class="toggle-thumb"></span>
@@ -12,7 +12,7 @@
 
     <div v-if="isEnabled && group.fields.length" class="group-body">
       <div v-for="f in group.fields" :key="f.path" class="row">
-        <label class="row-label">{{ f.label }}</label>
+        <label class="row-label">{{ t(f.labelKey) }}</label>
         <div class="row-control">
           <template v-if="f.type === 'toggle'">
             <button class="toggle small" :class="{ active: !!getValue(f.path) }" :aria-pressed="!!getValue(f.path)" @click="setValue(f.path, !getValue(f.path))">
@@ -41,10 +41,11 @@ import type { usePlayer } from '@root/composables/usePlayer'
 
 import { inject, computed } from 'vue'
 import { getByPath } from '@root/utils'
+import { useI18n } from '@root/composables/useI18n'
 
 export interface ParserField {
   type: 'toggle' | 'number'
-  label: string
+  labelKey: string
   path: string
   min?: number
   max?: number
@@ -53,8 +54,8 @@ export interface ParserField {
 
 export interface ParserGroupDef {
   key: string
-  label: string
-  hint: string
+  labelKey: string
+  hintKey: string
   enabledPath: string
   fields: ParserField[]
 }
@@ -62,6 +63,8 @@ export interface ParserGroupDef {
 const props = defineProps<{ group: ParserGroupDef }>()
 
 const player = inject<ReturnType<typeof usePlayer>>('player')!
+
+const { t } = useI18n()
 
 const isEnabled = computed<boolean>(() => !!getByPath(player.parserOptions, props.group.enabledPath))
 

@@ -2,32 +2,32 @@
   <div class="lyric-tab">
     <section class="section">
       <header class="section-head">
-        <h3 class="section-title">Lyric</h3>
+        <h3 class="section-title">{{ t('lyric.title') }}</h3>
         <div class="format-tabs">
-          <button class="format-tab" :class="{ active: format === 'lrc' }" @click="format = 'lrc'">LRC</button>
-          <button class="format-tab" :class="{ active: format === 'ttml' }" @click="format = 'ttml'">TTML</button>
+          <button class="format-tab" :class="{ active: format === 'lrc' }" @click="format = 'lrc'">{{ t('lyric.format.lrc') }}</button>
+          <button class="format-tab" :class="{ active: format === 'ttml' }" @click="format = 'ttml'">{{ t('lyric.format.ttml') }}</button>
         </div>
       </header>
 
       <div class="lyric-fields">
         <template v-if="format === 'lrc'">
           <div class="field">
-            <label>Original</label>
-            <textarea v-model="lrcOriginal" spellcheck="false" placeholder="Paste LRC content..." rows="10"></textarea>
+            <label>{{ t('lyric.field.original') }}</label>
+            <textarea v-model="lrcOriginal" spellcheck="false" :placeholder="t('lyric.placeholder.lrc')" rows="10"></textarea>
           </div>
           <div class="field">
-            <label>Romanization</label>
-            <textarea v-model="lrcRoman" spellcheck="false" placeholder="Optional romanization LRC..." rows="6"></textarea>
+            <label>{{ t('lyric.field.roman') }}</label>
+            <textarea v-model="lrcRoman" spellcheck="false" :placeholder="t('lyric.placeholder.lrcRoman')" rows="6"></textarea>
           </div>
           <div class="field">
-            <label>Translation</label>
-            <textarea v-model="lrcTranslate" spellcheck="false" placeholder="Optional translation LRC..." rows="6"></textarea>
+            <label>{{ t('lyric.field.translate') }}</label>
+            <textarea v-model="lrcTranslate" spellcheck="false" :placeholder="t('lyric.placeholder.lrcTranslate')" rows="6"></textarea>
           </div>
         </template>
         <template v-else>
           <div class="field grow">
-            <label>Original (TTML)</label>
-            <textarea v-model="ttmlOriginal" spellcheck="false" placeholder="Paste TTML content..." rows="18"></textarea>
+            <label>{{ t('lyric.field.originalTtml') }}</label>
+            <textarea v-model="ttmlOriginal" spellcheck="false" :placeholder="t('lyric.placeholder.ttml')" rows="18"></textarea>
             <div class="ttml-file">
               <button class="file-btn" @click="pickTtml">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -35,9 +35,9 @@
                   <polyline points="17 8 12 3 7 8" />
                   <line x1="12" y1="3" x2="12" y2="15" />
                 </svg>
-                <span>Choose TTML File</span>
+                <span>{{ t('lyric.ttmlChoose') }}</span>
               </button>
-              <span class="file-name" :class="{ filled: !!ttmlFileName }">{{ ttmlFileName || 'No file selected' }}</span>
+              <span class="file-name" :class="{ filled: !!ttmlFileName }">{{ ttmlFileName || t('lyric.noFile') }}</span>
               <input ref="ttmlFile" type="file" accept=".ttml,.xml" hidden @change="onTtmlFile" />
             </div>
           </div>
@@ -45,15 +45,15 @@
       </div>
 
       <div class="lyric-footer">
-        <button class="action secondary" @click="clearLyric">Clear</button>
-        <button class="action primary" @click="applyLyric">Apply</button>
+        <button class="action secondary" @click="clearLyric">{{ t('lyric.clear') }}</button>
+        <button class="action primary" @click="applyLyric">{{ t('lyric.apply') }}</button>
       </div>
     </section>
 
     <section class="section parser">
       <header class="section-head">
-        <h3 class="section-title">Parser</h3>
-        <span class="section-hint">Auto re-applies on change</span>
+        <h3 class="section-title">{{ t('parser.title') }}</h3>
+        <span class="section-hint">{{ t('parser.hint') }}</span>
       </header>
 
       <div class="parser-groups">
@@ -69,10 +69,13 @@ import type { usePlayer } from '@root/composables/usePlayer'
 import type { ParserGroupDef } from '@root/components/parser/parser-group.vue'
 
 import { inject, ref, useTemplateRef, computed } from 'vue'
+import { useI18n } from '@root/composables/useI18n'
 
 import ParserGroup from '@root/components/parser/parser-group.vue'
 
 const player = inject<ReturnType<typeof usePlayer>>('player')!
+
+const { t } = useI18n()
 
 const initial = player.lyricInfo.value
 const format = ref<LyricFormat>(initial?.format ?? 'lrc')
@@ -99,7 +102,7 @@ const applyLyric = () => {
   if (format.value === 'lrc') {
     const original = lrcOriginal.value.trim()
     if (!original) {
-      alert('Please provide LRC original content.')
+      alert(t('lyric.alert.lrcEmpty'))
       return
     }
     stored = {
@@ -111,7 +114,7 @@ const applyLyric = () => {
   } else {
     const original = ttmlOriginal.value.trim()
     if (!original) {
-      alert('Please provide TTML original content or choose a file.')
+      alert(t('lyric.alert.ttmlEmpty'))
       return
     }
     stored = {
@@ -121,7 +124,7 @@ const applyLyric = () => {
     }
   }
   const ok = player.applyLyric(stored)
-  if (!ok) alert('Failed to parse the provided lyric.')
+  if (!ok) alert(t('lyric.alert.parseFailed'))
 }
 
 const clearLyric = () => {
@@ -136,71 +139,69 @@ const clearLyric = () => {
 const groups = computed<ParserGroupDef[]>(() => [
   {
     key: 'pureClean',
-    label: 'Pure Clean',
-    hint: 'Strip song/creator info from header lines',
+    labelKey: 'parser.group.pureClean.label',
+    hintKey: 'parser.group.pureClean.hint',
     enabledPath: 'pureClean.enabled',
-    fields: [
-      { type: 'toggle', label: 'First line with music info', path: 'pureClean.firstLineWithMusicInfo' },
-    ],
+    fields: [{ type: 'toggle', labelKey: 'parser.group.pureClean.firstLineWithMusicInfo', path: 'pureClean.firstLineWithMusicInfo' }],
   },
   {
     key: 'pureExtract',
-    label: 'Pure Extract',
-    hint: 'Extract creator info from header',
+    labelKey: 'parser.group.pureExtract.label',
+    hintKey: 'parser.group.pureExtract.hint',
     enabledPath: 'pureExtract.enabled',
     fields: [],
   },
   {
     key: 'agentExtract',
-    label: 'Agent Extract',
-    hint: 'Extract per-line agent (e.g. "F:" prefix)',
+    labelKey: 'parser.group.agentExtract.label',
+    hintKey: 'parser.group.agentExtract.hint',
     enabledPath: 'agentExtract.enabled',
     fields: [],
   },
   {
     key: 'backgroundExtract',
-    label: 'Background Extract',
-    hint: 'Detect parenthesized background lines',
+    labelKey: 'parser.group.backgroundExtract.label',
+    hintKey: 'parser.group.backgroundExtract.hint',
     enabledPath: 'backgroundExtract.enabled',
     fields: [
-      { type: 'toggle', label: 'Full line  e.g. (lyric)', path: 'backgroundExtract.fullLine' },
-      { type: 'toggle', label: 'In line  e.g. lyric (extra) lyric', path: 'backgroundExtract.inLine' },
-      { type: 'toggle', label: 'Cross line  e.g. (lyric\\nlyric)', path: 'backgroundExtract.crossLine' },
+      { type: 'toggle', labelKey: 'parser.group.backgroundExtract.fullLine', path: 'backgroundExtract.fullLine' },
+      { type: 'toggle', labelKey: 'parser.group.backgroundExtract.inLine', path: 'backgroundExtract.inLine' },
+      { type: 'toggle', labelKey: 'parser.group.backgroundExtract.crossLine', path: 'backgroundExtract.crossLine' },
     ],
   },
   {
     key: 'backgroundClean',
-    label: 'Background Clean',
-    hint: 'Remove leftover background markers',
+    labelKey: 'parser.group.backgroundClean.label',
+    hintKey: 'parser.group.backgroundClean.hint',
     enabledPath: 'backgroundClean.enabled',
     fields: [],
   },
   {
     key: 'interludeInsert',
-    label: 'Interlude Insert',
-    hint: 'Insert interlude markers at long gaps',
+    labelKey: 'parser.group.interludeInsert.label',
+    hintKey: 'parser.group.interludeInsert.hint',
     enabledPath: 'interludeInsert.enabled',
     fields: [
-      { type: 'number', label: 'First gap (ms)', path: 'interludeInsert.first', min: 0, step: 500 },
-      { type: 'number', label: 'Normal gap (ms)', path: 'interludeInsert.normal', min: 0, step: 500 },
+      { type: 'number', labelKey: 'parser.group.interludeInsert.first', path: 'interludeInsert.first', min: 0, step: 500 },
+      { type: 'number', labelKey: 'parser.group.interludeInsert.normal', path: 'interludeInsert.normal', min: 0, step: 500 },
     ],
   },
   {
     key: 'spaceInsert',
-    label: 'Space Insert',
-    hint: 'Insert spaces between CJK / Latin / punctuation',
+    labelKey: 'parser.group.spaceInsert.label',
+    hintKey: 'parser.group.spaceInsert.hint',
     enabledPath: 'spaceInsert.enabled',
     fields: [
-      { type: 'toggle', label: 'Original line', path: 'spaceInsert.original' },
-      { type: 'toggle', label: 'Extended (translation / roman)', path: 'spaceInsert.extended' },
+      { type: 'toggle', labelKey: 'parser.group.spaceInsert.original', path: 'spaceInsert.original' },
+      { type: 'toggle', labelKey: 'parser.group.spaceInsert.extended', path: 'spaceInsert.extended' },
     ],
   },
   {
     key: 'stressMark',
-    label: 'Stress Mark',
-    hint: 'Mark syllables held longer than threshold',
+    labelKey: 'parser.group.stressMark.label',
+    hintKey: 'parser.group.stressMark.hint',
     enabledPath: 'stressMark.enabled',
-    fields: [{ type: 'number', label: 'Hold threshold (ms)', path: 'stressMark.checkTime', min: 0, step: 500 }],
+    fields: [{ type: 'number', labelKey: 'parser.group.stressMark.checkTime', path: 'stressMark.checkTime', min: 0, step: 500 }],
   },
 ])
 </script>
