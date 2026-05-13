@@ -16,18 +16,20 @@ export class NormalLineElement extends BaseLineElement {
   }
 
   private readonly info: LineNormal
-  private readonly isBackgroundLine: boolean
 
   private container: HTMLDivElement
-
   private syllable: SyllableElement | null = null
   private extended: ExtendedElement | null = null
+
+  private readonly backgroundEnable: boolean
+  private backgroundEnterDelay: number = 0
+  private backgroundRetractDelay: number = 0
 
   constructor(context: ComponentContext, info: LineNormal, isBackground: boolean) {
     super(context)
 
     this.info = info
-    this.isBackgroundLine = isBackground
+    this.backgroundEnable = isBackground
 
     this.container = document.createElement('div')
     this.element.appendChild(this.container)
@@ -35,8 +37,34 @@ export class NormalLineElement extends BaseLineElement {
     this.updateConfig()
   }
 
+  updateBackgroundDelay(enter: number, retract: number) {
+    if (!this.backgroundEnable) {
+      return
+    }
+
+    const style = this.container.style
+
+    if (enter !== this.backgroundEnterDelay) {
+      this.backgroundEnterDelay = enter
+      if (enter) {
+        style.setProperty('--lyric-player-line-background-enter-delay', `${enter}ms`)
+      } else {
+        style.removeProperty('--lyric-player-line-background-enter-delay')
+      }
+    }
+
+    if (retract !== this.backgroundRetractDelay) {
+      this.backgroundRetractDelay = retract
+      if (retract) {
+        style.setProperty('--lyric-player-line-background-retract-delay', `${retract}ms`)
+      } else {
+        style.removeProperty('--lyric-player-line-background-retract-delay')
+      }
+    }
+  }
+
   private applyClassName() {
-    const className = [styles.normal, this.context.config.line.normal.base.className, this.isBackgroundLine ? styles.background : '']
+    const className = [styles.normal, this.context.config.line.normal.base.className, this.backgroundEnable ? styles.background : '']
     applyClassName(this.container, className)
   }
 
@@ -118,6 +146,6 @@ export class NormalLineElement extends BaseLineElement {
   }
 
   get isBackground() {
-    return this.isBackgroundLine
+    return this.backgroundEnable
   }
 }

@@ -1,15 +1,24 @@
 $positions: left, center, right;
 
-@function build-player-var($target) {
-  @return var(--lyric-player-#{$target});
+@function build-player-var($target, $default: null) {
+  @if $default == '' or $default == null {
+    @return var(--lyric-player-#{$target});
+  } @else {
+    @return var(--lyric-player-#{$target}, #{$default});
+  }
 }
 
-@function build-line-var($module, $sub, $suffix) {
-  @if $sub == '' or $sub == null {
-    @return build-player-var('line-#{$module}-#{$suffix}');
-  } @else {
-    @return build-player-var('line-#{$module}-#{$sub}-#{$suffix}');
+@function build-line-var($module, $sub: null, $suffix: null, $default: null) {
+  $name: 'line-#{$module}';
+
+  @if $sub != '' and $sub != null {
+    $name: '#{$name}-#{$sub}';
   }
+  @if $suffix != '' and $suffix != null {
+    $name: '#{$name}-#{$suffix}';
+  }
+
+  @return build-player-var($name, $default);
 }
 
 @mixin apply-line-font($element) {

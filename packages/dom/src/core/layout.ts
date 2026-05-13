@@ -282,6 +282,13 @@ export class LayoutManager {
         }
       }
 
+      if (element.type === LineElementType.Normal && element.isBackground) {
+        const raw = (currentStyle.transitionDelay ?? 0) + (currentStyle.transitionDuration ?? 0)
+        const enter = Math.round(raw / 3)
+        const retract = Math.round(raw / 6)
+        element.updateBackgroundDelay(enter, retract)
+      }
+
       element.updateStyle(currentStyle)
 
       if (!isActiveLine) {

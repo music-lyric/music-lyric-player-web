@@ -42,17 +42,25 @@
   transform: scale(0.6);
   transform-origin: var(--lyric-player-line-position) center;
 
+  // retract: fast, with small delay
   transition-property: opacity, transform;
-  transition-duration: 0.2s, 0.4s;
-  transition-delay: 0.1s, 0s;
-  transition-timing-function: ease, cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  transition-duration: 0.25s, 0.4s;
+  transition-delay:
+    build-line-var('background', 'retract', 'delay', 80ms),
+    build-line-var('background', 'retract', 'delay', 80ms);
+  transition-timing-function: ease, cubic-bezier(0.16, 1, 0.3, 1);
 
   :is([played]) & {
     opacity: 0;
   }
 
+  // enter: slow, with delay
   :is([active], [scrolling]) & {
     opacity: 1;
     transform: scale(0.7);
+    transition-duration: 0.55s, 0.85s;
+    transition-delay:
+      calc(build-line-var('background', 'enter', 'delay', 150ms) + 80ms),
+      build-line-var('background', 'enter', 'delay', 150ms);
   }
 }
