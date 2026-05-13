@@ -39,6 +39,7 @@ export const usePlayer = ({ defaults }: UsePlayerOptions) => {
 
   let volumeBeforeMute = volume.value > 0 ? volume.value : 1
   let frameId: number | null = null
+  let isSeeking = false
 
   audio.volume = volume.value
 
@@ -46,7 +47,7 @@ export const usePlayer = ({ defaults }: UsePlayerOptions) => {
 
   const tick = () => {
     if (!isPlaying.value) return
-    currentTime.value = audio.currentTime
+    if (!isSeeking) currentTime.value = audio.currentTime
     frameId = requestAnimationFrame(tick)
   }
   const stopTick = () => {
@@ -117,11 +118,27 @@ export const usePlayer = ({ defaults }: UsePlayerOptions) => {
   }
   const toggle = () => (isPlaying.value ? pause() : play())
 
+  // While dragging the progress slider: only seek the lyric (and the
+  // displayed currentTime). The audio element is left alone so playback
+  // is not interrupted; it commits in `seek` on drag end. Base is always
+  // paused here so the lyric does not drift forward between drag steps —
+  // important for backward drag where forward drift makes the wipe jitter.
+  const previewSeek = (ratio: number) => {
+    if (!hasAudio.value || !duration.value) return
+    const time = ratio * duration.value
+    isSeeking = true
+    currentTime.value = time
+    base.play(time * 1000)
+  }
+
   const seek = (ratio: number) => {
     if (!hasAudio.value || !duration.value) return
-    audio.currentTime = ratio * duration.value
+    const time = ratio * duration.value
+    audio.currentTime = time
     currentTime.value = audio.currentTime
+    isSeeking = false
     base.play(audio.currentTime * 1000)
+    if (!isPlaying.value) base.pause()
   }
 
   const setVolume = (val: number) => {
@@ -193,6 +210,7 @@ export const usePlayer = ({ defaults }: UsePlayerOptions) => {
     pause,
     toggle,
     seek,
+    previewSeek,
     setVolume,
     toggleMute,
     applyConfigPatch,

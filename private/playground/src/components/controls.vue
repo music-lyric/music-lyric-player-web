@@ -19,7 +19,7 @@
     </button>
 
     <div class="progress">
-      <Slider :ratio="progress" :disabled="!player.hasAudio.value" @seek="player.seek" />
+      <Slider :ratio="progress" :disabled="!player.hasAudio.value" @seek="player.previewSeek" @seek-end="player.seek" />
     </div>
 
     <div class="time">{{ timeText }}</div>

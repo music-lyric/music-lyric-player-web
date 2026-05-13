@@ -17,6 +17,7 @@ interface Props {
 const props = defineProps<Props>()
 const emit = defineEmits<{
   (e: 'seek', ratio: number): void
+  (e: 'seek-end', ratio: number): void
 }>()
 
 const trackRef = useTemplateRef<HTMLDivElement>('track')
@@ -31,20 +32,23 @@ const getRatio = (clientX: number) => {
 }
 
 const seek = (clientX: number) => {
-  emit('seek', getRatio(clientX))
+  const ratio = getRatio(clientX)
+  emit('seek', ratio)
+  return ratio
 }
 
 const onStart = (e: MouseEvent | TouchEvent) => {
   if (props.disabled) return
   dragging.value = true
-  seek('touches' in e ? e.touches[0].clientX : e.clientX)
+  let lastRatio = seek('touches' in e ? e.touches[0].clientX : e.clientX)
 
   const onMove = (ev: MouseEvent | TouchEvent) => {
     if (!dragging.value) return
-    seek('touches' in ev ? ev.touches[0].clientX : ev.clientX)
+    lastRatio = seek('touches' in ev ? ev.touches[0].clientX : ev.clientX)
   }
   const onEnd = () => {
     dragging.value = false
+    emit('seek-end', lastRatio)
     document.removeEventListener('mousemove', onMove)
     document.removeEventListener('touchmove', onMove)
     document.removeEventListener('mouseup', onEnd)
