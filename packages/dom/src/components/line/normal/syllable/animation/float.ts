@@ -4,6 +4,7 @@ import type { Config } from '@root/config'
 
 export class FloatAnimation {
   private animation: Animation | null = null
+  private delay: number = 0
 
   constructor(
     private readonly host: HTMLDivElement,
@@ -23,8 +24,9 @@ export class FloatAnimation {
     }
 
     const delay = this.wordInfo.time.start - this.lineInfo.time.start
-    const duration = Math.max(1000, this.wordInfo.time.duration)
+    this.delay = delay
 
+    const duration = Math.max(1000, this.wordInfo.time.duration)
     this.animation = this.host.animate([{ transform: `translateY(${config.from ?? 0}px)` }, { transform: `translateY(${config.to ?? 2}px)` }], {
       delay,
       duration,
@@ -46,6 +48,15 @@ export class FloatAnimation {
         this.animation.play()
       }
       return
+    }
+
+    // When the line is active but `currentTime` is still before its start (e.g. before-song fallback / seek)
+    // pad the effect's delay so the float does not advance during the catch-up window.
+    const initDelay = this.wordInfo.time.start - this.lineInfo.time.start
+    const delay = relativeTime < 0 ? initDelay - relativeTime : initDelay
+    if (this.delay !== delay) {
+      this.delay = delay
+      this.animation.effect!.updateTiming({ delay })
     }
 
     const isFinished = currentTime >= this.wordInfo.time.end
@@ -75,5 +86,7 @@ export class FloatAnimation {
 
   dispose() {
     this.animation?.cancel()
+    this.animation = null
+    this.delay = 0
   }
 }
