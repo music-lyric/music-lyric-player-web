@@ -1,39 +1,38 @@
 <template>
-  <aside class="sidebar" :class="{ open }">
-    <div class="sidebar-header">
-      <div class="sidebar-header-row">
-        <h1 class="sidebar-title">
+  <aside :class="[$style.sidebar, { [$style.open]: open }]">
+    <div :class="$style.sidebarHeader">
+      <div :class="$style.sidebarHeaderRow">
+        <h1 :class="$style.sidebarTitle">
           {{ t('app.title') }}
-          <span class="sidebar-version">(v{{ version }})</span>
+          <span :class="$style.sidebarVersion">(v{{ version }})</span>
         </h1>
-        <button class="locale-btn" :title="t('app.changeLanguage')" @click="cycleLocale">
+        <button :class="$style.localeBtn" :title="t('app.changeLanguage')" @click="cycleLocale">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10" />
             <path d="M2 12h20" />
             <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
           </svg>
-          <span class="locale-label">{{ LOCALE_LABELS[locale] }}</span>
+          <span :class="$style.localeLabel">{{ LOCALE_LABELS[locale] }}</span>
         </button>
       </div>
-      <p class="sidebar-subtitle">{{ t('app.subtitle') }}</p>
+      <p :class="$style.sidebarSubtitle">{{ t('app.subtitle') }}</p>
     </div>
 
-    <div class="sidebar-tabs-wrap">
-      <nav class="sidebar-tabs">
+    <div :class="$style.sidebarTabsWrap">
+      <nav :class="$style.sidebarTabs">
         <button
           v-for="(tab, i) in tabs"
           :key="tab.key"
-          class="sidebar-tab"
-          :class="{ active: activeTab === tab.key }"
+          :class="[$style.sidebarTab, { [$style.active]: activeTab === tab.key }]"
           @click="(activeTab = tab.key), (indicatorIndex = i)"
         >
           {{ t(tab.labelKey) }}
         </button>
-        <span class="sidebar-tab-indicator" :style="indicatorStyle"></span>
+        <span :class="$style.sidebarTabIndicator" :style="indicatorStyle"></span>
       </nav>
     </div>
 
-    <div class="sidebar-body">
+    <div :class="$style.sidebarBody">
       <AudioTab v-show="activeTab === 'audio'" />
       <LyricTab v-show="activeTab === 'lyric'" />
       <SettingsTab v-show="activeTab === 'settings'" />
@@ -85,7 +84,7 @@ const indicatorStyle = computed(() => ({
 }))
 </script>
 
-<style scoped>
+<style module lang="scss">
 .sidebar {
   position: fixed;
   top: 0;
@@ -100,44 +99,53 @@ const indicatorStyle = computed(() => ({
   transform: translateX(-100%);
   transition: transform var(--motion-slow);
   z-index: 20;
-}
-.sidebar.open {
-  transform: translateX(0);
-  box-shadow: var(--shadow-md);
+
+  &.open {
+    transform: translateX(0);
+    box-shadow: var(--shadow-md);
+  }
+
+  @media (max-width: 480px) {
+    width: 320px;
+  }
 }
 
-.sidebar-header {
+.sidebarHeader {
   padding: 18px 20px 14px;
   flex-shrink: 0;
   border-bottom: 1px solid var(--color-border-soft);
 }
-.sidebar-header-row {
+
+.sidebarHeaderRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
 }
-.sidebar-title {
+
+.sidebarTitle {
   margin: 0;
   font-size: 15px;
   font-weight: 600;
   letter-spacing: -0.005em;
   color: var(--color-text);
 }
-.sidebar-version {
+
+.sidebarVersion {
   margin-left: 4px;
   font-size: 11px;
   font-weight: 500;
   color: var(--color-text-muted);
   font-variant-numeric: tabular-nums;
 }
-.sidebar-subtitle {
+
+.sidebarSubtitle {
   margin: 2px 0 0;
   font-size: 12px;
   color: var(--color-text-muted);
 }
 
-.locale-btn {
+.localeBtn {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -154,26 +162,30 @@ const indicatorStyle = computed(() => ({
     color var(--motion-fast),
     border-color var(--motion-fast),
     background var(--motion-fast);
+
+  &:hover {
+    color: var(--color-primary-strong);
+    border-color: var(--color-primary-border);
+    background: var(--color-primary-faint);
+  }
+
+  svg {
+    width: 13px;
+    height: 13px;
+  }
 }
-.locale-btn:hover {
-  color: var(--color-primary-strong);
-  border-color: var(--color-primary-border);
-  background: var(--color-primary-faint);
-}
-.locale-btn svg {
-  width: 13px;
-  height: 13px;
-}
-.locale-label {
+
+.localeLabel {
   min-width: 14px;
   text-align: center;
 }
 
-.sidebar-tabs-wrap {
+.sidebarTabsWrap {
   padding: 12px 16px;
   flex-shrink: 0;
 }
-.sidebar-tabs {
+
+.sidebarTabs {
   position: relative;
   display: flex;
   background: var(--color-bg-alt);
@@ -181,7 +193,8 @@ const indicatorStyle = computed(() => ({
   padding: 4px;
   gap: 4px;
 }
-.sidebar-tab {
+
+.sidebarTab {
   position: relative;
   z-index: 1;
   flex: 1;
@@ -194,14 +207,17 @@ const indicatorStyle = computed(() => ({
   font-size: 13px;
   font-weight: 500;
   transition: color var(--motion-fast);
+
+  &:hover {
+    color: var(--color-text);
+  }
+
+  &.active {
+    color: var(--color-primary-strong);
+  }
 }
-.sidebar-tab:hover {
-  color: var(--color-text);
-}
-.sidebar-tab.active {
-  color: var(--color-primary-strong);
-}
-.sidebar-tab-indicator {
+
+.sidebarTabIndicator {
   position: absolute;
   z-index: 0;
   top: 4px;
@@ -213,17 +229,11 @@ const indicatorStyle = computed(() => ({
   transition: transform var(--motion-base);
 }
 
-.sidebar-body {
+.sidebarBody {
   flex: 1;
   min-height: 0;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-}
-
-@media (max-width: 480px) {
-  .sidebar {
-    width: 320px;
-  }
 }
 </style>

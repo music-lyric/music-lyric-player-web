@@ -34,6 +34,11 @@ export default defineConfig({
   define: {
     __APP_VERSION__: JSON.stringify(rootPkg.version),
   },
+  css: {
+    modules: {
+      generateScopedName: '[local]-[hash:hex:8]',
+    },
+  },
   resolve: {
     alias: [
       {

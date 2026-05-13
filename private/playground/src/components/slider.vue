@@ -1,8 +1,8 @@
 <template>
-  <div class="slider" :class="{ dragging, disabled }" @mousedown="onStart" @touchstart.passive="onStart">
-    <div ref="track" class="slider-track">
-      <div class="slider-fill" :style="{ width: `${ratio * 100}%` }"></div>
-      <div class="slider-thumb" :style="{ left: `${ratio * 100}%` }"></div>
+  <div :class="[$style.slider, { [$style.dragging]: dragging, [$style.disabled]: disabled }]" @mousedown="onStart" @touchstart.passive="onStart">
+    <div ref="track" :class="$style.sliderTrack">
+      <div :class="$style.sliderFill" :style="{ width: `${ratio * 100}%` }"></div>
+      <div :class="$style.sliderThumb" :style="{ left: `${ratio * 100}%` }"></div>
     </div>
   </div>
 </template>
@@ -61,35 +61,50 @@ const onStart = (e: MouseEvent | TouchEvent) => {
 }
 </script>
 
-<style scoped>
+<style module lang="scss">
 .slider {
   display: flex;
   align-items: center;
   height: 24px;
   cursor: pointer;
   user-select: none;
+
+  &.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  &:hover .sliderThumb,
+  &.dragging .sliderThumb {
+    transform: translateY(-50%) scale(1);
+  }
+
+  &.dragging {
+    .sliderFill {
+      transition: none;
+    }
+    .sliderThumb {
+      transition: transform var(--motion-fast);
+    }
+  }
 }
-.slider.disabled {
-  pointer-events: none;
-  opacity: 0.5;
-}
-.slider-track {
+
+.sliderTrack {
   position: relative;
   width: 100%;
   height: 3px;
   background: var(--color-border);
   border-radius: var(--radius-sm);
 }
-.slider-fill {
+
+.sliderFill {
   height: 100%;
   background: var(--color-primary);
   border-radius: var(--radius-sm);
   transition: width 50ms linear;
 }
-.slider.dragging .slider-fill {
-  transition: none;
-}
-.slider-thumb {
+
+.sliderThumb {
   position: absolute;
   top: 50%;
   width: 12px;
@@ -101,12 +116,5 @@ const onStart = (e: MouseEvent | TouchEvent) => {
   transition:
     transform var(--motion-fast),
     left 50ms linear;
-}
-.slider:hover .slider-thumb,
-.slider.dragging .slider-thumb {
-  transform: translateY(-50%) scale(1);
-}
-.slider.dragging .slider-thumb {
-  transition: transform var(--motion-fast);
 }
 </style>

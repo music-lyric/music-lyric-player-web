@@ -1,9 +1,9 @@
 <template>
-  <div class="app-shell" :class="{ 'sidebar-open': sidebarOpen }">
+  <div :class="[$style.appShell, { [$style.sidebarOpen]: sidebarOpen }]">
     <Sidebar :open="sidebarOpen" />
-    <div class="sidebar-backdrop" @click="closeSidebar"></div>
+    <div :class="$style.sidebarBackdrop" @click="closeSidebar"></div>
 
-    <main class="app-main">
+    <main :class="$style.appMain">
       <LyricArea />
       <Controls />
     </main>
@@ -38,17 +38,30 @@ provide('settings', settings)
 provide('sidebar', { open: sidebarOpen, toggle: toggleSidebar, close: closeSidebar })
 </script>
 
-<style scoped>
-.app-shell {
+<style module lang="scss">
+.appShell {
   position: relative;
   width: 100%;
   height: 100%;
   display: flex;
   overflow: hidden;
   background: var(--color-bg);
+
+  &.sidebarOpen {
+    .sidebarBackdrop {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    @media (min-width: 768px) {
+      .appMain {
+        margin-left: var(--sidebar-width);
+      }
+    }
+  }
 }
 
-.app-main {
+.appMain {
   flex: 1;
   min-width: 0;
   display: flex;
@@ -57,7 +70,7 @@ provide('sidebar', { open: sidebarOpen, toggle: toggleSidebar, close: closeSideb
   margin-left: 0;
 }
 
-.sidebar-backdrop {
+.sidebarBackdrop {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.35);
@@ -65,17 +78,8 @@ provide('sidebar', { open: sidebarOpen, toggle: toggleSidebar, close: closeSideb
   pointer-events: none;
   transition: opacity var(--motion-slow);
   z-index: 15;
-}
-.app-shell.sidebar-open .sidebar-backdrop {
-  opacity: 1;
-  pointer-events: auto;
-}
 
-@media (min-width: 768px) {
-  .app-shell.sidebar-open .app-main {
-    margin-left: var(--sidebar-width);
-  }
-  .sidebar-backdrop {
+  @media (min-width: 768px) {
     display: none;
   }
 }

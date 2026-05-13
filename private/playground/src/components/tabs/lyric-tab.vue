@@ -1,35 +1,35 @@
 <template>
-  <div class="lyric-tab">
-    <section class="section">
-      <header class="section-head">
-        <h3 class="section-title">{{ t('lyric.title') }}</h3>
-        <div class="format-tabs">
-          <button class="format-tab" :class="{ active: format === 'lrc' }" @click="format = 'lrc'">{{ t('lyric.format.lrc') }}</button>
-          <button class="format-tab" :class="{ active: format === 'ttml' }" @click="format = 'ttml'">{{ t('lyric.format.ttml') }}</button>
+  <div :class="$style.lyricTab">
+    <section :class="$style.section">
+      <header :class="$style.sectionHead">
+        <h3 :class="$style.sectionTitle">{{ t('lyric.title') }}</h3>
+        <div :class="$style.formatTabs">
+          <button :class="[$style.formatTab, { [$style.active]: format === 'lrc' }]" @click="format = 'lrc'">{{ t('lyric.format.lrc') }}</button>
+          <button :class="[$style.formatTab, { [$style.active]: format === 'ttml' }]" @click="format = 'ttml'">{{ t('lyric.format.ttml') }}</button>
         </div>
       </header>
 
-      <div class="lyric-fields">
+      <div :class="$style.lyricFields">
         <template v-if="format === 'lrc'">
-          <div class="field">
+          <div :class="$style.field">
             <label>{{ t('lyric.field.original') }}</label>
             <textarea v-model="lrcOriginal" spellcheck="false" :placeholder="t('lyric.placeholder.lrc')" rows="10"></textarea>
           </div>
-          <div class="field">
+          <div :class="$style.field">
             <label>{{ t('lyric.field.roman') }}</label>
             <textarea v-model="lrcRoman" spellcheck="false" :placeholder="t('lyric.placeholder.lrcRoman')" rows="6"></textarea>
           </div>
-          <div class="field">
+          <div :class="$style.field">
             <label>{{ t('lyric.field.translate') }}</label>
             <textarea v-model="lrcTranslate" spellcheck="false" :placeholder="t('lyric.placeholder.lrcTranslate')" rows="6"></textarea>
           </div>
         </template>
         <template v-else>
-          <div class="field grow">
+          <div :class="[$style.field, $style.grow]">
             <label>{{ t('lyric.field.originalTtml') }}</label>
             <textarea v-model="ttmlOriginal" spellcheck="false" :placeholder="t('lyric.placeholder.ttml')" rows="18"></textarea>
-            <div class="ttml-file">
-              <button class="file-btn" @click="pickTtml">
+            <div :class="$style.ttmlFile">
+              <button :class="$style.fileBtn" @click="pickTtml">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                   <polyline points="17 8 12 3 7 8" />
@@ -37,26 +37,26 @@
                 </svg>
                 <span>{{ t('lyric.ttmlChoose') }}</span>
               </button>
-              <span class="file-name" :class="{ filled: !!ttmlFileName }">{{ ttmlFileName || t('lyric.noFile') }}</span>
+              <span :class="[$style.fileName, { [$style.filled]: !!ttmlFileName }]">{{ ttmlFileName || t('lyric.noFile') }}</span>
               <input ref="ttmlFile" type="file" accept=".ttml,.xml" hidden @change="onTtmlFile" />
             </div>
           </div>
         </template>
       </div>
 
-      <div class="lyric-footer">
-        <button class="action secondary" @click="clearLyric">{{ t('lyric.clear') }}</button>
-        <button class="action primary" @click="applyLyric">{{ t('lyric.apply') }}</button>
+      <div :class="$style.lyricFooter">
+        <button :class="[$style.action, $style.secondary]" @click="clearLyric">{{ t('lyric.clear') }}</button>
+        <button :class="[$style.action, $style.primary]" @click="applyLyric">{{ t('lyric.apply') }}</button>
       </div>
     </section>
 
-    <section class="section parser">
-      <header class="section-head">
-        <h3 class="section-title">{{ t('parser.title') }}</h3>
-        <span class="section-hint">{{ t('parser.hint') }}</span>
+    <section :class="[$style.section, $style.parser]">
+      <header :class="$style.sectionHead">
+        <h3 :class="$style.sectionTitle">{{ t('parser.title') }}</h3>
+        <span :class="$style.sectionHint">{{ t('parser.hint') }}</span>
       </header>
 
-      <div class="parser-groups">
+      <div :class="$style.parserGroups">
         <ParserGroup v-for="g in groups" :key="g.key" :group="g" />
       </div>
     </section>
@@ -206,8 +206,8 @@ const groups = computed<ParserGroupDef[]>(() => [
 ])
 </script>
 
-<style scoped>
-.lyric-tab {
+<style module lang="scss">
+.lyricTab {
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -221,36 +221,40 @@ const groups = computed<ParserGroupDef[]>(() => [
   display: flex;
   flex-direction: column;
   gap: 10px;
-}
-.section.parser {
-  gap: 8px;
+
+  &.parser {
+    gap: 8px;
+  }
 }
 
-.section-head {
+.sectionHead {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
 }
-.section-title {
+
+.sectionTitle {
   margin: 0;
   font-size: 13px;
   font-weight: 600;
   color: var(--color-text);
   letter-spacing: 0.01em;
 }
-.section-hint {
+
+.sectionHint {
   font-size: 11px;
   color: var(--color-text-muted);
 }
 
-.format-tabs {
+.formatTabs {
   display: inline-flex;
   background: var(--color-bg-alt);
   border-radius: var(--radius-full);
   padding: 2px;
 }
-.format-tab {
+
+.formatTab {
   padding: 4px 12px;
   border: none;
   background: transparent;
@@ -261,63 +265,70 @@ const groups = computed<ParserGroupDef[]>(() => [
   transition:
     color var(--motion-fast),
     background var(--motion-fast);
-}
-.format-tab:hover {
-  color: var(--color-primary);
-}
-.format-tab.active {
-  background: var(--color-bg);
-  color: var(--color-primary-strong);
-  box-shadow: var(--shadow-sm);
+
+  &:hover {
+    color: var(--color-primary);
+  }
+
+  &.active {
+    background: var(--color-bg);
+    color: var(--color-primary-strong);
+    box-shadow: var(--shadow-sm);
+  }
 }
 
-.lyric-fields {
+.lyricFields {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
+
 .field {
   display: flex;
   flex-direction: column;
   gap: 6px;
-}
-.field label {
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-}
-.field textarea {
-  resize: none;
-  min-height: 160px;
-  padding: 10px 12px;
-  font-size: 12px;
-  font-family: var(--font-mono);
-  line-height: 1.5;
-  background: var(--color-bg-subtle);
-  color: var(--color-text);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  outline: none;
-  transition:
-    border-color var(--motion-fast),
-    background var(--motion-fast),
-    box-shadow var(--motion-fast);
-}
-.field textarea:focus {
-  border-color: var(--color-primary);
-  background: var(--color-bg);
-  box-shadow: var(--ring);
+
+  label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  textarea {
+    resize: none;
+    min-height: 160px;
+    padding: 10px 12px;
+    font-size: 12px;
+    font-family: var(--font-mono);
+    line-height: 1.5;
+    background: var(--color-bg-subtle);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    outline: none;
+    transition:
+      border-color var(--motion-fast),
+      background var(--motion-fast),
+      box-shadow var(--motion-fast);
+
+    &:focus {
+      border-color: var(--color-primary);
+      background: var(--color-bg);
+      box-shadow: var(--ring);
+    }
+  }
 }
 
-.ttml-file {
+.ttmlFile {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-top: 4px;
 }
-.file-btn {
+
+.fileBtn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -331,32 +342,37 @@ const groups = computed<ParserGroupDef[]>(() => [
     border-color var(--motion-fast),
     color var(--motion-fast),
     background var(--motion-fast);
+
+  &:hover {
+    border-color: var(--color-primary-border);
+    color: var(--color-primary);
+    background: var(--color-primary-faint);
+  }
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
 }
-.file-btn:hover {
-  border-color: var(--color-primary-border);
-  color: var(--color-primary);
-  background: var(--color-primary-faint);
-}
-.file-btn svg {
-  width: 14px;
-  height: 14px;
-}
-.file-name {
+
+.fileName {
   font-size: 12px;
   color: var(--color-text-muted);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-.file-name.filled {
-  color: var(--color-text-secondary);
+
+  &.filled {
+    color: var(--color-text-secondary);
+  }
 }
 
-.lyric-footer {
+.lyricFooter {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
 }
+
 .action {
   padding: 7px 16px;
   font-size: 12px;
@@ -370,25 +386,29 @@ const groups = computed<ParserGroupDef[]>(() => [
     color var(--motion-fast),
     background var(--motion-fast),
     box-shadow var(--motion-fast);
-}
-.action.secondary:hover {
-  border-color: var(--color-border-strong);
-  color: var(--color-text);
-}
-.action.primary {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-  color: var(--color-text-inverse);
-}
-.action.primary:hover {
-  background: var(--color-primary-strong);
-  border-color: var(--color-primary-strong);
-}
-.action:focus-visible {
-  box-shadow: var(--ring);
+
+  &.secondary:hover {
+    border-color: var(--color-border-strong);
+    color: var(--color-text);
+  }
+
+  &.primary {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-text-inverse);
+
+    &:hover {
+      background: var(--color-primary-strong);
+      border-color: var(--color-primary-strong);
+    }
+  }
+
+  &:focus-visible {
+    box-shadow: var(--ring);
+  }
 }
 
-.parser-groups {
+.parserGroups {
   display: flex;
   flex-direction: column;
   gap: 8px;

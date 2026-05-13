@@ -1,6 +1,6 @@
 <template>
-  <div class="controls">
-    <button class="control-btn icon" :class="{ active: sidebar.open.value }" :title="t('controls.toggleSidebar')" @click="sidebar.toggle">
+  <div :class="$style.controls">
+    <button :class="[$style.controlBtn, $style.icon, { [$style.active]: sidebar.open.value }]" :title="t('controls.toggleSidebar')" @click="sidebar.toggle">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <line x1="3" y1="6" x2="21" y2="6" />
         <line x1="3" y1="12" x2="21" y2="12" />
@@ -8,7 +8,7 @@
       </svg>
     </button>
 
-    <button class="control-btn primary" :disabled="!player.hasAudio.value" :title="player.isPlaying.value ? t('controls.pause') : t('controls.play')" @click="player.toggle">
+    <button :class="[$style.controlBtn, $style.primary]" :disabled="!player.hasAudio.value" :title="player.isPlaying.value ? t('controls.pause') : t('controls.play')" @click="player.toggle">
       <svg v-if="!player.isPlaying.value" viewBox="0 0 24 24" fill="currentColor">
         <path d="M8 5v14l11-7z" />
       </svg>
@@ -18,14 +18,14 @@
       </svg>
     </button>
 
-    <div class="progress">
+    <div :class="$style.progress">
       <Slider :ratio="progress" :disabled="!player.hasAudio.value" @seek="player.previewSeek" @seek-end="player.seek" />
     </div>
 
-    <div class="time">{{ timeText }}</div>
+    <div :class="$style.time">{{ timeText }}</div>
 
-    <div class="volume">
-      <button class="control-btn icon" :title="player.muted.value ? t('controls.unmute') : t('controls.mute')" @click="player.toggleMute">
+    <div :class="$style.volume">
+      <button :class="[$style.controlBtn, $style.icon]" :title="player.muted.value ? t('controls.unmute') : t('controls.mute')" @click="player.toggleMute">
         <svg v-if="!player.muted.value" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
           <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
@@ -37,7 +37,7 @@
           <line x1="17" y1="9" x2="23" y2="15" />
         </svg>
       </button>
-      <div class="volume-slider">
+      <div :class="$style.volumeSlider">
         <Slider :ratio="player.volume.value" @seek="player.setVolume" />
       </div>
     </div>
@@ -64,7 +64,7 @@ const progress = computed(() => (player.duration.value ? player.currentTime.valu
 const timeText = computed(() => `${formatTime(player.currentTime.value)} / ${formatTime(player.duration.value)}`)
 </script>
 
-<style scoped>
+<style module lang="scss">
 .controls {
   display: flex;
   align-items: center;
@@ -74,9 +74,14 @@ const timeText = computed(() => `${formatTime(player.currentTime.value)} / ${for
   border-top: 1px solid var(--color-border);
   background: var(--color-bg);
   flex-shrink: 0;
+
+  @media (max-width: 640px) {
+    gap: 8px;
+    padding: 0 12px;
+  }
 }
 
-.control-btn {
+.controlBtn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -87,39 +92,47 @@ const timeText = computed(() => `${formatTime(player.currentTime.value)} / ${for
   transition:
     color var(--motion-fast),
     background var(--motion-fast);
-}
-.control-btn:hover {
-  color: var(--color-primary);
-  background: var(--color-primary-faint);
-}
-.control-btn.icon {
-  width: 34px;
-  height: 34px;
-}
-.control-btn.icon svg {
-  width: 18px;
-  height: 18px;
-}
-.control-btn.icon.active {
-  color: var(--color-primary);
-  background: var(--color-primary-faint);
-}
-.control-btn.primary {
-  width: 38px;
-  height: 38px;
-  color: var(--color-primary);
-}
-.control-btn.primary:hover {
-  background: var(--color-primary-faint);
-}
-.control-btn.primary:disabled {
-  color: var(--color-text-muted);
-  background: transparent;
-  cursor: not-allowed;
-}
-.control-btn.primary svg {
-  width: 18px;
-  height: 18px;
+
+  &:hover {
+    color: var(--color-primary);
+    background: var(--color-primary-faint);
+  }
+
+  &.icon {
+    width: 34px;
+    height: 34px;
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    &.active {
+      color: var(--color-primary);
+      background: var(--color-primary-faint);
+    }
+  }
+
+  &.primary {
+    width: 38px;
+    height: 38px;
+    color: var(--color-primary);
+
+    &:hover {
+      background: var(--color-primary-faint);
+    }
+
+    &:disabled {
+      color: var(--color-text-muted);
+      background: transparent;
+      cursor: not-allowed;
+    }
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
 }
 
 .progress {
@@ -132,6 +145,10 @@ const timeText = computed(() => `${formatTime(player.currentTime.value)} / ${for
   font-size: 12px;
   color: var(--color-text-secondary);
   white-space: nowrap;
+
+  @media (max-width: 640px) {
+    display: none;
+  }
 }
 
 .volume {
@@ -139,23 +156,16 @@ const timeText = computed(() => `${formatTime(player.currentTime.value)} / ${for
   align-items: center;
   gap: 8px;
   min-width: 140px;
-}
-.volume-slider {
-  width: 100px;
-}
 
-@media (max-width: 640px) {
-  .controls {
-    gap: 8px;
-    padding: 0 12px;
-  }
-  .time {
-    display: none;
-  }
-  .volume {
+  @media (max-width: 640px) {
     min-width: 0;
   }
-  .volume-slider {
+}
+
+.volumeSlider {
+  width: 100px;
+
+  @media (max-width: 640px) {
     display: none;
   }
 }

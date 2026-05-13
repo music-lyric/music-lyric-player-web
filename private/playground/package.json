@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.6",
+    "sass": "^1.86.0",
     "vue-tsc": "^3.2.8"
   }
 }

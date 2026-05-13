@@ -1,27 +1,27 @@
 <template>
-  <div class="group" :class="{ open: isEnabled }">
-    <header class="group-head">
-      <div class="group-title-wrap">
-        <span class="group-title">{{ t(group.labelKey) }}</span>
-        <span class="group-hint">{{ t(group.hintKey) }}</span>
+  <div :class="[$style.group, { [$style.open]: isEnabled }]">
+    <header :class="$style.groupHead">
+      <div :class="$style.groupTitleWrap">
+        <span :class="$style.groupTitle">{{ t(group.labelKey) }}</span>
+        <span :class="$style.groupHint">{{ t(group.hintKey) }}</span>
       </div>
-      <button class="toggle" :class="{ active: isEnabled }" :aria-pressed="isEnabled" @click="toggleEnabled">
-        <span class="toggle-thumb"></span>
+      <button :class="[$style.toggle, { [$style.active]: isEnabled }]" :aria-pressed="isEnabled" @click="toggleEnabled">
+        <span :class="$style.toggleThumb"></span>
       </button>
     </header>
 
-    <div v-if="isEnabled && group.fields.length" class="group-body">
-      <div v-for="f in group.fields" :key="f.path" class="row">
-        <label class="row-label">{{ t(f.labelKey) }}</label>
-        <div class="row-control">
+    <div v-if="isEnabled && group.fields.length" :class="$style.groupBody">
+      <div v-for="f in group.fields" :key="f.path" :class="$style.row">
+        <label :class="$style.rowLabel">{{ t(f.labelKey) }}</label>
+        <div :class="$style.rowControl">
           <template v-if="f.type === 'toggle'">
-            <button class="toggle small" :class="{ active: !!getValue(f.path) }" :aria-pressed="!!getValue(f.path)" @click="setValue(f.path, !getValue(f.path))">
-              <span class="toggle-thumb"></span>
+            <button :class="[$style.toggle, $style.small, { [$style.active]: !!getValue(f.path) }]" :aria-pressed="!!getValue(f.path)" @click="setValue(f.path, !getValue(f.path))">
+              <span :class="$style.toggleThumb"></span>
             </button>
           </template>
           <template v-else-if="f.type === 'number'">
             <input
-              class="ctrl input"
+              :class="[$style.ctrl, $style.input]"
               type="number"
               :min="f.min"
               :max="f.max"
@@ -82,36 +82,40 @@ const writeNumber = (path: string, raw: string) => {
 }
 </script>
 
-<style scoped>
+<style module lang="scss">
 .group {
   background: var(--color-bg-subtle);
   border: 1px solid var(--color-border-soft);
   border-radius: var(--radius-md);
   transition: border-color var(--motion-fast);
-}
-.group.open {
-  border-color: var(--color-border);
+
+  &.open {
+    border-color: var(--color-border);
+  }
 }
 
-.group-head {
+.groupHead {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   padding: 10px 12px;
 }
-.group-title-wrap {
+
+.groupTitleWrap {
   display: flex;
   flex-direction: column;
   gap: 2px;
   min-width: 0;
 }
-.group-title {
+
+.groupTitle {
   font-size: 12px;
   font-weight: 600;
   color: var(--color-text);
 }
-.group-hint {
+
+.groupHint {
   font-size: 11px;
   color: var(--color-text-muted);
   overflow: hidden;
@@ -119,7 +123,7 @@ const writeNumber = (path: string, raw: string) => {
   white-space: nowrap;
 }
 
-.group-body {
+.groupBody {
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -133,35 +137,40 @@ const writeNumber = (path: string, raw: string) => {
   gap: 12px;
   min-height: 32px;
 }
-.row-label {
+
+.rowLabel {
   flex: 1;
   font-size: 12px;
   color: var(--color-text-secondary);
 }
-.row-control {
+
+.rowControl {
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: flex-end;
 }
 
-.ctrl.input {
-  width: 110px;
-  height: 28px;
-  padding: 0 8px;
-  font-size: 12px;
-  background: var(--color-bg);
-  color: var(--color-text);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  outline: none;
-  transition:
-    border-color var(--motion-fast),
-    box-shadow var(--motion-fast);
-}
-.ctrl.input:focus {
-  border-color: var(--color-primary);
-  box-shadow: var(--ring);
+.ctrl {
+  &.input {
+    width: 110px;
+    height: 28px;
+    padding: 0 8px;
+    font-size: 12px;
+    background: var(--color-bg);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    outline: none;
+    transition:
+      border-color var(--motion-fast),
+      box-shadow var(--motion-fast);
+
+    &:focus {
+      border-color: var(--color-primary);
+      box-shadow: var(--ring);
+    }
+  }
 }
 
 .toggle {
@@ -174,24 +183,43 @@ const writeNumber = (path: string, raw: string) => {
   padding: 0;
   cursor: pointer;
   transition: background var(--motion-fast);
+
+  &:hover {
+    background: var(--color-text-muted);
+  }
+
+  &.small {
+    width: 32px;
+    height: 18px;
+
+    .toggleThumb {
+      width: 14px;
+      height: 14px;
+    }
+
+    &.active .toggleThumb {
+      left: 16px;
+    }
+  }
+
+  &.active {
+    background: var(--color-primary);
+
+    &:hover {
+      background: var(--color-primary-strong);
+    }
+
+    .toggleThumb {
+      left: 18px;
+    }
+  }
+
+  &:focus-visible {
+    box-shadow: var(--ring);
+  }
 }
-.toggle.small {
-  width: 32px;
-  height: 18px;
-}
-.toggle:hover {
-  background: var(--color-text-muted);
-}
-.toggle.active {
-  background: var(--color-primary);
-}
-.toggle.active:hover {
-  background: var(--color-primary-strong);
-}
-.toggle:focus-visible {
-  box-shadow: var(--ring);
-}
-.toggle-thumb {
+
+.toggleThumb {
   position: absolute;
   top: 2px;
   left: 2px;
@@ -201,15 +229,5 @@ const writeNumber = (path: string, raw: string) => {
   border-radius: 50%;
   transition: left var(--motion-fast);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
-}
-.toggle.small .toggle-thumb {
-  width: 14px;
-  height: 14px;
-}
-.toggle.active .toggle-thumb {
-  left: 18px;
-}
-.toggle.small.active .toggle-thumb {
-  left: 16px;
 }
 </style>

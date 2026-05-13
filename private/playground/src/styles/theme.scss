@@ -92,22 +92,24 @@ textarea {
   outline: none;
 }
 
-/* Scrollbars */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--color-border-strong);
-  border-radius: var(--radius-full);
-  border: 2px solid transparent;
-  background-clip: content-box;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-text-muted);
-  background-clip: content-box;
-  border: 2px solid transparent;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
+
+  &-thumb {
+    background: var(--color-border-strong);
+    border-radius: var(--radius-full);
+    border: 2px solid transparent;
+    background-clip: content-box;
+
+    &:hover {
+      background: var(--color-text-muted);
+      background-clip: content-box;
+      border: 2px solid transparent;
+    }
+  }
+
+  &-track {
+    background: transparent;
+  }
 }

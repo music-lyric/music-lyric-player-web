@@ -1,8 +1,8 @@
 <template>
-  <div class="settings-tab">
-    <div class="toolbar">
-      <span class="toolbar-meta">{{ t('settings.toolbarMeta') }}</span>
-      <button class="reset-btn" @click="settings.reset">
+  <div :class="$style.settingsTab">
+    <div :class="$style.toolbar">
+      <span :class="$style.toolbarMeta">{{ t('settings.toolbarMeta') }}</span>
+      <button :class="$style.resetBtn" @click="settings.reset">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
           <path d="M3 3v5h5" />
@@ -11,7 +11,7 @@
       </button>
     </div>
 
-    <div class="scroll">
+    <div :class="$style.scroll">
       <SettingSection v-for="section in SECTIONS" :key="section.id" :section="section" />
     </div>
   </div>
@@ -32,8 +32,8 @@ const settings = inject<ReturnType<typeof useSettings>>('settings')!
 const { t } = useI18n()
 </script>
 
-<style scoped>
-.settings-tab {
+<style module lang="scss">
+.settingsTab {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -49,11 +49,13 @@ const { t } = useI18n()
   border-bottom: 1px solid var(--color-border-soft);
   flex-shrink: 0;
 }
-.toolbar-meta {
+
+.toolbarMeta {
   font-size: 11px;
   color: var(--color-text-muted);
 }
-.reset-btn {
+
+.resetBtn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -68,15 +70,17 @@ const { t } = useI18n()
     color var(--motion-fast),
     border-color var(--motion-fast),
     background var(--motion-fast);
-}
-.reset-btn:hover {
-  color: var(--color-primary-strong);
-  border-color: var(--color-primary-border);
-  background: var(--color-primary-faint);
-}
-.reset-btn svg {
-  width: 13px;
-  height: 13px;
+
+  &:hover {
+    color: var(--color-primary-strong);
+    border-color: var(--color-primary-border);
+    background: var(--color-primary-faint);
+  }
+
+  svg {
+    width: 13px;
+    height: 13px;
+  }
 }
 
 .scroll {

@@ -1,21 +1,21 @@
 <template>
-  <div class="audio-tab">
-    <section class="section">
-      <header class="section-head">
-        <h3 class="section-title">{{ t('audio.title') }}</h3>
-        <span class="section-hint">{{ t('audio.hint') }}</span>
+  <div :class="$style.audioTab">
+    <section :class="$style.section">
+      <header :class="$style.sectionHead">
+        <h3 :class="$style.sectionTitle">{{ t('audio.title') }}</h3>
+        <span :class="$style.sectionHint">{{ t('audio.hint') }}</span>
       </header>
-      <button class="picker" :class="{ filled: player.hasAudio.value }" @click="pickAudio">
-        <span class="picker-icon">
+      <button :class="[$style.picker, { [$style.filled]: player.hasAudio.value }]" @click="pickAudio">
+        <span :class="$style.pickerIcon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M9 18V5l12-2v13" />
             <circle cx="6" cy="18" r="3" />
             <circle cx="18" cy="16" r="3" />
           </svg>
         </span>
-        <span class="picker-body">
-          <span class="picker-label">{{ player.hasAudio.value ? t('audio.fileFilled') : t('audio.filePick') }}</span>
-          <span class="picker-meta" :title="player.audioName.value">
+        <span :class="$style.pickerBody">
+          <span :class="$style.pickerLabel">{{ player.hasAudio.value ? t('audio.fileFilled') : t('audio.filePick') }}</span>
+          <span :class="$style.pickerMeta" :title="player.audioName.value">
             {{ player.audioName.value || t('audio.noFile') }}
           </span>
         </span>
@@ -46,8 +46,8 @@ const onAudioChange = async (e: Event) => {
 }
 </script>
 
-<style scoped>
-.audio-tab {
+<style module lang="scss">
+.audioTab {
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -63,20 +63,22 @@ const onAudioChange = async (e: Event) => {
   gap: 10px;
 }
 
-.section-head {
+.sectionHead {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
 }
-.section-title {
+
+.sectionTitle {
   margin: 0;
   font-size: 13px;
   font-weight: 600;
   color: var(--color-text);
   letter-spacing: 0.01em;
 }
-.section-hint {
+
+.sectionHint {
   font-size: 11px;
   color: var(--color-text-muted);
 }
@@ -95,20 +97,20 @@ const onAudioChange = async (e: Event) => {
     border-color var(--motion-fast),
     background var(--motion-fast),
     box-shadow var(--motion-fast);
+
+  &:hover,
+  &.filled {
+    border-color: var(--color-primary-border);
+    background: var(--color-primary-faint);
+  }
+
+  &:focus-visible {
+    border-color: var(--color-primary);
+    box-shadow: var(--ring);
+  }
 }
-.picker:hover {
-  border-color: var(--color-primary-border);
-  background: var(--color-primary-faint);
-}
-.picker.filled {
-  border-color: var(--color-primary-border);
-  background: var(--color-primary-faint);
-}
-.picker:focus-visible {
-  border-color: var(--color-primary);
-  box-shadow: var(--ring);
-}
-.picker-icon {
+
+.pickerIcon {
   width: 36px;
   height: 36px;
   display: inline-flex;
@@ -118,23 +120,27 @@ const onAudioChange = async (e: Event) => {
   background: var(--color-primary-soft);
   border-radius: var(--radius-sm);
   flex-shrink: 0;
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
 }
-.picker-icon svg {
-  width: 18px;
-  height: 18px;
-}
-.picker-body {
+
+.pickerBody {
   flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
 }
-.picker-label {
+
+.pickerLabel {
   font-size: 13px;
   font-weight: 500;
   color: var(--color-text);
 }
-.picker-meta {
+
+.pickerMeta {
   font-size: 12px;
   color: var(--color-text-secondary);
   overflow: hidden;

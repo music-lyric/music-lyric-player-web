@@ -93,14 +93,17 @@ importers:
         version: 0.11.2
       vue:
         specifier: ^3.5.34
-        version: 3.5.34(typescript@5.8.2)
+        version: 3.5.34(typescript@5.9.3)
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^6.0.6
-        version: 6.0.6(vite@7.3.1(@types/node@25.5.2)(sass@1.99.0)(tsx@4.21.0))(vue@3.5.34(typescript@5.8.2))
+        version: 6.0.6(vite@7.3.1(@types/node@25.5.2)(sass@1.99.0)(tsx@4.21.0))(vue@3.5.34(typescript@5.9.3))
+      sass:
+        specifier: ^1.86.0
+        version: 1.99.0
       vue-tsc:
         specifier: ^3.2.8
-        version: 3.2.8(typescript@5.8.2)
+        version: 3.2.8(typescript@5.9.3)
 
 packages:
 
@@ -1546,11 +1549,11 @@ snapshots:
 
   '@types/semver@7.7.1': {}
 
-  '@vitejs/plugin-vue@6.0.6(vite@7.3.1(@types/node@25.5.2)(sass@1.99.0)(tsx@4.21.0))(vue@3.5.34(typescript@5.8.2))':
+  '@vitejs/plugin-vue@6.0.6(vite@7.3.1(@types/node@25.5.2)(sass@1.99.0)(tsx@4.21.0))(vue@3.5.34(typescript@5.9.3))':
     dependencies:
       '@rolldown/pluginutils': 1.0.0-rc.13
       vite: 7.3.1(@types/node@25.5.2)(sass@1.99.0)(tsx@4.21.0)
-      vue: 3.5.34(typescript@5.8.2)
+      vue: 3.5.34(typescript@5.9.3)
 
   '@volar/language-core@2.4.28':
     dependencies:
@@ -1651,11 +1654,11 @@ snapshots:
       '@vue/shared': 3.5.34
       csstype: 3.2.3
 
-  '@vue/server-renderer@3.5.34(vue@3.5.34(typescript@5.8.2))':
+  '@vue/server-renderer@3.5.34(vue@3.5.34(typescript@5.9.3))':
     dependencies:
       '@vue/compiler-ssr': 3.5.34
       '@vue/shared': 3.5.34
-      vue: 3.5.34(typescript@5.8.2)
+      vue: 3.5.34(typescript@5.9.3)
 
   '@vue/shared@3.5.32': {}
 
@@ -2064,20 +2067,20 @@ snapshots:
 
   vscode-uri@3.1.0: {}
 
-  vue-tsc@3.2.8(typescript@5.8.2):
+  vue-tsc@3.2.8(typescript@5.9.3):
     dependencies:
       '@volar/typescript': 2.4.28
       '@vue/language-core': 3.2.8
-      typescript: 5.8.2
+      typescript: 5.9.3
 
-  vue@3.5.34(typescript@5.8.2):
+  vue@3.5.34(typescript@5.9.3):
     dependencies:
       '@vue/compiler-dom': 3.5.34
       '@vue/compiler-sfc': 3.5.34
       '@vue/runtime-dom': 3.5.34
-      '@vue/server-renderer': 3.5.34(vue@3.5.34(typescript@5.8.2))
+      '@vue/server-renderer': 3.5.34(vue@3.5.34(typescript@5.9.3))
       '@vue/shared': 3.5.34
     optionalDependencies:
-      typescript: 5.8.2
+      typescript: 5.9.3
 
   yallist@4.0.0: {}

@@ -1,11 +1,11 @@
 <template>
-  <div v-if="visible" class="row">
-    <label class="row-label">{{ t(field.labelKey) }}</label>
+  <div v-if="visible" :class="$style.row">
+    <label :class="$style.rowLabel">{{ t(field.labelKey) }}</label>
 
-    <div class="row-control">
+    <div :class="$style.rowControl">
       <template v-if="field.type === 'number'">
         <input
-          class="ctrl input"
+          :class="[$style.ctrl, $style.input]"
           type="number"
           :placeholder="field.placeholder"
           :step="field.step"
@@ -18,7 +18,7 @@
 
       <template v-else-if="field.type === 'text' || field.type === 'padding'">
         <input
-          class="ctrl input"
+          :class="[$style.ctrl, $style.input]"
           type="text"
           :placeholder="field.placeholder"
           :value="value ?? ''"
@@ -27,14 +27,14 @@
       </template>
 
       <template v-else-if="field.type === 'select'">
-        <select class="ctrl select" :value="value" @change="settings.apply(field.path, ($event.target as HTMLSelectElement).value)">
+        <select :class="[$style.ctrl, $style.select]" :value="value" @change="settings.apply(field.path, ($event.target as HTMLSelectElement).value)">
           <option v-for="o in field.options" :key="o.value" :value="o.value">{{ t(o.labelKey) }}</option>
         </select>
       </template>
 
       <template v-else-if="field.type === 'toggle'">
-        <button class="toggle" :class="{ active: !!value }" :aria-pressed="!!value" @click="toggle">
-          <span class="toggle-thumb"></span>
+        <button :class="[$style.toggle, { [$style.active]: !!value }]" :aria-pressed="!!value" @click="toggle">
+          <span :class="$style.toggleThumb"></span>
         </button>
       </template>
     </div>
@@ -76,7 +76,7 @@ const toggle = () => {
 }
 </script>
 
-<style scoped>
+<style module lang="scss">
 .row {
   display: flex;
   align-items: center;
@@ -84,17 +84,27 @@ const toggle = () => {
   min-height: 36px;
   padding: 4px 0;
 }
-.row-label {
+
+.rowLabel {
   flex: 1;
   font-size: 13px;
   color: var(--color-text-secondary);
+
+  @media (max-width: 480px) {
+    font-size: 12px;
+  }
 }
-.row-control {
+
+.rowControl {
   flex-shrink: 0;
   width: 168px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
+
+  @media (max-width: 480px) {
+    width: 140px;
+  }
 }
 
 .ctrl {
@@ -110,16 +120,22 @@ const toggle = () => {
   transition:
     border-color var(--motion-fast),
     box-shadow var(--motion-fast);
-}
-.ctrl:hover {
-  border-color: var(--color-border-strong);
-}
-.ctrl:focus {
-  border-color: var(--color-primary);
-  box-shadow: var(--ring);
+
+  &:hover {
+    border-color: var(--color-border-strong);
+  }
+
+  &:focus {
+    border-color: var(--color-primary);
+    box-shadow: var(--ring);
+  }
+
+  @media (max-width: 480px) {
+    font-size: 12px;
+  }
 }
 
-.ctrl.input::placeholder {
+.input::placeholder {
   color: var(--color-text-muted);
 }
 
@@ -133,20 +149,29 @@ const toggle = () => {
   padding: 0;
   cursor: pointer;
   transition: background var(--motion-fast);
+
+  &:hover {
+    background: var(--color-text-muted);
+  }
+
+  &.active {
+    background: var(--color-primary);
+
+    &:hover {
+      background: var(--color-primary-strong);
+    }
+
+    .toggleThumb {
+      left: 18px;
+    }
+  }
+
+  &:focus-visible {
+    box-shadow: var(--ring);
+  }
 }
-.toggle:hover {
-  background: var(--color-text-muted);
-}
-.toggle.active {
-  background: var(--color-primary);
-}
-.toggle.active:hover {
-  background: var(--color-primary-strong);
-}
-.toggle:focus-visible {
-  box-shadow: var(--ring);
-}
-.toggle-thumb {
+
+.toggleThumb {
   position: absolute;
   top: 2px;
   left: 2px;
@@ -156,20 +181,5 @@ const toggle = () => {
   border-radius: 50%;
   transition: left var(--motion-fast);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
-}
-.toggle.active .toggle-thumb {
-  left: 18px;
-}
-
-@media (max-width: 480px) {
-  .row-control {
-    width: 140px;
-  }
-  .row-label {
-    font-size: 12px;
-  }
-  .ctrl {
-    font-size: 12px;
-  }
 }
 </style>

@@ -1,23 +1,23 @@
 <template>
-  <div class="section" :class="[`level-${level}`, { open, 'has-children': !!section.children?.length }]">
-    <button class="section-head" @click="toggle">
-      <span class="section-chevron">
+  <div :class="[$style.section, $style[`level${level}`], { [$style.open]: open, [$style.hasChildren]: !!section.children?.length }]">
+    <button :class="$style.sectionHead" @click="toggle">
+      <span :class="$style.sectionChevron">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="9 18 15 12 9 6" />
         </svg>
       </span>
-      <span class="section-title">{{ t(section.titleKey) }}</span>
+      <span :class="$style.sectionTitle">{{ t(section.titleKey) }}</span>
     </button>
 
-    <div v-show="open" class="section-body">
-      <div v-for="(group, i) in section.groups" :key="i" class="group" :class="{ titled: !!group.titleKey }">
-        <div v-if="group.titleKey" class="group-title">{{ t(group.titleKey) }}</div>
-        <div class="group-rows">
+    <div v-show="open" :class="$style.sectionBody">
+      <div v-for="(group, i) in section.groups" :key="i" :class="[$style.group, { [$style.titled]: !!group.titleKey }]">
+        <div v-if="group.titleKey" :class="$style.groupTitle">{{ t(group.titleKey) }}</div>
+        <div :class="$style.groupRows">
           <SettingField v-for="field in group.fields" :key="field.path" :field="field" />
         </div>
       </div>
 
-      <div v-if="section.children?.length" class="section-children">
+      <div v-if="section.children?.length" :class="$style.sectionChildren">
         <SettingSection v-for="child in section.children" :key="child.id" :section="child" :level="level + 1" />
       </div>
     </div>
@@ -42,15 +42,20 @@ const open = ref(false)
 const toggle = () => (open.value = !open.value)
 </script>
 
-<style scoped>
+<style module lang="scss">
 .section {
   border-bottom: 1px solid var(--color-border-soft);
-}
-.section:last-child {
-  border-bottom: none;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &.open > .sectionHead .sectionChevron {
+    transform: rotate(90deg);
+  }
 }
 
-.section-head {
+.sectionHead {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -62,11 +67,13 @@ const toggle = () => (open.value = !open.value)
   cursor: pointer;
   color: var(--color-text);
   transition: background var(--motion-fast);
+
+  &:hover {
+    background: var(--color-bg-alt);
+  }
 }
-.section-head:hover {
-  background: var(--color-bg-alt);
-}
-.section-chevron {
+
+.sectionChevron {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -74,21 +81,20 @@ const toggle = () => (open.value = !open.value)
   height: 16px;
   color: var(--color-text-muted);
   transition: transform var(--motion-base);
+
+  svg {
+    width: 12px;
+    height: 12px;
+  }
 }
-.section-chevron svg {
-  width: 12px;
-  height: 12px;
-}
-.section.open > .section-head .section-chevron {
-  transform: rotate(90deg);
-}
-.section-title {
+
+.sectionTitle {
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.005em;
 }
 
-.section-body {
+.sectionBody {
   padding: 4px 16px 14px;
   display: flex;
   flex-direction: column;
@@ -99,14 +105,16 @@ const toggle = () => (open.value = !open.value)
   display: flex;
   flex-direction: column;
   gap: 4px;
+
+  &.titled {
+    padding: 10px 12px 12px;
+    background: var(--color-bg-subtle);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-md);
+  }
 }
-.group.titled {
-  padding: 10px 12px 12px;
-  background: var(--color-bg-subtle);
-  border: 1px solid var(--color-border-soft);
-  border-radius: var(--radius-md);
-}
-.group-title {
+
+.groupTitle {
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -114,48 +122,68 @@ const toggle = () => (open.value = !open.value)
   color: var(--color-text-muted);
   margin-bottom: 4px;
 }
-.group-rows {
+
+.groupRows {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
-.section-children {
+.sectionChildren {
   border-top: 1px solid var(--color-border-soft);
   margin: 0 -16px -14px;
-}
-.section-children > .section {
-  border-bottom: 1px solid var(--color-border-soft);
-}
-.section-children > .section:last-child {
-  border-bottom: none;
+
+  > .section {
+    border-bottom: 1px solid var(--color-border-soft);
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
 }
 
-.section.level-1 > .section-head {
-  padding-left: 28px;
-  background: var(--color-bg-subtle);
-}
-.section.level-1 > .section-head:hover {
-  background: var(--color-bg-alt);
-}
-.section.level-1 > .section-body {
-  padding-left: 28px;
-}
-.section.level-2 > .section-head {
-  padding-left: 44px;
-}
-.section.level-2 > .section-body {
-  padding-left: 44px;
+.level1 {
+  > .sectionHead {
+    padding-left: 28px;
+    background: var(--color-bg-subtle);
+
+    &:hover {
+      background: var(--color-bg-alt);
+    }
+
+    .sectionTitle {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+    }
+  }
+
+  > .sectionBody {
+    padding-left: 28px;
+  }
+
+  &.open > .sectionHead .sectionTitle {
+    color: var(--color-primary-strong);
+  }
 }
 
-.section.level-1 .section-title,
-.section.level-2 .section-title {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--color-text-secondary);
-}
-.section.level-1.open > .section-head .section-title,
-.section.level-2.open > .section-head .section-title {
-  color: var(--color-primary-strong);
+.level2 {
+  > .sectionHead {
+    padding-left: 44px;
+
+    .sectionTitle {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+    }
+  }
+
+  > .sectionBody {
+    padding-left: 44px;
+  }
+
+  &.open > .sectionHead .sectionTitle {
+    color: var(--color-primary-strong);
+  }
 }
 </style>
