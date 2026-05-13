@@ -2,7 +2,10 @@
   <aside class="sidebar" :class="{ open }">
     <div class="sidebar-header">
       <div class="sidebar-header-row">
-        <h1 class="sidebar-title">{{ t('app.title') }}</h1>
+        <h1 class="sidebar-title">
+          {{ t('app.title') }}
+          <span class="sidebar-version">(v{{ version }})</span>
+        </h1>
         <button class="locale-btn" :title="t('app.changeLanguage')" @click="cycleLocale">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10" />
@@ -51,6 +54,8 @@ import SettingsTab from '@root/components/tabs/settings-tab.vue'
 defineProps<{ open: boolean }>()
 
 const { t, locale, setLocale, available } = useI18n()
+
+const version = __APP_VERSION__
 
 const LOCALE_LABELS: Record<LocaleKey, string> = {
   'en-us': 'EN',
@@ -118,6 +123,13 @@ const indicatorStyle = computed(() => ({
   font-weight: 600;
   letter-spacing: -0.005em;
   color: var(--color-text);
+}
+.sidebar-version {
+  margin-left: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
 }
 .sidebar-subtitle {
   margin: 2px 0 0;

@@ -1,4 +1,5 @@
 import { join } from 'node:path'
+import { readFileSync } from 'node:fs'
 
 import { defineConfig, type Plugin } from 'vite'
 
@@ -8,6 +9,8 @@ import PathPlugin from 'vite-tsconfig-paths'
 const cwd = process.cwd()
 const src = join(cwd, 'src')
 const workspace = join(cwd, '..', '..')
+
+const rootPkg = JSON.parse(readFileSync(join(workspace, 'package.json'), 'utf-8')) as { version: string }
 
 const Alias = (): Plugin => {
   const playgroundSrc = src.replace(/\\/g, '/')
@@ -28,6 +31,9 @@ const Alias = (): Plugin => {
 export default defineConfig({
   root: src,
   plugins: [VuePlugin(), Alias(), PathPlugin()],
+  define: {
+    __APP_VERSION__: JSON.stringify(rootPkg.version),
+  },
   resolve: {
     alias: [
       {
