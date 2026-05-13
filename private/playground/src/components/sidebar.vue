@@ -7,36 +7,51 @@
 
     <div class="sidebar-tabs-wrap">
       <nav class="sidebar-tabs">
-        <button v-for="tab in tabs" :key="tab.key" class="sidebar-tab" :class="{ active: activeTab === tab.key }" @click="activeTab = tab.key">
+        <button
+          v-for="(tab, i) in tabs"
+          :key="tab.key"
+          class="sidebar-tab"
+          :class="{ active: activeTab === tab.key }"
+          @click="(activeTab = tab.key), (indicatorIndex = i)"
+        >
           {{ tab.label }}
         </button>
-        <span class="sidebar-tab-indicator" :class="`pos-${activeTab}`"></span>
+        <span class="sidebar-tab-indicator" :style="indicatorStyle"></span>
       </nav>
     </div>
 
     <div class="sidebar-body">
-      <SourceTab v-show="activeTab === 'source'" />
+      <AudioTab v-show="activeTab === 'audio'" />
+      <LyricTab v-show="activeTab === 'lyric'" />
       <SettingsTab v-show="activeTab === 'settings'" />
     </div>
   </aside>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
-import SourceTab from '@root/components/tabs/source-tab.vue'
+import AudioTab from '@root/components/tabs/audio-tab.vue'
+import LyricTab from '@root/components/tabs/lyric-tab.vue'
 import SettingsTab from '@root/components/tabs/settings-tab.vue'
 
 defineProps<{ open: boolean }>()
 
-type TabKey = 'source' | 'settings'
-
-const activeTab = ref<TabKey>('source')
+type TabKey = 'audio' | 'lyric' | 'settings'
 
 const tabs: { key: TabKey; label: string }[] = [
-  { key: 'source', label: 'Source' },
+  { key: 'audio', label: 'Audio' },
+  { key: 'lyric', label: 'Lyric' },
   { key: 'settings', label: 'Settings' },
 ]
+
+const activeTab = ref<TabKey>('audio')
+const indicatorIndex = ref(0)
+
+const indicatorStyle = computed(() => ({
+  width: `calc(${100 / tabs.length}% - ${(4 * (tabs.length - 1)) / tabs.length}px)`,
+  transform: `translateX(calc(${indicatorIndex.value * 100}% + ${indicatorIndex.value * 4}px))`,
+}))
 </script>
 
 <style scoped>
@@ -88,6 +103,7 @@ const tabs: { key: TabKey; label: string }[] = [
   background: var(--color-bg-alt);
   border-radius: var(--radius-md);
   padding: 4px;
+  gap: 4px;
 }
 .sidebar-tab {
   position: relative;
@@ -115,17 +131,10 @@ const tabs: { key: TabKey; label: string }[] = [
   top: 4px;
   bottom: 4px;
   left: 4px;
-  width: calc(50% - 4px);
   background: var(--color-bg);
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-sm);
   transition: transform var(--motion-base);
-}
-.sidebar-tab-indicator.pos-source {
-  transform: translateX(0);
-}
-.sidebar-tab-indicator.pos-settings {
-  transform: translateX(100%);
 }
 
 .sidebar-body {

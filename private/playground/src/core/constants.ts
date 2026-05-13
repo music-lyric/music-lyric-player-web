@@ -1,4 +1,5 @@
 export const STORAGE_KEY = 'lyric-player-state'
 export const SETTINGS_STORAGE_KEY = 'lyric-player-settings'
+export const PARSER_OPTIONS_STORAGE_KEY = 'lyric-player-parser-options'
 export const DB_NAME = 'MusicLyricDB'
 export const STORE_NAME = 'media'

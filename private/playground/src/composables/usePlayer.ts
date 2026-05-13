@@ -1,14 +1,16 @@
 import type { Config } from '@music-lyric-player/dom'
 import type { StoredLyric } from '@root/core/storage'
+import type { ParserOptions } from '@root/core/parser-options'
 
 import { Lyric } from 'music-lyric-kit'
 import { BaseLyricPlayer } from '@music-lyric-player/base'
 import { DomLyricPlayer } from '@music-lyric-player/dom'
 
-import { ref, shallowRef, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, shallowRef, onMounted, onUnmounted } from 'vue'
 import { parseStoredLyric } from '@root/core/parser'
+import { loadParserOptions, saveParserOptions } from '@root/core/parser-options'
 import { loadState, saveState, loadSettings, loadAudioFromDB, saveAudioToDB } from '@root/core/storage'
-import { deepMerge } from '@root/utils'
+import { debounce, deepMerge, patchFromPath } from '@root/utils'
 
 interface UsePlayerOptions {
   defaults: Partial<Config.Root>
@@ -44,6 +46,11 @@ export const usePlayer = ({ defaults }: UsePlayerOptions) => {
   audio.volume = volume.value
 
   const lyricElement = shallowRef<HTMLElement>(dom.element)
+
+  const parserOptions = reactive<ParserOptions>(loadParserOptions())
+  const persistParserOptions = debounce(() => {
+    saveParserOptions(parserOptions as ParserOptions)
+  }, 250)
 
   const tick = () => {
     if (!isPlaying.value) return
@@ -86,13 +93,22 @@ export const usePlayer = ({ defaults }: UsePlayerOptions) => {
   }
 
   const applyLyric = (stored: StoredLyric) => {
-    const result = parseStoredLyric(stored)
+    const result = parseStoredLyric(stored, parserOptions as ParserOptions)
     if (!result) return false
     base.updateLyric(result.result)
     hasLyric.value = true
     lyricInfo.value = stored
     persistState()
     return true
+  }
+
+  const updateParserOption = (path: string, value: unknown) => {
+    const patch = patchFromPath(path, value)
+    deepMerge(parserOptions, patch)
+    persistParserOptions()
+    if (lyricInfo.value) {
+      applyLyric(lyricInfo.value)
+    }
   }
 
   const clearLyric = () => {
@@ -214,5 +230,7 @@ export const usePlayer = ({ defaults }: UsePlayerOptions) => {
     setVolume,
     toggleMute,
     applyConfigPatch,
+    parserOptions,
+    updateParserOption,
   }
 }

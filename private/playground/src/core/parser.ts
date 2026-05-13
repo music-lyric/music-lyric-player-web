@@ -1,40 +1,67 @@
+import type { ParserPipelineInput } from 'music-lyric-kit'
+import type { ParserOptions } from './parser-options'
 import type { StoredLyric } from './storage'
 
 import { ParserPipeline } from 'music-lyric-kit'
 
-const parseLrc = (original: string, roman?: string, translate?: string) => {
-  return new ParserPipeline({ content: { original, roman, translate }, format: 'lrc' })
-    .parse()
-    .pureClean()
-    .pureExtract()
-    .agentExtract()
-    .backgroundExtract()
-    .backgroundClean()
-    .interludeInsert()
-    .spaceInsert()
-    .stressMark()
-    .final()
+const buildPipeline = (input: ParserPipelineInput, options: ParserOptions) => {
+  const pipeline = new ParserPipeline(input).parse()
+
+  if (options.pureClean.enabled) {
+    pipeline.pureClean({ firstLineWithMusicInfo: options.pureClean.firstLineWithMusicInfo } as never)
+  }
+  if (options.pureExtract.enabled) {
+    pipeline.pureExtract()
+  }
+  if (options.agentExtract.enabled) {
+    pipeline.agentExtract()
+  }
+  if (options.backgroundExtract.enabled) {
+    pipeline.backgroundExtract({
+      fullLine: options.backgroundExtract.fullLine,
+      inLine: options.backgroundExtract.inLine,
+      crossLine: options.backgroundExtract.crossLine,
+    })
+  }
+  if (options.backgroundClean.enabled) {
+    pipeline.backgroundClean()
+  }
+  if (options.interludeInsert.enabled) {
+    pipeline.interludeInsert({
+      checkTime: {
+        first: options.interludeInsert.first,
+        normal: options.interludeInsert.normal,
+      },
+    })
+  }
+  if (options.spaceInsert.enabled) {
+    pipeline.spaceInsert({
+      original: options.spaceInsert.original,
+      extended: options.spaceInsert.extended,
+    } as never)
+  }
+  if (options.stressMark.enabled) {
+    pipeline.stressMark({ checkTime: options.stressMark.checkTime })
+  }
+
+  return pipeline.final()
 }
 
-const parseTtml = (content: string) => {
-  return new ParserPipeline({ content, format: 'ttml-amll' })
-    .parse()
-    .pureClean()
-    .pureExtract()
-    .agentExtract()
-    .backgroundExtract()
-    .backgroundClean()
-    .interludeInsert()
-    .spaceInsert()
-    .stressMark()
-    .final()
-}
-
-export const parseStoredLyric = (lyric: StoredLyric) => {
+export const parseStoredLyric = (lyric: StoredLyric, options: ParserOptions) => {
   if (lyric.format === 'ttml') {
     if (!lyric.ttmlOriginal) return null
-    return parseTtml(lyric.ttmlOriginal)
+    return buildPipeline({ content: lyric.ttmlOriginal, format: 'ttml-amll' }, options)
   }
   if (!lyric.lrcOriginal) return null
-  return parseLrc(lyric.lrcOriginal, lyric.lrcRoman, lyric.lrcTranslate)
+  return buildPipeline(
+    {
+      content: {
+        original: lyric.lrcOriginal,
+        roman: lyric.lrcRoman,
+        translate: lyric.lrcTranslate,
+      },
+      format: 'lrc',
+    },
+    options,
+  )
 }
