@@ -65,6 +65,9 @@ const main = async () => {
 
   handleUpdate('root', root, newVersion)
   for (const target of targets) {
+    if (target.private) {
+      continue
+    }
     handleUpdate(target.id, target.root, newVersion)
   }
 

@@ -6,6 +6,7 @@ export interface Target {
   name: string
   version: string
   root: string
+  private: boolean
 }
 
 export const root = process.cwd()
@@ -24,15 +25,12 @@ const handleFindTarget = (dir: string): Target | null => {
   }
 
   const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'))
-  if (pkg.private) {
-    return null
-  }
 
   const name: string = pkg.name || ''
   const version: string = pkg.version
   const id = name === 'music-lyric-player' ? 'main' : name.replace('@music-lyric-player/', '')
 
-  return { id, name, version, root: dir }
+  return { id, name, version, root: dir, private: !!pkg.private }
 }
 
 const handleFindTargets = (root: string): Target[] => {
@@ -58,4 +56,8 @@ export const rootVersion = rootPackage.version
 
 export const mainVersion = mainPackge.version
 
-export const targets: Target[] = [...handleFindTargets(join(root, 'packages')), mainPackge]
+export const targets: Target[] = [
+  ...handleFindTargets(join(root, 'packages')),
+  ...handleFindTargets(join(root, 'private')),
+  mainPackge,
+]

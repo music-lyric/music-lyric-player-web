@@ -1,8 +1,11 @@
 import type { CommitInfo } from './git'
 
 import { formatDate } from '../../utils'
+import { targets } from '../../target'
 
 const ALLOW_TYPES = ['fix', 'feat', 'perf', 'revert', 'docs', 'refactor']
+
+const PRIVATE_SCOPES = new Set(targets.filter((t) => t.private).map((t) => t.id))
 
 const TYPE_TITLE_MAP: Record<string, string> = {
   fix: 'Fix',
@@ -139,6 +142,10 @@ export const buildContents = (infos: CommitInfo[], repo: RepoInfo): string[] => 
   for (const info of infos) {
     const type = info.type
     if (!type || !ALLOW_TYPES.includes(type)) {
+      continue
+    }
+
+    if (info.scope && PRIVATE_SCOPES.has(info.scope)) {
       continue
     }
 
