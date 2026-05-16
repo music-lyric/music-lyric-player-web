@@ -7,7 +7,7 @@
         <input
           :class="[$style.ctrl, $style.input]"
           type="number"
-          :placeholder="field.placeholder"
+          :placeholder="placeholder"
           :step="field.step"
           :min="field.min"
           :max="field.max"
@@ -20,7 +20,7 @@
         <input
           :class="[$style.ctrl, $style.input]"
           type="text"
-          :placeholder="field.placeholder"
+          :placeholder="placeholder"
           :value="value ?? ''"
           @change="writeText(($event.target as HTMLInputElement).value)"
         />
@@ -45,8 +45,10 @@
 import type { FieldBinding } from '@root/core/bindings'
 import type { useSettings } from '@root/composables/useSettings'
 
+import { DEFAULT_CONFIG } from '@music-lyric-player/dom'
 import { computed, inject } from 'vue'
 import { useI18n } from '@root/composables/useI18n'
+import { resolveInheritedValue } from '@root/utils'
 
 const props = defineProps<{ field: FieldBinding }>()
 
@@ -57,6 +59,13 @@ const { t } = useI18n()
 const value = computed(() => settings.get(props.field.path))
 
 const visible = computed(() => (props.field.showWhen ? props.field.showWhen(settings.current) : true))
+
+const placeholder = computed(() => {
+  if (props.field.placeholder !== undefined) return props.field.placeholder
+  const resolved = resolveInheritedValue(props.field.path, settings.current, DEFAULT_CONFIG)
+  if (resolved == null || typeof resolved === 'object') return 'Inherit'
+  return String(resolved)
+})
 
 const writeNumber = (raw: string) => {
   if (raw === '') {

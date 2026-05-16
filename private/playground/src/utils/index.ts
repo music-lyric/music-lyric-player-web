@@ -43,6 +43,45 @@ export const getByPath = (obj: any, path: string): any => {
   return cur
 }
 
+const INHERIT_CHAIN: Array<[string, string]> = [
+  ['line.normal.extended.translate', 'line.normal.extended.base'],
+  ['line.normal.extended.roman', 'line.normal.extended.base'],
+  ['line.normal.extended.base', 'line.normal.base'],
+  ['line.normal.syllable', 'line.normal.base'],
+]
+
+const INHERITABLE_SUBPATHS = ['font.', 'style.']
+
+const buildInheritedPaths = (path: string): string[] => {
+  const chain = [path]
+  let current = path
+  while (true) {
+    let next: string | undefined
+    for (const [src, dst] of INHERIT_CHAIN) {
+      const prefix = src + '.'
+      if (!current.startsWith(prefix)) continue
+      const suffix = current.slice(prefix.length)
+      if (!INHERITABLE_SUBPATHS.some((s) => suffix.startsWith(s))) break
+      next = dst + '.' + suffix
+      break
+    }
+    if (next === undefined) break
+    chain.push(next)
+    current = next
+  }
+  return chain
+}
+
+export const resolveInheritedValue = (path: string, ...sources: any[]): any => {
+  for (const p of buildInheritedPaths(path)) {
+    for (const src of sources) {
+      const v = getByPath(src, p)
+      if (v !== undefined) return v
+    }
+  }
+  return undefined
+}
+
 export const setByPath = (obj: any, path: string, value: any): void => {
   const parts = path.split('.')
   let cur = obj

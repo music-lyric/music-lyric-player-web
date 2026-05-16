@@ -43,15 +43,15 @@ const stateFields = (prefix: string, includePlayed = false): GroupBinding[] => {
     {
       titleKey: 'settings.group.normalState',
       fields: [
-        { path: `${prefix}.style.normal.color`, labelKey: 'settings.field.color', type: 'text', placeholder: 'Inherit' },
-        { path: `${prefix}.style.normal.opacity`, labelKey: 'settings.field.opacity', type: 'number', placeholder: 'Inherit', step: 0.05, min: 0, max: 1 },
+        { path: `${prefix}.style.normal.color`, labelKey: 'settings.field.color', type: 'text' },
+        { path: `${prefix}.style.normal.opacity`, labelKey: 'settings.field.opacity', type: 'number', step: 0.05, min: 0, max: 1 },
       ],
     },
     {
       titleKey: 'settings.group.activeState',
       fields: [
-        { path: `${prefix}.style.active.color`, labelKey: 'settings.field.color', type: 'text', placeholder: 'Inherit' },
-        { path: `${prefix}.style.active.opacity`, labelKey: 'settings.field.opacity', type: 'number', placeholder: 'Inherit', step: 0.05, min: 0, max: 1 },
+        { path: `${prefix}.style.active.color`, labelKey: 'settings.field.color', type: 'text' },
+        { path: `${prefix}.style.active.opacity`, labelKey: 'settings.field.opacity', type: 'number', step: 0.05, min: 0, max: 1 },
       ],
     },
   ]
@@ -59,8 +59,8 @@ const stateFields = (prefix: string, includePlayed = false): GroupBinding[] => {
     groups.push({
       titleKey: 'settings.group.playedState',
       fields: [
-        { path: `${prefix}.style.played.color`, labelKey: 'settings.field.color', type: 'text', placeholder: 'Inherit' },
-        { path: `${prefix}.style.played.opacity`, labelKey: 'settings.field.opacity', type: 'number', placeholder: 'Inherit', step: 0.05, min: 0, max: 1 },
+        { path: `${prefix}.style.played.color`, labelKey: 'settings.field.color', type: 'text' },
+        { path: `${prefix}.style.played.opacity`, labelKey: 'settings.field.opacity', type: 'number', step: 0.05, min: 0, max: 1 },
       ],
     })
   }
@@ -70,9 +70,9 @@ const stateFields = (prefix: string, includePlayed = false): GroupBinding[] => {
 const fontFields = (prefix: string): GroupBinding => ({
   titleKey: 'settings.group.font',
   fields: [
-    { path: `${prefix}.font.size`, labelKey: 'settings.field.fontSize', type: 'number', placeholder: 'Inherit', min: 8, max: 200, step: 1 },
-    { path: `${prefix}.font.weight`, labelKey: 'settings.field.fontWeight', type: 'number', placeholder: 'Inherit', min: 100, max: 900, step: 100 },
-    { path: `${prefix}.font.family`, labelKey: 'settings.field.fontFamily', type: 'text', placeholder: 'Inherit' },
+    { path: `${prefix}.font.size`, labelKey: 'settings.field.fontSize', type: 'number', min: 8, max: 200, step: 1 },
+    { path: `${prefix}.font.weight`, labelKey: 'settings.field.fontWeight', type: 'number', min: 100, max: 900, step: 100 },
+    { path: `${prefix}.font.family`, labelKey: 'settings.field.fontFamily', type: 'text' },
   ],
 })
 
@@ -80,7 +80,6 @@ const classNameField = (prefix: string): FieldBinding => ({
   path: `${prefix}.className`,
   labelKey: 'settings.field.className',
   type: 'text',
-  placeholder: 'Inherit',
 })
 
 export const SECTIONS: SectionBinding[] = [
@@ -91,15 +90,15 @@ export const SECTIONS: SectionBinding[] = [
       {
         fields: [
           { path: 'container.className', labelKey: 'settings.field.className', type: 'text', placeholder: '""' },
-          { path: 'container.padding', labelKey: 'settings.field.padding', type: 'padding', placeholder: '20px' },
+          { path: 'container.padding', labelKey: 'settings.field.padding', type: 'padding' },
         ],
       },
       {
         titleKey: 'settings.group.edgeFade',
         fields: [
           { path: 'container.fade.enabled', labelKey: 'settings.field.enabled', type: 'toggle' },
-          { path: 'container.fade.top', labelKey: 'settings.field.fadeTop', type: 'text', placeholder: '5%' },
-          { path: 'container.fade.bottom', labelKey: 'settings.field.fadeBottom', type: 'text', placeholder: '10%' },
+          { path: 'container.fade.top', labelKey: 'settings.field.fadeTop', type: 'text' },
+          { path: 'container.fade.bottom', labelKey: 'settings.field.fadeBottom', type: 'text' },
         ],
       },
     ],
@@ -159,7 +158,7 @@ export const SECTIONS: SectionBinding[] = [
         fields: [
           { path: 'scroll.animation.mode', labelKey: 'settings.field.scrollMode', type: 'select', options: SCROLL_MODES },
           { path: 'scroll.animation.duration', labelKey: 'settings.field.scrollDuration', type: 'number', min: 0, max: 2000, step: 50 },
-          { path: 'scroll.animation.easing', labelKey: 'settings.field.scrollEasing', type: 'text', placeholder: 'ease' },
+          { path: 'scroll.animation.easing', labelKey: 'settings.field.scrollEasing', type: 'text' },
           {
             path: 'scroll.animation.delay',
             labelKey: 'settings.field.scrollDelay',
@@ -302,13 +301,11 @@ export const SECTIONS: SectionBinding[] = [
                 path: 'line.normal.syllable.animation.emphasize.effects.main.easingRise',
                 labelKey: 'settings.field.emphasizeMainEasingRise',
                 type: 'text',
-                placeholder: 'cubic-bezier(...)',
               },
               {
                 path: 'line.normal.syllable.animation.emphasize.effects.main.easingFall',
                 labelKey: 'settings.field.emphasizeMainEasingFall',
                 type: 'text',
-                placeholder: 'cubic-bezier(...)',
               },
             ],
           },
@@ -320,7 +317,6 @@ export const SECTIONS: SectionBinding[] = [
                 path: 'line.normal.syllable.animation.emphasize.effects.glow.color',
                 labelKey: 'settings.field.emphasizeGlowColor',
                 type: 'text',
-                placeholder: '#000000',
               },
               {
                 path: 'line.normal.syllable.animation.emphasize.effects.glow.maxRadius',
@@ -342,7 +338,6 @@ export const SECTIONS: SectionBinding[] = [
                 path: 'line.normal.syllable.animation.emphasize.effects.glow.easing',
                 labelKey: 'settings.field.emphasizeGlowEasing',
                 type: 'text',
-                placeholder: 'cubic-bezier(...)',
               },
             ],
           },
@@ -378,7 +373,6 @@ export const SECTIONS: SectionBinding[] = [
                 path: 'line.normal.syllable.animation.emphasize.effects.float.easing',
                 labelKey: 'settings.field.emphasizeFloatEasing',
                 type: 'text',
-                placeholder: 'cubic-bezier(...)',
               },
             ],
           },
