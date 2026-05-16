@@ -96,6 +96,41 @@ export const DEFAULT_CONFIG: Root = {
               last: 0.5,
             },
           },
+          emphasize: {
+            enabled: true,
+            minDuration: 1000,
+            disablePlaybackRate: 4,
+            effects: {
+              main: {
+                enabled: true,
+                scale: 0.1,
+                offset: {
+                  horizontal: 1,
+                  vertical: 1,
+                },
+                easing: {
+                  rise: 'cubic-bezier(0.2, 0.4, 0.58, 1)',
+                  fall: 'cubic-bezier(0.3, 0, 0.58, 1)',
+                },
+              },
+              glow: {
+                enabled: true,
+                color: '#000000',
+                easing: 'cubic-bezier(0.2, 0.4, 0.58, 1)',
+                maxRadius: 9,
+                maxAlpha: 1,
+              },
+              float: {
+                enabled: true,
+                duration: {
+                  scale: 1.4,
+                  lead: 400,
+                },
+                amplitude: 2,
+                easing: 'cubic-bezier(0.45, 0, 0.55, 1)',
+              },
+            },
+          },
         },
       },
       extended: {

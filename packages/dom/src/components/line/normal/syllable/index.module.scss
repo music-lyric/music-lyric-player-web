@@ -5,8 +5,14 @@
 }
 
 .word {
+  --emphasize-padding-horizontal: 0px;
+  --emphasize-padding-vertical: 0px;
+
   display: inline-block;
   transition: opacity 0.8s ease;
+
+  padding: var(--emphasize-padding-vertical) var(--emphasize-padding-horizontal);
+  margin: calc(-1 * var(--emphasize-padding-vertical)) calc(-1 * var(--emphasize-padding-horizontal));
 
   mask-mode: alpha;
   mask-repeat: no-repeat;
@@ -14,14 +20,18 @@
   @include apply-line-style('syllable');
 }
 
+.char {
+  display: inline-block;
+}
+
 .spaceEnd {
   :is([position='left'], [position='center']) & {
-    margin-right: 0.3em;
+    margin-right: calc(0.3em - var(--emphasize-padding-horizontal));
   }
 }
 
 .spaceStart {
   :is([position='right']) & {
-    margin-left: 0.3em;
+    margin-left: calc(0.3em - var(--emphasize-padding-horizontal));
   }
 }
