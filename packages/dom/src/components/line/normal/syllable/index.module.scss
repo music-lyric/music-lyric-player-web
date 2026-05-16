@@ -24,13 +24,13 @@
   display: inline-block;
 }
 
-.spaceEnd {
+.space-end {
   :is([position='left'], [position='center']) & {
     margin-right: calc(0.3em - var(--emphasize-padding-horizontal));
   }
 }
 
-.spaceStart {
+.space-start {
   :is([position='right']) & {
     margin-left: calc(0.3em - var(--emphasize-padding-horizontal));
   }
