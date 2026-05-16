@@ -1,0 +1,8 @@
+pnpm-lock.yaml
+CHANGELOG.md
+
+.history
+.turbo
+
+dist
+node_modules

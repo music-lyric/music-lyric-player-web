@@ -8,6 +8,7 @@
     "dev": "turbo watch dev",
     "build": "turbo run build",
     "build:force": "turbo run build --force",
+    "format": "prettier --write --ignore-unknown .",
     "change-log:build": "tsx scripts/change-log/build.ts",
     "change-log:match": "tsx scripts/change-log/match.ts",
     "version": "tsx scripts/version.ts",
