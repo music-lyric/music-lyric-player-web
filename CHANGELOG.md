@@ -1,3 +1,21 @@
+## v0.9.0 (2026-05-16)
+
+### Document
+
+- update packages readme ([3076e0b](https://github.com/music-lyric/music-lyric-player-web/commit/3076e0b))
+
+### Feature
+
+- `dom`
+  - support duet by alternating alignment on agent change ([2eb8a3b](https://github.com/music-lyric/music-lyric-player-web/commit/2eb8a3b))
+  - defer background line pop on both enter and retract ([8deeaae](https://github.com/music-lyric/music-lyric-player-web/commit/8deeaae))
+
+### Fix
+
+- `dom`
+  - runtime style does not apply during initialization ([327fc67](https://github.com/music-lyric/music-lyric-player-web/commit/327fc67))
+  - pad float delay before line starts ([250b117](https://github.com/music-lyric/music-lyric-player-web/commit/250b117))
+
 ## v0.8.0 (2026-05-11)
 
 ### Feature
@@ -87,8 +105,6 @@
 - `dom`
   - rename base line element fields ([099ca42](https://github.com/music-lyric/music-lyric-player-web/commit/099ca42))
   - modularize config ([e01fecf](https://github.com/music-lyric/music-lyric-player-web/commit/e01fecf))
-- `playground`
-  - lyric select ([8932e39](https://github.com/music-lyric/music-lyric-player-web/commit/8932e39))
 - `utils`
   - config compare ([81f2ab7](https://github.com/music-lyric/music-lyric-player-web/commit/81f2ab7))
 
@@ -155,8 +171,6 @@
   - add scroll animation ([07e3075](https://github.com/music-lyric/music-lyric-player-web/commit/07e3075))
   - support blur lyric line ([254137d](https://github.com/music-lyric/music-lyric-player-web/commit/254137d))
   - support scaling lyric line ([84a79d3](https://github.com/music-lyric/music-lyric-player-web/commit/84a79d3))
-- `playground`
-  - support custom scroll animation config ([e1387f4](https://github.com/music-lyric/music-lyric-player-web/commit/e1387f4))
 
 ### Fix
 
@@ -184,9 +198,6 @@
   - support show background line ([7c55a75](https://github.com/music-lyric/music-lyric-player-web/commit/7c55a75))
   - support handle scroll event ([003873f](https://github.com/music-lyric/music-lyric-player-web/commit/003873f))
   - prevent user select text ([f8b807b](https://github.com/music-lyric/music-lyric-player-web/commit/f8b807b))
-- `playground`
-  - support custom played style ([ba877f2](https://github.com/music-lyric/music-lyric-player-web/commit/ba877f2))
-  - support edit config ([1e863db](https://github.com/music-lyric/music-lyric-player-web/commit/1e863db))
 - `utils`
   - compare object support return parent path ([085fa52](https://github.com/music-lyric/music-lyric-player-web/commit/085fa52))
 
@@ -227,9 +238,6 @@
   - add base dom player ([57ccd55](https://github.com/music-lyric/music-lyric-player-web/commit/57ccd55))
 - `main`
   - add export ([92c1450](https://github.com/music-lyric/music-lyric-player-web/commit/92c1450))
-- `playground`
-  - add player ([9cf58e6](https://github.com/music-lyric/music-lyric-player-web/commit/9cf58e6))
-  - add base content ([31c520f](https://github.com/music-lyric/music-lyric-player-web/commit/31c520f))
 - `utils`
   - add event client ([a3d143d](https://github.com/music-lyric/music-lyric-player-web/commit/a3d143d))
   - add util tools ([862b867](https://github.com/music-lyric/music-lyric-player-web/commit/862b867))
@@ -249,8 +257,6 @@
 - `dom`
   - optimize code ([67a0966](https://github.com/music-lyric/music-lyric-player-web/commit/67a0966))
   - components ([e709562](https://github.com/music-lyric/music-lyric-player-web/commit/e709562))
-- `playground`
-  - optimize code ([c5ae4e0](https://github.com/music-lyric/music-lyric-player-web/commit/c5ae4e0))
 - `utils`
   - config manager events ([0adf348](https://github.com/music-lyric/music-lyric-player-web/commit/0adf348))
   - event client ([9afbdc8](https://github.com/music-lyric/music-lyric-player-web/commit/9afbdc8))
