@@ -1,3 +1,5 @@
+import { freezeObjectDeep } from '@music-lyric-player/utils'
+
 import { FontConfig } from './common'
 import { Root, Scroll } from './root'
 
@@ -16,7 +18,7 @@ const DEFAULT_EXTENDED_FONT_SIZE = Math.round(DEFAULT_FONT_CONFIG.size! * 0.6)
  *
  * Used as the fallback when a user‑supplied {@link Config} omits fields.
  */
-export const DEFAULT_CONFIG: Root = {
+export const DEFAULT_CONFIG: Root = freezeObjectDeep({
   container: {
     className: '',
     padding: '20px',
@@ -171,4 +173,4 @@ export const DEFAULT_CONFIG: Root = {
       },
     },
   },
-}
+})

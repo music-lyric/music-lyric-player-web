@@ -1,3 +1,3 @@
 export { DomLyricPlayer } from './core'
 
-export { Config } from './config'
+export { Config, DEFAULT_CONFIG } from './config'
