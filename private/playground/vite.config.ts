@@ -1,10 +1,11 @@
+import type { Plugin } from 'vite'
+
 import { join } from 'node:path'
 import { readFileSync } from 'node:fs'
 
-import { defineConfig, type Plugin } from 'vite'
-
 import VuePlugin from '@vitejs/plugin-vue'
 import PathPlugin from 'vite-tsconfig-paths'
+import { buildConfig } from '../config/vite'
 
 const cwd = process.cwd()
 const src = join(cwd, 'src')
@@ -28,27 +29,27 @@ const Alias = (): Plugin => {
   }
 }
 
-export default defineConfig({
-  root: src,
-  plugins: [VuePlugin(), Alias(), PathPlugin()],
-  define: {
-    __APP_VERSION__: JSON.stringify(rootPkg.version),
-  },
-  css: {
-    modules: {
-      generateScopedName: '[local]-[hash:hex:8]',
+export default buildConfig({
+  withCommon: false,
+  withDts: false,
+  withCss: true,
+  custom: {
+    root: src,
+    plugins: [VuePlugin(), Alias(), PathPlugin()],
+    define: {
+      __APP_VERSION__: JSON.stringify(rootPkg.version),
     },
-  },
-  resolve: {
-    alias: [
-      {
-        find: /^@music-lyric-player\/(.*?)$/,
-        replacement: join(workspace, 'packages', '$1', 'src', 'index.ts'),
-      },
-    ],
-  },
-  server: {
-    port: 9090,
-    strictPort: false,
+    resolve: {
+      alias: [
+        {
+          find: /^@music-lyric-player\/(.*?)$/,
+          replacement: join(workspace, 'packages', '$1', 'src', 'index.ts'),
+        },
+      ],
+    },
+    server: {
+      port: 9090,
+      strictPort: false,
+    },
   },
 })
