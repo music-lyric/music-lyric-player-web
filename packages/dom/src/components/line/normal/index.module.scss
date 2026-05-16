@@ -45,9 +45,7 @@
   // retract: fast, with small delay
   transition-property: opacity, transform;
   transition-duration: 0.25s, 0.4s;
-  transition-delay:
-    build-line-var('background', 'retract', 'delay', 80ms),
-    build-line-var('background', 'retract', 'delay', 80ms);
+  transition-delay: build-line-var('background', 'retract', 'delay', 80ms), build-line-var('background', 'retract', 'delay', 80ms);
   transition-timing-function: ease, cubic-bezier(0.16, 1, 0.3, 1);
 
   :is([played]) & {
@@ -59,8 +57,6 @@
     opacity: 1;
     transform: scale(0.7);
     transition-duration: 0.55s, 0.85s;
-    transition-delay:
-      calc(build-line-var('background', 'enter', 'delay', 150ms) + 80ms),
-      build-line-var('background', 'enter', 'delay', 150ms);
+    transition-delay: calc(build-line-var('background', 'enter', 'delay', 150ms) + 80ms), build-line-var('background', 'enter', 'delay', 150ms);
   }
 }

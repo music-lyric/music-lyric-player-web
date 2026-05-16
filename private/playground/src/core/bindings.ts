@@ -205,7 +205,10 @@ export const SECTIONS: SectionBinding[] = [
         titleKey: 'settings.section.lineNormalSyllable',
         groups: [
           {
-            fields: [{ path: 'line.normal.syllable.enabled', labelKey: 'settings.field.enabled', type: 'toggle' }, classNameField('line.normal.syllable')],
+            fields: [
+              { path: 'line.normal.syllable.enabled', labelKey: 'settings.field.enabled', type: 'toggle' },
+              classNameField('line.normal.syllable'),
+            ],
           },
           fontFields('line.normal.syllable'),
           ...stateFields('line.normal.syllable', true),
@@ -213,7 +216,14 @@ export const SECTIONS: SectionBinding[] = [
             titleKey: 'settings.group.floatAnimation',
             fields: [
               { path: 'line.normal.syllable.animation.float.enabled', labelKey: 'settings.field.enabled', type: 'toggle' },
-              { path: 'line.normal.syllable.animation.float.from', labelKey: 'settings.field.floatFrom', type: 'number', step: 0.5, min: -50, max: 50 },
+              {
+                path: 'line.normal.syllable.animation.float.from',
+                labelKey: 'settings.field.floatFrom',
+                type: 'number',
+                step: 0.5,
+                min: -50,
+                max: 50,
+              },
               { path: 'line.normal.syllable.animation.float.to', labelKey: 'settings.field.floatTo', type: 'number', step: 0.5, min: -50, max: 50 },
             ],
           },
@@ -382,7 +392,12 @@ export const SECTIONS: SectionBinding[] = [
         id: 'line.normal.extended',
         titleKey: 'settings.section.lineNormalExtended',
         groups: [
-          { fields: [{ path: 'line.normal.extended.visible', labelKey: 'settings.field.visible', type: 'toggle' }, classNameField('line.normal.extended.base')] },
+          {
+            fields: [
+              { path: 'line.normal.extended.visible', labelKey: 'settings.field.visible', type: 'toggle' },
+              classNameField('line.normal.extended.base'),
+            ],
+          },
           fontFields('line.normal.extended.base'),
           ...stateFields('line.normal.extended.base', true),
         ],
@@ -422,13 +437,24 @@ export const SECTIONS: SectionBinding[] = [
         titleKey: 'settings.section.lineInterlude',
         groups: [
           {
-            fields: [classNameField('line.interlude'), { path: 'line.interlude.size', labelKey: 'settings.field.interludeSize', type: 'number', min: 4, max: 64, step: 1 }],
+            fields: [
+              classNameField('line.interlude'),
+              { path: 'line.interlude.size', labelKey: 'settings.field.interludeSize', type: 'number', min: 4, max: 64, step: 1 },
+            ],
           },
           {
             titleKey: 'settings.group.normalState',
             fields: [
               { path: 'line.interlude.style.normal.color', labelKey: 'settings.field.color', type: 'text', placeholder: 'Inherit' },
-              { path: 'line.interlude.style.normal.opacity', labelKey: 'settings.field.opacity', type: 'number', placeholder: 'Inherit', step: 0.05, min: 0, max: 1 },
+              {
+                path: 'line.interlude.style.normal.opacity',
+                labelKey: 'settings.field.opacity',
+                type: 'number',
+                placeholder: 'Inherit',
+                step: 0.05,
+                min: 0,
+                max: 1,
+              },
               { path: 'line.interlude.style.normal.hide', labelKey: 'settings.field.interludeHide', type: 'toggle' },
             ],
           },
@@ -436,7 +462,15 @@ export const SECTIONS: SectionBinding[] = [
             titleKey: 'settings.group.activeState',
             fields: [
               { path: 'line.interlude.style.active.color', labelKey: 'settings.field.color', type: 'text', placeholder: 'Inherit' },
-              { path: 'line.interlude.style.active.opacity', labelKey: 'settings.field.opacity', type: 'number', placeholder: 'Inherit', step: 0.05, min: 0, max: 1 },
+              {
+                path: 'line.interlude.style.active.opacity',
+                labelKey: 'settings.field.opacity',
+                type: 'number',
+                placeholder: 'Inherit',
+                step: 0.05,
+                min: 0,
+                max: 1,
+              },
             ],
           },
         ],

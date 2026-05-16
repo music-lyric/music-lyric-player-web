@@ -56,8 +56,4 @@ export const rootVersion = rootPackage.version
 
 export const mainVersion = mainPackge.version
 
-export const targets: Target[] = [
-  ...handleFindTargets(join(root, 'packages')),
-  ...handleFindTargets(join(root, 'private')),
-  mainPackge,
-]
+export const targets: Target[] = [...handleFindTargets(join(root, 'packages')), ...handleFindTargets(join(root, 'private')), mainPackge]

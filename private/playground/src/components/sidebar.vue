@@ -24,7 +24,7 @@
           v-for="(tab, i) in tabs"
           :key="tab.key"
           :class="[$style.sidebarTab, { [$style.active]: activeTab === tab.key }]"
-          @click="(activeTab = tab.key), (indicatorIndex = i)"
+          @click="((activeTab = tab.key), (indicatorIndex = i))"
         >
           {{ t(tab.labelKey) }}
         </button>

@@ -15,7 +15,11 @@
         <label :class="$style.rowLabel">{{ t(f.labelKey) }}</label>
         <div :class="$style.rowControl">
           <template v-if="f.type === 'toggle'">
-            <button :class="[$style.toggle, $style.small, { [$style.active]: !!getValue(f.path) }]" :aria-pressed="!!getValue(f.path)" @click="setValue(f.path, !getValue(f.path))">
+            <button
+              :class="[$style.toggle, $style.small, { [$style.active]: !!getValue(f.path) }]"
+              :aria-pressed="!!getValue(f.path)"
+              @click="setValue(f.path, !getValue(f.path))"
+            >
               <span :class="$style.toggleThumb"></span>
             </button>
           </template>

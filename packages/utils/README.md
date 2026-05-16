@@ -14,13 +14,13 @@ npm install @music-lyric-player/utils
 
 ## What's inside
 
-| Export | Purpose |
-| --- | --- |
-| `ConfigManager` | Reactive, deeply-mergeable typed config with an `update` event that emits the set of changed key paths |
-| `Event` | Typed event emitter with `add` / `remove` / `emit` / `clear` |
-| `deepCompare`, `freezeDeep`, `hasKeyContaining` | Object helpers used by the renderer for change-detection and read-only state |
-| `random`, `regex` | Small pure helpers |
-| `DeepPartial`, `DeepRequired`, `NestedKeys` | Type helpers used by config types |
+| Export                                          | Purpose                                                                                                |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `ConfigManager`                                 | Reactive, deeply-mergeable typed config with an `update` event that emits the set of changed key paths |
+| `Event`                                         | Typed event emitter with `add` / `remove` / `emit` / `clear`                                           |
+| `deepCompare`, `freezeDeep`, `hasKeyContaining` | Object helpers used by the renderer for change-detection and read-only state                           |
+| `random`, `regex`                               | Small pure helpers                                                                                     |
+| `DeepPartial`, `DeepRequired`, `NestedKeys`     | Type helpers used by config types                                                                      |
 
 ## Example
 

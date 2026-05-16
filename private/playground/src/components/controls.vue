@@ -1,6 +1,10 @@
 <template>
   <div :class="$style.controls">
-    <button :class="[$style.controlBtn, $style.icon, { [$style.active]: sidebar.open.value }]" :title="t('controls.toggleSidebar')" @click="sidebar.toggle">
+    <button
+      :class="[$style.controlBtn, $style.icon, { [$style.active]: sidebar.open.value }]"
+      :title="t('controls.toggleSidebar')"
+      @click="sidebar.toggle"
+    >
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <line x1="3" y1="6" x2="21" y2="6" />
         <line x1="3" y1="12" x2="21" y2="12" />
@@ -8,7 +12,12 @@
       </svg>
     </button>
 
-    <button :class="[$style.controlBtn, $style.primary]" :disabled="!player.hasAudio.value" :title="player.isPlaying.value ? t('controls.pause') : t('controls.play')" @click="player.toggle">
+    <button
+      :class="[$style.controlBtn, $style.primary]"
+      :disabled="!player.hasAudio.value"
+      :title="player.isPlaying.value ? t('controls.pause') : t('controls.play')"
+      @click="player.toggle"
+    >
       <svg v-if="!player.isPlaying.value" viewBox="0 0 24 24" fill="currentColor">
         <path d="M8 5v14l11-7z" />
       </svg>
@@ -25,8 +34,20 @@
     <div :class="$style.time">{{ timeText }}</div>
 
     <div :class="$style.volume">
-      <button :class="[$style.controlBtn, $style.icon]" :title="player.muted.value ? t('controls.unmute') : t('controls.mute')" @click="player.toggleMute">
-        <svg v-if="!player.muted.value" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <button
+        :class="[$style.controlBtn, $style.icon]"
+        :title="player.muted.value ? t('controls.unmute') : t('controls.mute')"
+        @click="player.toggleMute"
+      >
+        <svg
+          v-if="!player.muted.value"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
           <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
           <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
           <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />

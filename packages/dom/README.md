@@ -56,12 +56,12 @@ dom.config.update({
 
 ## Scroll modes
 
-| Mode | Behavior |
-| --- | --- |
-| `smooth` | All lines move together. Optional fixed `delay` |
-| `ripple` | Symmetric cascade radiating outward from the active line |
+| Mode          | Behavior                                                            |
+| ------------- | ------------------------------------------------------------------- |
+| `smooth`      | All lines move together. Optional fixed `delay`                     |
+| `ripple`      | Symmetric cascade radiating outward from the active line            |
 | `directional` | Asymmetric cascade — played lines move first, upcoming lines follow |
-| `stagger` | Linear, direction-sensitive stagger |
+| `stagger`     | Linear, direction-sensitive stagger                                 |
 
 ## Teardown
 

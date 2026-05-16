@@ -14,12 +14,12 @@ npm install @music-lyric-player/base music-lyric-kit
 
 ## Events
 
-| Event | Payload | Fires when |
-| --- | --- | --- |
-| `play` | `(currentTime: number)` | Playback starts or resumes |
-| `pause` | `(currentTime: number)` | Playback pauses |
-| `lyricUpdate` | `(info: Info)` | A new lyric is loaded |
-| `linesUpdate` | `(lines, indexes, firstIndex, isSeek)` | Active lines change |
+| Event         | Payload                                | Fires when                 |
+| ------------- | -------------------------------------- | -------------------------- |
+| `play`        | `(currentTime: number)`                | Playback starts or resumes |
+| `pause`       | `(currentTime: number)`                | Playback pauses            |
+| `lyricUpdate` | `(info: Info)`                         | A new lyric is loaded      |
+| `linesUpdate` | `(lines, indexes, firstIndex, isSeek)` | Active lines change        |
 
 ## Usage
 
@@ -50,8 +50,8 @@ base.play(0)
 
 ## Options
 
-| Field | Type | Default | Description |
-| --- | --- | --- | --- |
+| Field    | Type                     | Default   | Description                                                                          |
+| -------- | ------------------------ | --------- | ------------------------------------------------------------------------------------ |
 | `driver` | `'animation' \| 'timer'` | `'timer'` | Tick source. `animation` uses `requestAnimationFrame`; `timer` uses `setTimeout(16)` |
 
 ```js

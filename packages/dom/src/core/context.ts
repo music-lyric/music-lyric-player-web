@@ -23,13 +23,7 @@ export class CoreContext {
     activeIndex: -1,
   }
 
-  constructor(
-    player: BaseLyricPlayer,
-    config: Config.RootManager,
-    root: Root,
-    container: Container,
-    componentContext: ComponentContext,
-  ) {
+  constructor(player: BaseLyricPlayer, config: Config.RootManager, root: Root, container: Container, componentContext: ComponentContext) {
     this.player = player
     this.config = config
     this.component = { root, container, context: componentContext }
