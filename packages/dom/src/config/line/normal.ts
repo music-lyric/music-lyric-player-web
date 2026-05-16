@@ -135,45 +135,6 @@ export interface SyllableAnimation {
 }
 
 /**
- * Rise / fall easing pair for the main emphasize envelope.
- *
- * The envelope is `rest → peak → rest`; `rise` controls the first half, `fall` the second.
- */
-export interface SyllableEmphasizeAnimationMainEasing {
-  /**
-   * CSS easing applied from offset `0` to the peak at `0.5`.
-   * @default "cubic-bezier(0.2, 0.4, 0.58, 1)"
-   */
-  rise?: string
-  /**
-   * CSS easing applied from the peak at `0.5` back to rest at `1`.
-   * @default "cubic-bezier(0.3, 0, 0.58, 1)"
-   */
-  fall?: string
-}
-
-/**
- * Peak horizontal / vertical translation applied to each character at the easing peak,
- * in `px`. Horizontal is per character (fans outward from word center); vertical is
- * uniform (upward lift).
- */
-export interface SyllableEmphasizeAnimationMainOffset {
-  /**
-   * Peak outward horizontal shift per character, in `px`. Characters fan outward from
-   * the word's center; the center character does not move.
-   * @default 1
-   * @min 0
-   */
-  horizontal?: number
-  /**
-   * Peak upward vertical shift, in `px`. Applied uniformly to every character.
-   * @default 1
-   * @min 0
-   */
-  vertical?: number
-}
-
-/**
  * The core per‑character emphasize transform: a scale pulse plus a small outward fan‑out
  * and upward lift. This is the "body" of the effect — glow and float are layered on top.
  */
@@ -191,13 +152,28 @@ export interface SyllableEmphasizeAnimationMain {
    */
   scale?: number
   /**
-   * Peak translation offsets. See {@link SyllableEmphasizeAnimationMainOffset}.
+   * Peak outward horizontal shift per character, in `px`. Characters fan outward from
+   * the word's center; the center character does not move.
+   * @default 1
+   * @min 0
    */
-  offset?: SyllableEmphasizeAnimationMainOffset
+  offsetHorizontal?: number
   /**
-   * Rise / fall easing pair. See {@link SyllableEmphasizeAnimationMainEasing}.
+   * Peak upward vertical shift, in `px`. Applied uniformly to every character.
+   * @default 1
+   * @min 0
    */
-  easing?: SyllableEmphasizeAnimationMainEasing
+  offsetVertical?: number
+  /**
+   * CSS easing applied from offset `0` to the peak at `0.5`.
+   * @default "cubic-bezier(0.2, 0.4, 0.58, 1)"
+   */
+  easingRise?: string
+  /**
+   * CSS easing applied from the peak at `0.5` back to rest at `1`.
+   * @default "cubic-bezier(0.3, 0, 0.58, 1)"
+   */
+  easingFall?: string
 }
 
 /**

@@ -104,14 +104,10 @@ export const DEFAULT_CONFIG: Root = {
               main: {
                 enabled: true,
                 scale: 0.1,
-                offset: {
-                  horizontal: 1,
-                  vertical: 1,
-                },
-                easing: {
-                  rise: 'cubic-bezier(0.2, 0.4, 0.58, 1)',
-                  fall: 'cubic-bezier(0.3, 0, 0.58, 1)',
-                },
+                offsetHorizontal: 1,
+                offsetVertical: 1,
+                easingRise: 'cubic-bezier(0.2, 0.4, 0.58, 1)',
+                easingFall: 'cubic-bezier(0.3, 0, 0.58, 1)',
               },
               glow: {
                 enabled: true,

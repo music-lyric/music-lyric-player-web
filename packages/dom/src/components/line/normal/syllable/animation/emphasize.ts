@@ -145,13 +145,13 @@ class MainEffect extends EffectBase {
     const config = this.config
     this.reset(duration, delay, stagger)
 
-    const riseEasing = config.easing.rise
+    const riseEasing = config.easingRise
 
-    const peakEasing = config.easing.fall
+    const peakEasing = config.easingFall
     const peakScale = round(1 + config.scale * intensity, 3)
 
-    const offsetX = round(config.offset.horizontal * intensity, 3)
-    const offsetY = round(-config.offset.vertical * intensity, 3)
+    const offsetX = round(config.offsetHorizontal * intensity, 3)
+    const offsetY = round(-config.offsetVertical * intensity, 3)
 
     const animations = this.animations
     for (let i = 0; i < count; i++) {
