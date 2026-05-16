@@ -16,10 +16,10 @@ export class FloatAnimation {
   }
 
   private init() {
+    this.dispose()
+
     const config = this.context.config.line.normal.syllable.animation.float
     if (!config.enabled) {
-      this.animation?.cancel()
-      this.animation = null
       return
     }
 
