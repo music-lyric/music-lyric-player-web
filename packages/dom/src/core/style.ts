@@ -22,6 +22,9 @@ export class StyleManager {
     this.runtime = document.createElement('style')
     this.runtime.id = 'lyric-player-style-runtime'
     host.appendChild(this.runtime)
+
+    // init styles
+    this.updateConfig()
   }
 
   private buildKey(key: string) {
