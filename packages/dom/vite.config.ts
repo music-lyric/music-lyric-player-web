@@ -35,6 +35,7 @@ export default buildConfig({
     plugins: [cssInlinePlugin()],
     css: {
       modules: {
+        generateScopedName: '[local]-[hash:hex:8]',
         localsConvention: 'camelCase',
       },
     },
