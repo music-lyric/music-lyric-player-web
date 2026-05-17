@@ -82,15 +82,12 @@ importers:
 
   private/playground:
     dependencies:
-      '@music-lyric-player/base':
-        specifier: workspace:*
-        version: link:../../packages/base
-      '@music-lyric-player/dom':
-        specifier: workspace:*
-        version: link:../../packages/dom
       music-lyric-kit:
         specifier: ^0.11.2
         version: 0.11.2
+      music-lyric-player:
+        specifier: workspace:*
+        version: link:../../main
       vue:
         specifier: ^3.5.34
         version: 3.5.34(typescript@5.9.3)

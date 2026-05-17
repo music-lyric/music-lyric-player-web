@@ -35,6 +35,21 @@ export default buildConfig({
   withCss: true,
   custom: {
     root: src,
+    base: './',
+    build: {
+      outDir: join(cwd, 'dist'),
+      target: 'esnext',
+      modulePreload: {
+        polyfill: false,
+      },
+      emptyOutDir: true,
+      sourcemap: true,
+      minify: false,
+    },
+    server: {
+      port: 9090,
+      strictPort: false,
+    },
     plugins: [VuePlugin(), Alias(), PathPlugin()],
     define: {
       __APP_VERSION__: JSON.stringify(rootPkg.version),
@@ -42,14 +57,14 @@ export default buildConfig({
     resolve: {
       alias: [
         {
+          find: /^music-lyric-player$/,
+          replacement: join(workspace, 'main', 'src', 'index.ts'),
+        },
+        {
           find: /^@music-lyric-player\/(.*?)$/,
           replacement: join(workspace, 'packages', '$1', 'src', 'index.ts'),
         },
       ],
-    },
-    server: {
-      port: 9090,
-      strictPort: false,
     },
   },
 })
