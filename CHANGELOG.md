@@ -1,3 +1,37 @@
+## v0.10.0 (2026-05-17)
+
+### Feature
+
+- `base`
+  - add bridge active option to fill gaps between active lines ([9381ed3](https://github.com/music-lyric/music-lyric-player-web/commit/9381ed3))
+- `dom`
+  - export default config ([2ed1952](https://github.com/music-lyric/music-lyric-player-web/commit/2ed1952))
+  - add emphasize animation for syllable line word ([57bf06f](https://github.com/music-lyric/music-lyric-player-web/commit/57bf06f))
+- `main`
+  - add full export ([4f31e5a](https://github.com/music-lyric/music-lyric-player-web/commit/4f31e5a))
+
+### Fix
+
+- `base`
+  - correct default driver to animation ([2235a22](https://github.com/music-lyric/music-lyric-player-web/commit/2235a22))
+- `dom`
+  - use effect end for animation past end detection ([a3d80fb](https://github.com/music-lyric/music-lyric-player-web/commit/a3d80fb))
+  - always play emphasize wind down on line switch ([fbbf723](https://github.com/music-lyric/music-lyric-player-web/commit/fbbf723))
+  - block host line height inheritance on container ([980a4fe](https://github.com/music-lyric/music-lyric-player-web/commit/980a4fe))
+  - dispose float animation before reinit in syllable word ([10a3f7e](https://github.com/music-lyric/music-lyric-player-web/commit/10a3f7e))
+
+### Refactor
+
+- format code ([e8dd2d9](https://github.com/music-lyric/music-lyric-player-web/commit/e8dd2d9))
+- `base`
+  - change config fields to partial ([c8fd5e4](https://github.com/music-lyric/music-lyric-player-web/commit/c8fd5e4))
+  - split modules ([630e5f2](https://github.com/music-lyric/music-lyric-player-web/commit/630e5f2))
+- `dom`
+  - rename config namespace ([792200a](https://github.com/music-lyric/music-lyric-player-web/commit/792200a))
+  - use dashes fields in styles ([fd11208](https://github.com/music-lyric/music-lyric-player-web/commit/fd11208))
+  - flatten emphasize main offset and easing fields ([00c9c1d](https://github.com/music-lyric/music-lyric-player-web/commit/00c9c1d))
+  - merge emphasize animation effects for syllable word ([a3d0067](https://github.com/music-lyric/music-lyric-player-web/commit/a3d0067))
+
 ## v0.9.0 (2026-05-16)
 
 ### Document
