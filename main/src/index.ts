@@ -1,3 +1,3 @@
-export { BaseLyricPlayer } from '@music-lyric-player/base'
+export * from '@music-lyric-player/base'
 
-export { DomLyricPlayer } from '@music-lyric-player/dom'
+export * from '@music-lyric-player/dom'
