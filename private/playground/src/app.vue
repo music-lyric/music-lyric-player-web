@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import type { DomLyricPlayerConfig } from '@music-lyric-player/dom'
+import type { DomLyricPlayerConfig } from 'music-lyric-player'
 
 import { provide, ref } from 'vue'
 import { usePlayer } from '@root/composables/usePlayer'

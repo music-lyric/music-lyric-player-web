@@ -1,4 +1,4 @@
-import type { DomLyricPlayerConfig } from '@music-lyric-player/dom'
+import type { DomLyricPlayerConfig } from 'music-lyric-player'
 
 import { reactive } from 'vue'
 import { loadSettings, saveSettings, clearSettings } from '@root/core/storage'

@@ -45,7 +45,7 @@
 import type { FieldBinding } from '@root/core/bindings'
 import type { useSettings } from '@root/composables/useSettings'
 
-import { DomLyricPlayerConfig } from '@music-lyric-player/dom'
+import { DomLyricPlayerConfig } from 'music-lyric-player'
 import { computed, inject } from 'vue'
 import { useI18n } from '@root/composables/useI18n'
 import { resolveInheritedValue } from '@root/utils'

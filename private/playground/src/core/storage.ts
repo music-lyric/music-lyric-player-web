@@ -1,4 +1,4 @@
-import type { DomLyricPlayerConfig } from '@music-lyric-player/dom'
+import type { DomLyricPlayerConfig } from 'music-lyric-player'
 
 import { STORAGE_KEY, SETTINGS_STORAGE_KEY, DB_NAME, STORE_NAME } from './constants'
 

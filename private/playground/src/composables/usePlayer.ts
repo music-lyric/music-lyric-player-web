@@ -1,10 +1,9 @@
-import type { DomLyricPlayerConfig } from '@music-lyric-player/dom'
+import type { DomLyricPlayerConfig } from 'music-lyric-player'
 import type { StoredLyric } from '@root/core/storage'
 import type { ParserOptions } from '@root/core/parser-options'
 
 import { Lyric } from 'music-lyric-kit'
-import { BaseLyricPlayer } from '@music-lyric-player/base'
-import { DomLyricPlayer } from '@music-lyric-player/dom'
+import { BaseLyricPlayer, DomLyricPlayer } from 'music-lyric-player'
 
 import { ref, reactive, shallowRef, onMounted, onUnmounted } from 'vue'
 import { parseStoredLyric } from '@root/core/parser'

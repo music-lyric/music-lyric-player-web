@@ -1,4 +1,4 @@
-import type { DomLyricPlayerConfig } from '@music-lyric-player/dom'
+import type { DomLyricPlayerConfig } from 'music-lyric-player'
 
 export type FieldType = 'number' | 'text' | 'select' | 'toggle' | 'padding'
 
