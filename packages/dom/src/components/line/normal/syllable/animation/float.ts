@@ -4,6 +4,7 @@ import type { DomLyricPlayerConfig } from '@root/config'
 
 export class FloatAnimation {
   private animation: Animation | null = null
+  private duration: number = 0
   private delay: number = 0
 
   constructor(
@@ -23,10 +24,12 @@ export class FloatAnimation {
       return
     }
 
+    const duration = Math.max(1000, this.wordInfo.time.duration)
+    this.duration = duration
+
     const delay = this.wordInfo.time.start - this.lineInfo.time.start
     this.delay = delay
 
-    const duration = Math.max(1000, this.wordInfo.time.duration)
     this.animation = this.host.animate([{ transform: `translateY(${config.from ?? 0}px)` }, { transform: `translateY(${config.to ?? 2}px)` }], {
       delay,
       duration,
@@ -59,8 +62,11 @@ export class FloatAnimation {
       this.animation.effect!.updateTiming({ delay })
     }
 
-    const isFinished = currentTime >= this.wordInfo.time.end
-    if (isFinished && this.animation.playState === 'finished') {
+    // Past effect end: use `.finish()` instead of `.play()` to avoid WAAPI's auto-rewind for animations whose `currentTime` lies past the effect end.
+    if (relativeTime >= initDelay + this.duration) {
+      if (this.animation.playState !== 'finished') {
+        this.animation.finish()
+      }
       return
     }
 
@@ -87,6 +93,7 @@ export class FloatAnimation {
   dispose() {
     this.animation?.cancel()
     this.animation = null
+    this.duration = 0
     this.delay = 0
   }
 }

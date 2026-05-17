@@ -281,13 +281,16 @@ export class MaskAnimation {
       this.animation.effect!.updateTiming({ delay })
     }
 
-    const isFinished = currentTime >= this.wordInfo.time.end
-    if (isFinished && this.animation.playState === 'finished') {
+    // Past effect end: use `.finish()` instead of `.play()` to avoid WAAPI's auto-rewind for animations whose `currentTime` lies past the effect end.
+    if (relativeTime >= this.lineInfo.time.duration) {
+      if (this.animation.playState !== 'finished') {
+        this.animation.finish()
+      }
       return
     }
 
     this.animation.playbackRate = 1
-    this.animation.currentTime = relativeTime < 0 ? 0 : relativeTime > this.lineInfo.time.duration ? this.lineInfo.time.duration : relativeTime
+    this.animation.currentTime = relativeTime < 0 ? 0 : relativeTime
     if (isPlay) {
       this.animation.play()
     } else {
