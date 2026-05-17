@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import type { DomLyricPlayerConfig } from 'music-lyric-player'
+import type { BaseLyricPlayerConfig, DomLyricPlayerConfig } from 'music-lyric-player'
 
 import { provide, ref } from 'vue'
 import { usePlayer } from '@root/composables/usePlayer'
@@ -21,13 +21,22 @@ import Sidebar from '@root/components/sidebar.vue'
 import LyricArea from '@root/components/lyric-area.vue'
 import Controls from '@root/components/controls.vue'
 
-const defaults: Partial<DomLyricPlayerConfig.Root> = {
-  layout: { gap: 50 },
-  line: { normal: { base: { font: { size: 48 } } } },
+const defaults: {
+  base?: Partial<BaseLyricPlayerConfig.Root>
+  dom?: Partial<DomLyricPlayerConfig.Root>
+} = {
+  dom: {
+    layout: { gap: 50 },
+    line: { normal: { base: { font: { size: 48 } } } },
+  },
 }
 
 const player = usePlayer({ defaults })
-const settings = useSettings({ defaults, applyConfigPatch: player.applyConfigPatch })
+const settings = useSettings({
+  defaults,
+  applyBasePatch: player.applyBasePatch,
+  applyDomPatch: player.applyDomPatch,
+})
 
 const sidebarOpen = ref(false)
 const toggleSidebar = () => (sidebarOpen.value = !sidebarOpen.value)

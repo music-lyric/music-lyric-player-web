@@ -1,26 +1,43 @@
 <template>
   <div :class="$style.settingsTab">
-    <div :class="$style.toolbar">
-      <span :class="$style.toolbarMeta">{{ t('settings.toolbarMeta') }}</span>
-      <button :class="$style.resetBtn" @click="settings.reset">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-          <path d="M3 3v5h5" />
-        </svg>
-        <span>{{ t('settings.reset') }}</span>
-      </button>
-    </div>
+    <section :class="$style.section">
+      <header :class="$style.sectionHead">
+        <h3 :class="$style.sectionTitle">{{ t('settings.scope.base') }}</h3>
+        <button :class="$style.resetBtn" @click="settings.reset('base')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+            <path d="M3 3v5h5" />
+          </svg>
+          <span>{{ t('settings.reset') }}</span>
+        </button>
+      </header>
+      <div :class="$style.sectionBody">
+        <SettingSection v-for="section in BASE_SECTIONS" :key="section.id" :section="section" />
+      </div>
+    </section>
 
-    <div :class="$style.scroll">
-      <SettingSection v-for="section in SECTIONS" :key="section.id" :section="section" />
-    </div>
+    <section :class="$style.section">
+      <header :class="$style.sectionHead">
+        <h3 :class="$style.sectionTitle">{{ t('settings.scope.dom') }}</h3>
+        <button :class="$style.resetBtn" @click="settings.reset('dom')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+            <path d="M3 3v5h5" />
+          </svg>
+          <span>{{ t('settings.reset') }}</span>
+        </button>
+      </header>
+      <div :class="$style.sectionBody">
+        <SettingSection v-for="section in DOM_SECTIONS" :key="section.id" :section="section" />
+      </div>
+    </section>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { useSettings } from '@root/composables/useSettings'
 
-import { SECTIONS } from '@root/core/bindings'
+import { BASE_SECTIONS, DOM_SECTIONS } from '@root/core/bindings'
 
 import { inject } from 'vue'
 import { useI18n } from '@root/composables/useI18n'
@@ -36,23 +53,32 @@ const { t } = useI18n()
 .settingsTab {
   display: flex;
   flex-direction: column;
+  gap: 20px;
+  padding: 16px;
+  overflow-y: auto;
   height: 100%;
   min-height: 0;
 }
 
-.toolbar {
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sectionHead {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 10px 16px;
-  border-bottom: 1px solid var(--color-border-soft);
-  flex-shrink: 0;
 }
 
-.toolbarMeta {
-  font-size: 11px;
-  color: var(--color-text-muted);
+.sectionTitle {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+  letter-spacing: 0.01em;
 }
 
 .resetBtn {
@@ -83,9 +109,12 @@ const { t } = useI18n()
   }
 }
 
-.scroll {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
+.sectionBody {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-md);
+  overflow: hidden;
 }
 </style>

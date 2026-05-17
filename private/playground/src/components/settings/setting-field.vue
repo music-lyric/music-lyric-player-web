@@ -33,7 +33,7 @@
       </template>
 
       <template v-else-if="field.type === 'toggle'">
-        <button :class="[$style.toggle, { [$style.active]: !!value }]" :aria-pressed="!!value" @click="toggle">
+        <button :class="[$style.toggle, { [$style.active]: !!effectiveValue }]" :aria-pressed="!!effectiveValue" @click="toggle">
           <span :class="$style.toggleThumb"></span>
         </button>
       </template>
@@ -45,7 +45,7 @@
 import type { FieldBinding } from '@root/core/bindings'
 import type { useSettings } from '@root/composables/useSettings'
 
-import { DomLyricPlayerConfig } from 'music-lyric-player'
+import { BaseLyricPlayerConfig, DomLyricPlayerConfig } from 'music-lyric-player'
 import { computed, inject } from 'vue'
 import { useI18n } from '@root/composables/useI18n'
 import { resolveInheritedValue } from '@root/utils'
@@ -60,9 +60,15 @@ const value = computed(() => settings.get(props.field.path))
 
 const visible = computed(() => (props.field.showWhen ? props.field.showWhen(settings.current) : true))
 
+const DEFAULTS = { base: BaseLyricPlayerConfig.DEFAULT, dom: DomLyricPlayerConfig.DEFAULT }
+
+const resolvedDefault = computed(() => resolveInheritedValue(props.field.path, settings.current, DEFAULTS))
+
+const effectiveValue = computed(() => (value.value !== undefined ? value.value : resolvedDefault.value))
+
 const placeholder = computed(() => {
   if (props.field.placeholder !== undefined) return props.field.placeholder
-  const resolved = resolveInheritedValue(props.field.path, settings.current, DomLyricPlayerConfig.DEFAULT)
+  const resolved = resolvedDefault.value
   if (resolved == null || typeof resolved === 'object') return 'Inherit'
   return String(resolved)
 })
@@ -81,7 +87,7 @@ const writeText = (raw: string) => {
 }
 
 const toggle = () => {
-  settings.apply(props.field.path, !value.value)
+  settings.apply(props.field.path, !effectiveValue.value)
 }
 </script>
 

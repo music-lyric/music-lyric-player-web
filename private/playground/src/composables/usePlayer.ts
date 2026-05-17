@@ -1,4 +1,4 @@
-import type { DomLyricPlayerConfig } from 'music-lyric-player'
+import type { BaseLyricPlayerConfig, DomLyricPlayerConfig } from 'music-lyric-player'
 import type { StoredLyric } from '@root/core/storage'
 import type { ParserOptions } from '@root/core/parser-options'
 
@@ -12,7 +12,10 @@ import { loadState, saveState, loadSettings, loadAudioFromDB, saveAudioToDB } fr
 import { debounce, deepMerge, patchFromPath } from '@root/utils'
 
 interface UsePlayerOptions {
-  defaults: Partial<DomLyricPlayerConfig.Root>
+  defaults: {
+    base?: Partial<BaseLyricPlayerConfig.Root>
+    dom?: Partial<DomLyricPlayerConfig.Root>
+  }
 }
 
 export const usePlayer = ({ defaults }: UsePlayerOptions) => {
@@ -20,8 +23,10 @@ export const usePlayer = ({ defaults }: UsePlayerOptions) => {
   const dom = new DomLyricPlayer(base)
 
   const savedSettings = loadSettings()
-  const merged = deepMerge(deepMerge({}, defaults), savedSettings)
-  dom.config.update(merged)
+  const mergedBase = deepMerge(deepMerge({}, defaults.base ?? {}), savedSettings.base ?? {})
+  const mergedDom = deepMerge(deepMerge({}, defaults.dom ?? {}), savedSettings.dom ?? {})
+  base.config.update(mergedBase)
+  dom.config.update(mergedDom)
 
   const audio = new Audio()
   audio.style.display = 'none'
@@ -181,7 +186,11 @@ export const usePlayer = ({ defaults }: UsePlayerOptions) => {
   audio.addEventListener('timeupdate', onAudioTimeUpdate)
   audio.addEventListener('ended', onAudioEnded)
 
-  const applyConfigPatch = (patch: Partial<DomLyricPlayerConfig.Root>) => {
+  const applyBasePatch = (patch: Partial<BaseLyricPlayerConfig.Root>) => {
+    base.config.update(patch)
+  }
+
+  const applyDomPatch = (patch: Partial<DomLyricPlayerConfig.Root>) => {
     dom.config.update(patch)
   }
 
@@ -228,7 +237,8 @@ export const usePlayer = ({ defaults }: UsePlayerOptions) => {
     previewSeek,
     setVolume,
     toggleMute,
-    applyConfigPatch,
+    applyBasePatch,
+    applyDomPatch,
     parserOptions,
     updateParserOption,
   }

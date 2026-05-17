@@ -44,10 +44,10 @@ export const getByPath = (obj: any, path: string): any => {
 }
 
 const INHERIT_CHAIN: Array<[string, string]> = [
-  ['line.normal.extended.translate', 'line.normal.extended.base'],
-  ['line.normal.extended.roman', 'line.normal.extended.base'],
-  ['line.normal.extended.base', 'line.normal.base'],
-  ['line.normal.syllable', 'line.normal.base'],
+  ['dom.line.normal.extended.translate', 'dom.line.normal.extended.base'],
+  ['dom.line.normal.extended.roman', 'dom.line.normal.extended.base'],
+  ['dom.line.normal.extended.base', 'dom.line.normal.base'],
+  ['dom.line.normal.syllable', 'dom.line.normal.base'],
 ]
 
 const INHERITABLE_SUBPATHS = ['font.', 'style.']
