@@ -100,6 +100,35 @@ export class BaseLyricPlayer {
     return this.active.index.length > 0 ? this.active.index[0] : -1
   }
 
+  private handleBridgeActive(lines: Line[], index: number[]): { lines: Line[]; index: number[] } {
+    if (!this.config.current.bridgeActive || index.length < 2) {
+      return { lines, index }
+    }
+    const min = index[0]
+    const max = index[index.length - 1]
+    if (max - min + 1 === index.length) {
+      return { lines, index }
+    }
+    const existing = new Map<number, Line>()
+    for (let i = 0; i < index.length; i++) {
+      existing.set(index[i], lines[i])
+    }
+    const bridgedLines: Line[] = []
+    const bridgedIndex: number[] = []
+    for (let i = min; i <= max; i++) {
+      const line = existing.get(i) ?? this.info.lines[i]
+      if (!line) continue
+      bridgedLines.push(line)
+      bridgedIndex.push(i)
+    }
+    return { lines: bridgedLines, index: bridgedIndex }
+  }
+
+  private handleEmitLinesUpdate(isSeek: boolean) {
+    const bridged = this.handleBridgeActive(this.active.lines, this.active.index)
+    this.event.emit('linesUpdate', bridged.lines, bridged.index, this.handleGetActiveIndex(), isSeek)
+  }
+
   private handleSyncTime(time: number) {
     const lines: Line[] = []
     const index: number[] = []
@@ -123,7 +152,7 @@ export class BaseLyricPlayer {
     this.active.lines = lines
     this.active.index = index
 
-    this.event.emit('linesUpdate', [...this.active.lines], [...this.active.index], this.handleGetActiveIndex(), true)
+    this.handleEmitLinesUpdate(true)
   }
 
   private handleUpdateActiveLines(now: number) {
@@ -164,7 +193,7 @@ export class BaseLyricPlayer {
 
     this.active.lines = newActiveLines
     this.active.index = newActiveIndex
-    this.event.emit('linesUpdate', [...this.active.lines], [...this.active.index], this.handleGetActiveIndex(), false)
+    this.handleEmitLinesUpdate(false)
   }
 
   private onTick = () => {
@@ -272,7 +301,7 @@ export class BaseLyricPlayer {
         index.push(i)
       }
     }
-    return { lines, index }
+    return this.handleBridgeActive(lines, index)
   }
 
   /**
@@ -286,14 +315,14 @@ export class BaseLyricPlayer {
    * Current active lines.
    */
   get currentLines() {
-    return [...this.active.lines]
+    return this.handleBridgeActive(this.active.lines, this.active.index).lines
   }
 
   /**
    * Indices of currently active lines.
    */
   get currentIndex() {
-    return [...this.active.index]
+    return this.handleBridgeActive(this.active.lines, this.active.index).index
   }
 
   /**
