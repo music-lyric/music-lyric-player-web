@@ -73,11 +73,7 @@ abstract class EffectBase {
         if (animation.playbackRate !== disableRate) {
           animation.playbackRate = disableRate
         }
-        if (isPlay) {
-          animation.play()
-        } else {
-          animation.pause()
-        }
+        animation.play()
       }
       return
     }
