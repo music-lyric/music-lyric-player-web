@@ -1,4 +1,4 @@
-import type { Config } from '@music-lyric-player/dom'
+import type { DomLyricPlayerConfig } from '@music-lyric-player/dom'
 
 export type FieldType = 'number' | 'text' | 'select' | 'toggle' | 'padding'
 
@@ -16,7 +16,7 @@ export interface FieldBinding {
   max?: number
   placeholder?: string
   options?: SelectOption[]
-  showWhen?: (cfg: Partial<Config.Root>) => boolean
+  showWhen?: (cfg: Partial<DomLyricPlayerConfig.Root>) => boolean
 }
 
 export interface GroupBinding {

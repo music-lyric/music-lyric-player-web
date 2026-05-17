@@ -45,7 +45,7 @@
 import type { FieldBinding } from '@root/core/bindings'
 import type { useSettings } from '@root/composables/useSettings'
 
-import { DEFAULT_CONFIG } from '@music-lyric-player/dom'
+import { DomLyricPlayerConfig } from '@music-lyric-player/dom'
 import { computed, inject } from 'vue'
 import { useI18n } from '@root/composables/useI18n'
 import { resolveInheritedValue } from '@root/utils'
@@ -62,7 +62,7 @@ const visible = computed(() => (props.field.showWhen ? props.field.showWhen(sett
 
 const placeholder = computed(() => {
   if (props.field.placeholder !== undefined) return props.field.placeholder
-  const resolved = resolveInheritedValue(props.field.path, settings.current, DEFAULT_CONFIG)
+  const resolved = resolveInheritedValue(props.field.path, settings.current, DomLyricPlayerConfig.DEFAULT)
   if (resolved == null || typeof resolved === 'object') return 'Inherit'
   return String(resolved)
 })

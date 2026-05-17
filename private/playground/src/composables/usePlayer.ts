@@ -1,4 +1,4 @@
-import type { Config } from '@music-lyric-player/dom'
+import type { DomLyricPlayerConfig } from '@music-lyric-player/dom'
 import type { StoredLyric } from '@root/core/storage'
 import type { ParserOptions } from '@root/core/parser-options'
 
@@ -13,7 +13,7 @@ import { loadState, saveState, loadSettings, loadAudioFromDB, saveAudioToDB } fr
 import { debounce, deepMerge, patchFromPath } from '@root/utils'
 
 interface UsePlayerOptions {
-  defaults: Partial<Config.Root>
+  defaults: Partial<DomLyricPlayerConfig.Root>
 }
 
 export const usePlayer = ({ defaults }: UsePlayerOptions) => {
@@ -182,7 +182,7 @@ export const usePlayer = ({ defaults }: UsePlayerOptions) => {
   audio.addEventListener('timeupdate', onAudioTimeUpdate)
   audio.addEventListener('ended', onAudioEnded)
 
-  const applyConfigPatch = (patch: Partial<Config.Root>) => {
+  const applyConfigPatch = (patch: Partial<DomLyricPlayerConfig.Root>) => {
     dom.config.update(patch)
   }
 

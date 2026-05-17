@@ -1,4 +1,4 @@
-import type { Config } from '@music-lyric-player/dom'
+import type { DomLyricPlayerConfig } from '@music-lyric-player/dom'
 
 import { STORAGE_KEY, SETTINGS_STORAGE_KEY, DB_NAME, STORE_NAME } from './constants'
 
@@ -31,7 +31,7 @@ export const saveState = (state: StoredState): void => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
 }
 
-export const loadSettings = (): Partial<Config.Root> => {
+export const loadSettings = (): Partial<DomLyricPlayerConfig.Root> => {
   try {
     return JSON.parse(localStorage.getItem(SETTINGS_STORAGE_KEY) ?? '{}')
   } catch {
@@ -39,7 +39,7 @@ export const loadSettings = (): Partial<Config.Root> => {
   }
 }
 
-export const saveSettings = (settings: Partial<Config.Root>): void => {
+export const saveSettings = (settings: Partial<DomLyricPlayerConfig.Root>): void => {
   localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings))
 }
 
