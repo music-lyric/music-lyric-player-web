@@ -10,7 +10,7 @@ export interface Root {
    *
    * @default 'animation'
    */
-  driver: 'timer' | 'animation'
+  driver?: 'timer' | 'animation'
   /**
    * Whether to bridge gaps between simultaneously active lines.
    *
@@ -20,7 +20,7 @@ export interface Root {
    *
    * @default true
    */
-  bridgeActive: boolean
+  bridgeActive?: boolean
 }
 
 /**

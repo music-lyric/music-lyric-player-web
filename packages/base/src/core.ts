@@ -6,7 +6,7 @@ import { ConfigManager, Event } from '@music-lyric-player/utils'
 import { BaseLyricPlayerConfig } from './config'
 
 export class BaseLyricPlayer {
-  readonly config: BaseLyricPlayerConfig.RootManager = new ConfigManager(BaseLyricPlayerConfig.DEFAULT)
+  readonly config: BaseLyricPlayerConfig.RootManager = new ConfigManager(BaseLyricPlayerConfig.DEFAULT as BaseLyricPlayerConfig.RootRequired)
 
   readonly event: Event<BaseLyricPlayerEventMap> = new Event()
 
