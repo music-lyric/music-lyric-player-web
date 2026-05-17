@@ -1,6 +1,6 @@
 import type { LineNormal, WordNormal } from '@music-lyric-kit/lyric'
 import type { ComponentContext } from '@root/components/context'
-import type { Config } from '@root/config'
+import type { DomLyricPlayerConfig } from '@root/config'
 
 export class FloatAnimation {
   private animation: Animation | null = null
@@ -73,7 +73,7 @@ export class FloatAnimation {
     }
   }
 
-  updateConfig(keys?: Config.RootKeySet) {
+  updateConfig(keys?: DomLyricPlayerConfig.RootKeySet) {
     if (!keys) {
       this.init()
       return

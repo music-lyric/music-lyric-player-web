@@ -1,3 +1,1 @@
-export * as Config from './root'
-
-export * from './default'
+export * as DomLyricPlayerConfig from './root'

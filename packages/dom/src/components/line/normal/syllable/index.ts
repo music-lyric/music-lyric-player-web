@@ -1,6 +1,6 @@
 import type { LineNormal } from '@music-lyric-kit/lyric'
 import type { ComponentContext } from '@root/components/context'
-import type { Config } from '@root/config'
+import type { DomLyricPlayerConfig } from '@root/config'
 import type { MaskGenerateInput } from './animation'
 
 import { WordType } from '@music-lyric-kit/lyric'
@@ -98,7 +98,7 @@ export class SyllableElement {
     this.dom.replaceChildren()
   }
 
-  updateConfig(keys?: Config.RootKeySet) {
+  updateConfig(keys?: DomLyricPlayerConfig.RootKeySet) {
     if (!keys) {
       applyClassName(this.dom, [styles.syllable])
       this.init()

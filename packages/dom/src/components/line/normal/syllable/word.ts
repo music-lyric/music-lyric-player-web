@@ -1,6 +1,6 @@
 import type { LineNormal, WordNormal } from '@music-lyric-kit/lyric'
 import type { ComponentContext } from '@root/components/context'
-import type { Config } from '@root/config'
+import type { DomLyricPlayerConfig } from '@root/config'
 
 import { EmphasizeAnimation, FloatAnimation, MaskAnimation } from './animation'
 
@@ -83,7 +83,7 @@ export class WordElement {
     this.size.height = this.dom.clientHeight
   }
 
-  updateConfig(keys?: Config.RootKeySet) {
+  updateConfig(keys?: DomLyricPlayerConfig.RootKeySet) {
     if (!keys) {
       applyClassName(this.dom, [styles.word])
     }

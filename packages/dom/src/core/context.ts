@@ -1,5 +1,5 @@
 import type { BaseLyricPlayer } from '@music-lyric-player/base'
-import type { Config } from '@root/config'
+import type { DomLyricPlayerConfig } from '@root/config'
 import type { ComponentContext, Root, Container } from '@root/components'
 
 interface ScrollState {
@@ -16,14 +16,20 @@ export class CoreContext {
   private isDestroyed = false
 
   public readonly player: BaseLyricPlayer
-  public readonly config: Config.RootManager
+  public readonly config: DomLyricPlayerConfig.RootManager
   public readonly component: ComponentState
   public readonly scroll: ScrollState = {
     active: false,
     activeIndex: -1,
   }
 
-  constructor(player: BaseLyricPlayer, config: Config.RootManager, root: Root, container: Container, componentContext: ComponentContext) {
+  constructor(
+    player: BaseLyricPlayer,
+    config: DomLyricPlayerConfig.RootManager,
+    root: Root,
+    container: Container,
+    componentContext: ComponentContext,
+  ) {
     this.player = player
     this.config = config
     this.component = { root, container, context: componentContext }

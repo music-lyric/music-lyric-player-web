@@ -1,6 +1,6 @@
 import type { LineNormal } from '@music-lyric-kit/lyric'
 import type { ComponentContext } from '@root/components/context'
-import type { Config } from '@root/config'
+import type { DomLyricPlayerConfig } from '@root/config'
 
 import { BaseLineElement, LineElementType } from '../base'
 import { SyllableElement } from './syllable'
@@ -91,7 +91,7 @@ export class NormalLineElement extends BaseLineElement {
     return this.content.content.extended.length > 0 && this.context.config.line.normal.extended.visible
   }
 
-  override updateConfig(keys?: Config.RootKeySet): void {
+  override updateConfig(keys?: DomLyricPlayerConfig.RootKeySet): void {
     super.updateConfig(keys)
 
     if (!keys) {

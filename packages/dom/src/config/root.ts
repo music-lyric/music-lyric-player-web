@@ -1,4 +1,5 @@
 import type { ConfigManager, DeepRequired, NestedKeys } from '@music-lyric-player/utils'
+import type { FontConfig } from './common'
 
 import * as Line from './line'
 import * as Effect from './effect'
@@ -6,10 +7,12 @@ import * as Scroll from './scroll'
 import * as Layout from './layout'
 import * as Container from './container'
 
+import { freezeObjectDeep } from '@music-lyric-player/utils'
+
 /**
  * Top‑level configuration of the lyric player.
  *
- * Every field is optional — values not provided fall back to `DEFAULT_CONFIG`.
+ * Every field is optional — values not provided fall back to {@link DEFAULT}.
  * The shape is split by concern; each domain lives in its own sub‑module.
  */
 export interface Root {
@@ -40,13 +43,12 @@ export interface Root {
 }
 
 /**
- * Fully‑resolved config in which every field is required,
- * produced by deep‑requiring the user‑facing {@link Config}.
+ * Fully‑resolved config in which every field is required, produced by deep‑requiring the user‑facing {@link Root}.
  */
 export type RootRequired = DeepRequired<Root>
 
 /**
- * Runtime config manager bound to this module's {@link Config} shape.
+ * Runtime config manager bound to this module's {@link Root} shape.
  */
 export type RootManager = ConfigManager<RootRequired, Root>
 
@@ -56,11 +58,182 @@ export type RootManager = ConfigManager<RootRequired, Root>
 export type RootKeys = NestedKeys<Root>
 
 /**
- * Set of config key paths that changed since the previous value,
- * as emitted by `ConfigManager.event['update']`.
+ * Set of config key paths that changed since the previous value, as emitted by `ConfigManager.event['update']`.
  *
  * Components consume this to decide which parts to refresh.
  */
 export type RootKeySet = Set<RootKeys>
 
 export { Line, Effect, Scroll, Layout, Container }
+
+const DEFAULT_COLOR = '#000000' as const
+
+const DEFAULT_FONT_CONFIG: FontConfig = {
+  size: 30,
+  weight: 500,
+  family: 'sans-serif',
+} as const
+
+const DEFAULT_EXTENDED_FONT_SIZE = Math.round(DEFAULT_FONT_CONFIG.size! * 0.6)
+
+/**
+ * Built‑in default configuration.
+ *
+ * Used as the fallback when a user‑supplied {@link Root} omits fields.
+ */
+export const DEFAULT: Root = freezeObjectDeep({
+  container: {
+    className: '',
+    padding: '20px',
+    fade: {
+      enabled: true,
+      top: '5%',
+      bottom: '10%',
+    },
+  },
+
+  layout: {
+    align: 'left',
+    gap: 30,
+    duet: {
+      enabled: true,
+    },
+  },
+
+  effect: {
+    scale: {
+      enabled: false,
+      min: 0.65,
+      max: 1,
+    },
+    blur: {
+      enabled: true,
+      min: 0.4,
+      max: 4.5,
+    },
+  },
+
+  scroll: {
+    anchor: 50,
+    animation: {
+      mode: Scroll.Animation.Mode.Smooth,
+      duration: 500,
+      delay: 0,
+      easing: 'ease',
+    },
+  },
+
+  line: {
+    className: '',
+    normal: {
+      base: {
+        className: '',
+        font: DEFAULT_FONT_CONFIG,
+        style: {
+          normal: {
+            color: DEFAULT_COLOR,
+            opacity: 0.6,
+          },
+          active: {
+            color: DEFAULT_COLOR,
+            opacity: 1,
+          },
+          played: {
+            color: DEFAULT_COLOR,
+            opacity: 0.4,
+          },
+        },
+      },
+      syllable: {
+        enabled: true,
+        className: '',
+        animation: {
+          float: {
+            enabled: true,
+            from: 0,
+            to: -2,
+          },
+          mask: {
+            enabled: true,
+            feather: {
+              normal: 0.5,
+              first: 1.5,
+              last: 0.5,
+            },
+          },
+          emphasize: {
+            enabled: true,
+            minDuration: 1000,
+            disablePlaybackRate: 4,
+            effects: {
+              main: {
+                enabled: true,
+                scale: 0.1,
+                offsetHorizontal: 1,
+                offsetVertical: 1,
+                easingRise: 'cubic-bezier(0.2, 0.4, 0.58, 1)',
+                easingFall: 'cubic-bezier(0.3, 0, 0.58, 1)',
+              },
+              glow: {
+                enabled: true,
+                color: '#000000',
+                easing: 'cubic-bezier(0.2, 0.4, 0.58, 1)',
+                maxRadius: 9,
+                maxAlpha: 1,
+              },
+              float: {
+                enabled: true,
+                duration: {
+                  scale: 1.4,
+                  lead: 400,
+                },
+                amplitude: 2,
+                easing: 'cubic-bezier(0.45, 0, 0.55, 1)',
+              },
+            },
+          },
+        },
+      },
+      extended: {
+        visible: true,
+        base: {
+          className: '',
+          font: {
+            size: DEFAULT_EXTENDED_FONT_SIZE,
+          },
+          style: {
+            normal: {
+              opacity: 0.4,
+            },
+            active: {
+              opacity: 0.6,
+            },
+          },
+        },
+        translate: {
+          visible: true,
+          className: '',
+        },
+        roman: {
+          visible: false,
+          className: '',
+        },
+      },
+    },
+    interlude: {
+      className: '',
+      size: 16,
+      style: {
+        normal: {
+          color: DEFAULT_COLOR,
+          opacity: 0.2,
+          hide: true,
+        },
+        active: {
+          color: DEFAULT_COLOR,
+          opacity: 0.8,
+        },
+      },
+    },
+  },
+})

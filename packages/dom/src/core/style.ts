@@ -1,9 +1,9 @@
-import type { Config } from '@root/config'
+import type { DomLyricPlayerConfig } from '@root/config'
 import type { CoreContext } from './context'
 
 import { hasKeyContainingAny } from '@music-lyric-player/utils'
 
-const WATCH_KEYS: Config.RootKeys[] = ['line', 'container.padding', 'container.fade', 'scroll.animation.easing']
+const WATCH_KEYS: DomLyricPlayerConfig.RootKeys[] = ['line', 'container.padding', 'container.fade', 'scroll.animation.easing']
 
 export class StyleManager {
   private readonly runtime: HTMLStyleElement
@@ -58,7 +58,7 @@ export class StyleManager {
     }
     return `${value}${unit}`
   }
-  private buildNormalLineConfig(type: string, config: Config.Line.Normal.Base | undefined, fallbackType?: string) {
+  private buildNormalLineConfig(type: string, config: DomLyricPlayerConfig.Line.Normal.Base | undefined, fallbackType?: string) {
     if (!config) {
       return {}
     }
@@ -76,7 +76,7 @@ export class StyleManager {
     return Object.fromEntries(Object.entries(block).filter(([_, v]) => v !== ''))
   }
 
-  private buildInterludeConfig(config: Config.Line.Interlude.Root) {
+  private buildInterludeConfig(config: DomLyricPlayerConfig.Line.Interlude.Root) {
     if (!config) {
       return {}
     }
@@ -93,7 +93,7 @@ export class StyleManager {
     return Object.fromEntries(Object.entries(block).filter(([_, v]) => v !== ''))
   }
 
-  updateConfig(keys?: Config.RootKeySet) {
+  updateConfig(keys?: DomLyricPlayerConfig.RootKeySet) {
     if (keys && !hasKeyContainingAny(keys, WATCH_KEYS)) {
       return
     }

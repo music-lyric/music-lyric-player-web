@@ -1,6 +1,6 @@
 import type { Line } from '@music-lyric-kit/lyric'
 import type { LineElement } from '@root/components'
-import type { Config } from '@root/config'
+import type { DomLyricPlayerConfig } from '@root/config'
 import type { CoreContext } from './context'
 
 import { LineType } from '@music-lyric-kit/lyric'
@@ -145,7 +145,7 @@ export class LineManager {
       return
     }
 
-    let current: Config.Layout.AlignValue = align
+    let current: DomLyricPlayerConfig.Layout.AlignValue = align
     let lastId: string | undefined = undefined
     for (const element of this.currentElementMap.values()) {
       if (element.type === LineElementType.Interlude) {
@@ -167,7 +167,7 @@ export class LineManager {
     }
   }
 
-  updateConfig(keys?: Config.RootKeySet) {
+  updateConfig(keys?: DomLyricPlayerConfig.RootKeySet) {
     if (keys && (hasKeyContaining(keys, 'layout.align') || hasKeyContaining(keys, 'layout.duet'))) {
       this.updateAlign()
     }

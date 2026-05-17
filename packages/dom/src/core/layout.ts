@@ -2,7 +2,7 @@ import type { LineElementStyle } from '@root/components'
 import type { CoreContext } from './context'
 import type { LineManager } from './line'
 
-import { Config } from '@root/config'
+import { DomLyricPlayerConfig } from '@root/config'
 import { LineElementType } from '@root/components'
 
 const GAUSSIAN_SIGMA = 2.2
@@ -70,13 +70,13 @@ export class LayoutManager {
     const duration = Math.max(config.duration ?? 0, 0)
 
     switch (config.mode) {
-      case Config.Scroll.Animation.Mode.Smooth: {
+      case DomLyricPlayerConfig.Scroll.Animation.Mode.Smooth: {
         return {
           duration,
           delay: Math.max(config.delay ?? 0, 0),
         }
       }
-      case Config.Scroll.Animation.Mode.Ripple: {
+      case DomLyricPlayerConfig.Scroll.Animation.Mode.Ripple: {
         const step = Math.max(config.step ?? 20, 10)
         const range = Math.max(config.range ?? 3, 1)
         const distance = Math.min(Math.abs(offset), range)
@@ -88,7 +88,7 @@ export class LayoutManager {
           delay: Math.round(eased * range * step),
         }
       }
-      case Config.Scroll.Animation.Mode.Directional: {
+      case DomLyricPlayerConfig.Scroll.Animation.Mode.Directional: {
         const step = Math.max(config.step ?? 40, 10)
         const range = Math.max(config.range ?? 5, 1)
         const distance = Math.min(Math.abs(offset), range)
@@ -108,7 +108,7 @@ export class LayoutManager {
           delay: Math.round(eased * range * step),
         }
       }
-      case Config.Scroll.Animation.Mode.Stagger: {
+      case DomLyricPlayerConfig.Scroll.Animation.Mode.Stagger: {
         if (direction === 0) {
           return {
             duration,
