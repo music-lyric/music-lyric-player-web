@@ -123,6 +123,12 @@ export class SyllableElement {
     this.updateMaskInfo()
   }
 
+  updateActive(active: boolean) {
+    for (const word of this.words) {
+      word.updateActive(active)
+    }
+  }
+
   play(currentTime: number, isActive: boolean) {
     const relativeTime = currentTime - this.info.time.start
     for (const word of this.words) {

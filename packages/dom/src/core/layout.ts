@@ -7,6 +7,10 @@ import { LineElementType } from '@root/components'
 
 const GAUSSIAN_SIGMA = 2.2
 
+// Lines within this many elements of the active line keep their animations built; others release them to drop compositor layers.
+// The buffer also lets a just-passed line finish its wind-down before release.
+const ANIMATION_ACTIVE_WINDOW = 2
+
 export interface TransitionResult {
   duration: number
   delay: number
@@ -288,6 +292,9 @@ export class LayoutManager {
         const retract = Math.round(raw / 6)
         element.updateBackgroundDelay(enter, retract)
       }
+
+      // `isActiveLine` always wins so duet / background active elements keep animations even past the window.
+      element.animated = isActiveLine || Math.abs(indexOffset) <= ANIMATION_ACTIVE_WINDOW
 
       element.updateStyle(currentStyle)
 

@@ -2,7 +2,7 @@ import type { LineNormal } from '@music-lyric-kit/lyric'
 import type { ComponentContext } from '@root/components/context'
 import type { DomLyricPlayerConfig } from '@root/config'
 
-import { BaseLineElement, LineElementType } from '../base'
+import { BaseLineElement, LineElementType, type LineElementStyle } from '../base'
 import { SyllableElement } from './syllable'
 import { ExtendedElement } from './extended'
 
@@ -137,6 +137,11 @@ export class NormalLineElement extends BaseLineElement {
 
   override reset() {
     this.syllable?.reset()
+  }
+
+  override updateStyle(current: LineElementStyle) {
+    super.updateStyle(current)
+    this.syllable?.updateActive(this.animated)
   }
 
   override destroy() {

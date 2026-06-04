@@ -240,6 +240,12 @@ export class MaskAnimationHost {
 export class MaskAnimation {
   private animation: Animation | null = null
   private delay: number = 0
+  private active = false
+
+  // Latest mask data, cached so activate() can (re)build without recomputation.
+  private cachedImage = ''
+  private cachedSize = ''
+  private cachedFrames?: Keyframe[]
 
   constructor(
     private readonly host: HTMLDivElement,
@@ -248,14 +254,23 @@ export class MaskAnimation {
     private readonly lineInfo: LineNormal,
   ) {}
 
-  updateInfo(image: string, size: string, frames?: Keyframe[]) {
+  private applyMaskStyle() {
     const style = this.host.style
-    style.maskImage = image
-    style.maskSize = size
+    style.maskImage = this.cachedImage
+    style.maskSize = this.cachedSize
+  }
 
+  private clearMaskStyle() {
+    const style = this.host.style
+    style.removeProperty('mask-image')
+    style.removeProperty('mask-size')
+    style.removeProperty('mask-position')
+  }
+
+  private build() {
     this.dispose()
-    if (frames) {
-      const animation = this.host.animate(frames, {
+    if (this.cachedFrames) {
+      const animation = this.host.animate(this.cachedFrames, {
         duration: this.lineInfo.time.duration,
         fill: 'both',
       })
@@ -300,6 +315,33 @@ export class MaskAnimation {
 
   updateConfig(keys?: DomLyricPlayerConfig.RootKeySet) {
     // pass
+  }
+
+  updateInfo(image: string, size: string, frames?: Keyframe[]) {
+    this.cachedImage = image
+    this.cachedSize = size
+    this.cachedFrames = frames
+
+    // Off-window words apply new data only on the next activate(); active ones rebuild immediately.
+    if (this.active) {
+      this.applyMaskStyle()
+      this.build()
+    }
+  }
+
+  updateActive(active: boolean) {
+    if (this.active === active) {
+      return
+    }
+    if (active) {
+      this.active = true
+      this.applyMaskStyle()
+      this.build()
+    } else {
+      this.active = false
+      this.dispose()
+      this.clearMaskStyle()
+    }
   }
 
   dispose() {

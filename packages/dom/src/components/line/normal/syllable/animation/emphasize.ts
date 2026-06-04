@@ -292,6 +292,7 @@ export class EmphasizeAnimation {
   private readonly float: FloatEffect
 
   private inited = false
+  private active = false
 
   private get config() {
     return this.context.config.line.normal.syllable.animation.emphasize
@@ -379,18 +380,32 @@ export class EmphasizeAnimation {
     this.float.drive(isPlay, isActive, relativeTime, localTime, disableRate)
   }
 
-  updateConfig(keys?: DomLyricPlayerConfig.RootKeySet) {
-    if (!keys) {
+  updateActive(active: boolean) {
+    if (this.active === active) {
+      return
+    }
+    if (active) {
+      this.active = true
       this.init()
+    } else {
+      this.active = false
+      this.dispose()
+    }
+  }
+
+  updateConfig(keys?: DomLyricPlayerConfig.RootKeySet) {
+    // Lazy: a deactivated animation never rebuilds here; a later activate() picks up the new config.
+    if (!this.active) {
       return
     }
 
     // Not emphasize changes, nothing to do.
-    if (!keys.has('line.normal.syllable.animation.emphasize')) {
+    if (keys && !keys.has('line.normal.syllable.animation.emphasize')) {
       return
     }
 
     if (
+      !keys ||
       this.inited !== this.visible ||
       keys.has('line.normal.syllable.animation.emphasize.enabled') ||
       keys.has('line.normal.syllable.animation.emphasize.minDuration')

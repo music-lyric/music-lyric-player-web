@@ -106,6 +106,12 @@ export class WordElement {
     this.animtion.emphasize.updateConfig(keys)
   }
 
+  updateActive(active: boolean) {
+    this.animtion.float.updateActive(active)
+    this.animtion.mask.updateActive(active)
+    this.animtion.emphasize.updateActive(active)
+  }
+
   dispose() {
     this.animtion.float.dispose()
     this.animtion.mask.dispose()

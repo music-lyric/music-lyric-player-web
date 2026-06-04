@@ -6,17 +6,17 @@ export class FloatAnimation {
   private animation: Animation | null = null
   private duration: number = 0
   private delay: number = 0
+  private active = false
 
   constructor(
     private readonly host: HTMLDivElement,
     private readonly context: ComponentContext,
     private readonly wordInfo: WordNormal,
     private readonly lineInfo: LineNormal,
-  ) {
-    this.updateConfig()
-  }
+  ) {}
 
-  private init() {
+  // Built lazily on activate so off-window words don't hold a compositor layer.
+  private build() {
     this.dispose()
 
     const config = this.context.config.line.normal.syllable.animation.float
@@ -79,15 +79,28 @@ export class FloatAnimation {
     }
   }
 
-  updateConfig(keys?: DomLyricPlayerConfig.RootKeySet) {
-    if (!keys) {
-      this.init()
+  updateActive(active: boolean) {
+    if (this.active === active) {
       return
     }
-
-    if (keys.has('line.normal.syllable.animation.float')) {
-      this.init()
+    if (active) {
+      this.active = true
+      this.build()
+    } else {
+      this.active = false
+      this.dispose()
     }
+  }
+
+  updateConfig(keys?: DomLyricPlayerConfig.RootKeySet) {
+    // Lazy: a deactivated animation never rebuilds here; a later activate() picks up the new config.
+    if (!this.active) {
+      return
+    }
+    if (keys && !keys.has('line.normal.syllable.animation.float')) {
+      return
+    }
+    this.build()
   }
 
   dispose() {
