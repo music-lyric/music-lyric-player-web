@@ -46,6 +46,13 @@ export class FloatAnimation {
     }
 
     if (!isActive) {
+      // Just built for an upcoming line and never driven yet: keep it paused at the initial frame.
+      // Reversing now would auto-rewind to the effect end (playbackRate < 0 at currentTime 0) and float back once.
+      const time = this.animation.currentTime
+      if (typeof time !== 'number' || time <= 0) {
+        this.animation.pause()
+        return
+      }
       if (this.animation.playbackRate !== -1) {
         this.animation.playbackRate = -1
         this.animation.play()

@@ -70,6 +70,13 @@ abstract class EffectBase {
         if (animation.playState === 'finished') {
           continue
         }
+        // Just built for an upcoming line and never driven yet: keep it paused at the initial frame.
+        // Fast-forwarding here would flash the emphasis once before the line is even reached.
+        const time = animation.currentTime
+        if (typeof time !== 'number' || time <= 0) {
+          animation.pause()
+          continue
+        }
         if (animation.playbackRate !== disableRate) {
           animation.playbackRate = disableRate
         }
