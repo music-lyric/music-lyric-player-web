@@ -143,9 +143,10 @@ export class SyllableElement {
     }
   }
 
-  reset() {
+  reset(currentTime: number) {
+    const relativeTime = currentTime - this.info.time.start
     for (const word of this.words) {
-      word.updateStyle(false, false, 0, 0)
+      word.updateStyle(false, false, currentTime, relativeTime)
     }
   }
 

@@ -260,13 +260,6 @@ export class MaskAnimation {
     style.maskSize = this.cachedSize
   }
 
-  private clearMaskStyle() {
-    const style = this.host.style
-    style.removeProperty('mask-image')
-    style.removeProperty('mask-size')
-    style.removeProperty('mask-position')
-  }
-
   private build() {
     this.dispose()
     if (this.cachedFrames) {
@@ -285,8 +278,15 @@ export class MaskAnimation {
     }
 
     if (!isActive) {
-      this.animation.currentTime = 0
-      this.animation.finish()
+      // Upcoming line (not started): hold the initial frame (fully dimmed) to match its state when it turns active.
+      // Already-played line: jump to the end (fully revealed).
+      // Without this, entering active would flash from fully revealed to dimmed.
+      if (relativeTime <= 0) {
+        this.animation.currentTime = 0
+        this.animation.pause()
+      } else {
+        this.animation.finish()
+      }
       return
     }
 
@@ -322,7 +322,7 @@ export class MaskAnimation {
     this.cachedSize = size
     this.cachedFrames = frames
 
-    // Off-window words apply new data only on the next activate(); active ones rebuild immediately.
+    // Active words rebuild immediately; off-window ones refresh their static mask on the next updateStyle.
     if (this.active) {
       this.applyMaskStyle()
       this.build()
@@ -340,7 +340,6 @@ export class MaskAnimation {
     } else {
       this.active = false
       this.dispose()
-      this.clearMaskStyle()
     }
   }
 

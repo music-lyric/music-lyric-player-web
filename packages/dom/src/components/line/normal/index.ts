@@ -135,8 +135,8 @@ export class NormalLineElement extends BaseLineElement {
     this.syllable?.pause(time, isActive)
   }
 
-  override reset() {
-    this.syllable?.reset()
+  override reset(time: number) {
+    this.syllable?.reset(time)
   }
 
   override updateStyle(current: LineElementStyle) {

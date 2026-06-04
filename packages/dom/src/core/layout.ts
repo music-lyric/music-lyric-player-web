@@ -299,7 +299,7 @@ export class LayoutManager {
       element.updateStyle(currentStyle)
 
       if (!isActiveLine) {
-        element.reset()
+        element.reset(currentTime)
         continue
       }
 

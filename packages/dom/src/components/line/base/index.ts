@@ -101,7 +101,7 @@ export abstract class BaseLineElement {
 
   abstract pause(time: number, isActive: boolean): void
 
-  abstract reset(): void
+  abstract reset(time: number): void
 
   destroy(): void {
     this.wrapper.dom.replaceChildren()

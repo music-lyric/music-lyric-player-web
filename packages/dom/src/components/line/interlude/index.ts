@@ -106,7 +106,7 @@ export class InterludeLineElement extends BaseLineElement {
     this.updateAllDotStyle(false, isActive, time)
   }
 
-  override reset() {
-    this.updateAllDotStyle(false, false, 0)
+  override reset(time: number) {
+    this.updateAllDotStyle(false, false, time)
   }
 }
