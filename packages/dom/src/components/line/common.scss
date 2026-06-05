@@ -1,14 +1,12 @@
+@forward '../common.scss';
+
+@use '../common.scss' as *;
+
 $positions: left, center, right;
 
-@function build-player-var($target, $default: null) {
-  @if $default == '' or $default == null {
-    @return var(--lyric-player-#{$target});
-  } @else {
-    @return var(--lyric-player-#{$target}, #{$default});
-  }
-}
-
-@function build-line-var($module, $sub: null, $suffix: null, $default: null) {
+// Reference a line-scoped player var, assembling the key as `line-<module>[-<sub>][-<suffix>]`.
+// e.g. `build-line-variable('normal', 'syllable', 'opacity')` -> `var(--lyric-player-line-normal-syllable-opacity)`.
+@function build-line-variable($module, $sub: null, $suffix: null, $default: null) {
   $name: 'line-#{$module}';
 
   @if $sub != '' and $sub != null {
@@ -18,26 +16,28 @@ $positions: left, center, right;
     $name: '#{$name}-#{$suffix}';
   }
 
-  @return build-player-var($name, $default);
+  @return build-root-variable($name, $default);
 }
 
+// Apply the configured font vars (size / weight / family) for a line element such as 'base' or 'syllable'.
 @mixin apply-line-font($element) {
-  font-size: build-line-var('normal', $element, 'font-size');
-  font-weight: build-line-var('normal', $element, 'font-weight');
-  font-family: build-line-var('normal', $element, 'font-family');
+  font-size: build-line-variable('normal', $element, 'font-size');
+  font-weight: build-line-variable('normal', $element, 'font-weight');
+  font-family: build-line-variable('normal', $element, 'font-family');
 }
 
+// Apply the configured color / opacity vars for a line element, plus its `[active]` and `[played]` variants.
 @mixin apply-line-style($element) {
-  color: build-line-var('normal', $element, 'color');
-  opacity: build-line-var('normal', $element, 'opacity');
+  color: build-line-variable('normal', $element, 'color');
+  opacity: build-line-variable('normal', $element, 'opacity');
 
   [active] & {
-    color: build-line-var('normal', '#{$element}-active', 'color');
-    opacity: build-line-var('normal', '#{$element}-active', 'opacity');
+    color: build-line-variable('normal', '#{$element}-active', 'color');
+    opacity: build-line-variable('normal', '#{$element}-active', 'opacity');
   }
 
   [played] & {
-    color: build-line-var('normal', '#{$element}-played', 'color');
-    opacity: build-line-var('normal', '#{$element}-played', 'opacity');
+    color: build-line-variable('normal', '#{$element}-played', 'color');
+    opacity: build-line-variable('normal', '#{$element}-played', 'opacity');
   }
 }

@@ -1,9 +1,12 @@
 import { Event } from '@music-lyric-player/utils'
 import { ComponentContext } from '@root/components/context'
 
-import { applyClassName } from '@root/utils'
+import { applyClassName, buildRootVariableKey } from '@root/utils'
 
 import styles from './index.module.scss'
+
+const CONTAINER_WIDTH_KEY = buildRootVariableKey('container-width')
+const CONTAINER_HEIGHT_KEY = buildRootVariableKey('container-height')
 
 export interface ContainerEventMap {
   'change-visible': (visible: boolean) => void
@@ -70,8 +73,8 @@ export class Container {
     this.event.emit('change-size', width, height)
 
     const domStyle = this.dom.style
-    domStyle.setProperty('--lyric-player-container-width', `${width}px`)
-    domStyle.setProperty('--lyric-player-container-height', `${height}px`)
+    domStyle.setProperty(CONTAINER_WIDTH_KEY, `${width}px`)
+    domStyle.setProperty(CONTAINER_HEIGHT_KEY, `${height}px`)
   }
 
   private handleScroll = (e: globalThis.Event) => {

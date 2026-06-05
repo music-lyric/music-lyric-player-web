@@ -9,7 +9,7 @@
   // - unsung side defaults to 1 and is pulled down to normal/active on the active line below.
   // - sung side carries the active opacity.
   --mask-normal-opacity: 1;
-  --mask-active-opacity: #{build-line-var('normal', 'syllable-active', 'opacity')};
+  --mask-active-opacity: #{build-line-variable('normal', 'syllable-active', 'opacity')};
 
   --emphasize-padding-horizontal: 0px;
   --emphasize-padding-vertical: 0px;
@@ -29,7 +29,7 @@
   // Switch opacity instantly here (no fade) so unsung syllables hold normal brightness while the wipe reveals them
   // word by word, instead of the whole line fading up and fighting the wipe. The fade-out on leaving active is kept above.
   [active] & {
-    --mask-normal-opacity: calc(#{build-line-var('normal', 'syllable', 'opacity')} / #{build-line-var('normal', 'syllable-active', 'opacity')});
+    --mask-normal-opacity: calc(#{build-line-variable('normal', 'syllable', 'opacity')} / #{build-line-variable('normal', 'syllable-active', 'opacity')});
     transition-duration: 0s;
   }
 }

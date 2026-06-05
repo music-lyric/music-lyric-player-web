@@ -1,12 +1,12 @@
 import type { ComponentContext } from '@root/components/context'
 import type { DomLyricPlayerConfig } from '@root/config'
 
-import { applyClassName, buildLineVarKey } from '@root/utils'
+import { applyClassName, buildLineVariableKey } from '@root/utils'
 
 import styles from './index.module.scss'
 
-const ANIMATION_DURATION_KEY = buildLineVarKey('animation', '', 'duration')
-const ANIMATION_DELAY_KEY = buildLineVarKey('animation', '', 'delay')
+const ANIMATION_DURATION_KEY = buildLineVariableKey('animation', '', 'duration')
+const ANIMATION_DELAY_KEY = buildLineVariableKey('animation', '', 'delay')
 
 export enum LineElementType {
   Normal,

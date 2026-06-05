@@ -6,9 +6,12 @@ import { BaseLineElement, LineElementType, type LineElementStyle } from '../base
 import { SyllableElement } from './syllable'
 import { ExtendedElement } from './extended'
 
-import { applyClassName } from '@root/utils'
+import { applyClassName, buildLineVariableKey } from '@root/utils'
 
 import styles from './index.module.scss'
+
+const BACKGROUND_ENTER_DELAY_KEY = buildLineVariableKey('background', 'enter', 'delay')
+const BACKGROUND_RETRACT_DELAY_KEY = buildLineVariableKey('background', 'retract', 'delay')
 
 export class NormalLineElement extends BaseLineElement {
   override get type() {
@@ -47,18 +50,18 @@ export class NormalLineElement extends BaseLineElement {
     if (enter !== this.backgroundEnterDelay) {
       this.backgroundEnterDelay = enter
       if (enter) {
-        style.setProperty('--lyric-player-line-background-enter-delay', `${enter}ms`)
+        style.setProperty(BACKGROUND_ENTER_DELAY_KEY, `${enter}ms`)
       } else {
-        style.removeProperty('--lyric-player-line-background-enter-delay')
+        style.removeProperty(BACKGROUND_ENTER_DELAY_KEY)
       }
     }
 
     if (retract !== this.backgroundRetractDelay) {
       this.backgroundRetractDelay = retract
       if (retract) {
-        style.setProperty('--lyric-player-line-background-retract-delay', `${retract}ms`)
+        style.setProperty(BACKGROUND_RETRACT_DELAY_KEY, `${retract}ms`)
       } else {
-        style.removeProperty('--lyric-player-line-background-retract-delay')
+        style.removeProperty(BACKGROUND_RETRACT_DELAY_KEY)
       }
     }
   }

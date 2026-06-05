@@ -1,32 +1,32 @@
 @use '../common.scss' as *;
 
 .wrapper {
-  --lyric-player-line-position: center;
+  @include set-root-variable('line-position', center);
   @each $pos in $positions {
     &[position='#{$pos}'] {
-      --lyric-player-line-position: #{$pos};
+      @include set-root-variable('line-position', $pos);
     }
   }
 
+  @include set-root-variable('line-animation-duration', 1000ms);
+  @include set-root-variable('line-animation-delay', 0ms);
+
   display: flex;
   position: absolute;
-  width: build-player-var('container-width');
-
-  --lyric-player-line-animation-duration: 1000ms;
-  --lyric-player-line-animation-delay: 0ms;
+  width: build-root-variable('container-width');
 
   // transform uses the full duration. opacity and filter run at 50% of it (same delay)
   transition:
-    transform build-line-var('animation', '', 'duration') build-player-var('scroll-easing') build-line-var('animation', '', 'delay'),
-    opacity calc(#{build-line-var('animation', '', 'duration')} * 0.5) ease build-line-var('animation', '', 'delay'),
-    filter calc(#{build-line-var('animation', '', 'duration')} * 0.5) ease build-line-var('animation', '', 'delay');
+    transform build-line-variable('animation', '', 'duration') build-root-variable('scroll-easing') build-line-variable('animation', '', 'delay'),
+    opacity calc(#{build-line-variable('animation', '', 'duration')} * 0.5) ease build-line-variable('animation', '', 'delay'),
+    filter calc(#{build-line-variable('animation', '', 'duration')} * 0.5) ease build-line-variable('animation', '', 'delay');
 
   will-change: transform;
   opacity: 1;
 
-  justify-content: build-line-var('position');
-  text-align: build-line-var('position');
-  transform-origin: build-line-var('position') center;
+  justify-content: build-line-variable('position');
+  text-align: build-line-variable('position');
+  transform-origin: build-line-variable('position') center;
 
   pointer-events: none;
 }

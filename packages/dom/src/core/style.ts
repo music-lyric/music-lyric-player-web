@@ -3,6 +3,8 @@ import type { CoreContext } from './context'
 
 import { hasKeyContainingAny } from '@music-lyric-player/utils'
 
+import { buildRootVariableKey } from '@root/utils'
+
 const WATCH_KEYS: DomLyricPlayerConfig.RootKeys[] = ['line', 'container.padding', 'container.fade', 'scroll.animation.easing']
 
 export class StyleManager {
@@ -28,7 +30,7 @@ export class StyleManager {
   }
 
   private buildKey(key: string) {
-    return `--lyric-player-${key}`
+    return buildRootVariableKey(key)
   }
 
   private buildItem(key: string, value: string) {

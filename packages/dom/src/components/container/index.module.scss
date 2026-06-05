@@ -1,3 +1,5 @@
+@use '../common.scss' as *;
+
 .container {
   position: relative;
   display: flex;
@@ -9,13 +11,13 @@
   box-sizing: border-box;
   line-height: normal;
 
-  padding: var(--lyric-player-container-padding);
+  padding: build-root-variable('container-padding');
 
   &[enable-fade] {
     mask-image: linear-gradient(
       transparent 0%,
-      #fff var(--lyric-player-container-fade-top),
-      #fff calc(100% - var(--lyric-player-container-fade-bottom)),
+      #fff build-root-variable('container-fade-top'),
+      #fff calc(100% - #{build-root-variable('container-fade-bottom')}),
       transparent 100%
     );
   }

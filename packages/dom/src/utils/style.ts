@@ -22,10 +22,18 @@ export const applyClassName = (element: HTMLDivElement, names: string[]) => {
 }
 
 /**
- * Build a line-scoped CSS custom property key under the `--lyric-player-` namespace, mirroring the scss `build-line-var`.
+ * Build a root-scoped player CSS custom property key under the `--lyric-player-` namespace.
+ * @example `('container-width')` -> `--lyric-player-container-width`
+ */
+export const buildRootVariableKey = (target: string) => {
+  return `--lyric-player-${target}`
+}
+
+/**
+ * Build a line-scoped player CSS custom property key.
  * @example `('animation', '', 'duration')` -> `--lyric-player-line-animation-duration`
  */
-export const buildLineVarKey = (module: string, sub?: string, suffix?: string) => {
+export const buildLineVariableKey = (module: string, sub?: string, suffix?: string) => {
   let name = `line-${module}`
   if (sub) {
     name += `-${sub}`
@@ -33,5 +41,5 @@ export const buildLineVarKey = (module: string, sub?: string, suffix?: string) =
   if (suffix) {
     name += `-${suffix}`
   }
-  return `--lyric-player-${name}`
+  return buildRootVariableKey(name)
 }
