@@ -39,10 +39,6 @@ export class CoreContext {
     return this.isDestroyed
   }
 
-  get isHideInterlude() {
-    return this.config.current.line.interlude.style.normal.opacity <= 0
-  }
-
   destroy() {
     this.isDestroyed = true
 
