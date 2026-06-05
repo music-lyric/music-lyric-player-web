@@ -105,6 +105,7 @@ export class BaseLyricPlayer {
     let firstIndex = this.info.lines.length
     for (let i = 0; i < this.info.lines.length; i++) {
       const line = this.info.lines[i]
+      // Lines are assumed sorted by time.start ascending, so the first line starting after `time` ends the scan.
       if (line.time.start > time) {
         firstIndex = i
         break
@@ -255,6 +256,7 @@ export class BaseLyricPlayer {
 
   /**
    * Find all active lines at the given time (ms). Does not mutate internal state.
+   * Assumes `info.lines` is sorted by `time.start` ascending.
    * @param time time in ms to find active lines for.
    */
   matchLinesWithTime(time: number): { lines: Line[]; index: number[] } {
@@ -262,6 +264,7 @@ export class BaseLyricPlayer {
     const index: number[] = []
     for (let i = 0; i < this.info.lines.length; i++) {
       const line = this.info.lines[i]
+      // Lines are assumed sorted by time.start ascending, so the first line starting after `time` ends the scan.
       if (line.time.start > time) {
         break
       }

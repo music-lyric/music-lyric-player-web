@@ -109,7 +109,8 @@ export class MaskAnimationHost {
     }
 
     // Precompute timing-only progress: for each word, the normalized [0, 1] offsets at which its leading pause ends and at which the word finishes singing.
-    // Since these depend solely on timing, lifting them out of the keyframe loop reduces total work from O(N^2) to O(N).
+    // These depend solely on timing, so lifting them out of the per-word keyframe loop avoids recomputing them for each word.
+    // Note: the keyframe construction below still scans all words per word, so generate() as a whole stays O(N^2).
     const pauseProgress = this.pauseProgress
     const moveProgress = this.moveProgress
     const hasPause = this.hasPause
