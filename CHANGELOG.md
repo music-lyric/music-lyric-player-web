@@ -1,3 +1,43 @@
+## v0.11.0 (2026-06-06)
+
+### Document
+
+- update note ([11938e7](https://github.com/music-lyric/music-lyric-player-web/commit/11938e7))
+
+### Feature
+
+- `dom`
+  - add instance id getter to player ([2bdd855](https://github.com/music-lyric/music-lyric-player-web/commit/2bdd855))
+- `utils`
+  - add path-based get and set to config manager ([07a5fc6](https://github.com/music-lyric/music-lyric-player-web/commit/07a5fc6))
+
+### Fix
+
+- guard numeric inputs against invalid values ([701d221](https://github.com/music-lyric/music-lyric-player-web/commit/701d221))
+- `base`
+  - emit pause event only when playing ([ff1ccdc](https://github.com/music-lyric/music-lyric-player-web/commit/ff1ccdc))
+- `dom`
+  - clamp active index to prevent layout offset ([26a8282](https://github.com/music-lyric/music-lyric-player-web/commit/26a8282))
+  - scope runtime styles per instance ([2a19044](https://github.com/music-lyric/music-lyric-player-web/commit/2a19044))
+  - run line opacity and filter ahead of the position move ([0e124cf](https://github.com/music-lyric/music-lyric-player-web/commit/0e124cf))
+  - align syllable brightness inside and outside the active line ([4b80709](https://github.com/music-lyric/music-lyric-player-web/commit/4b80709))
+  - the syllable word flickering when reset ([c09dbe9](https://github.com/music-lyric/music-lyric-player-web/commit/c09dbe9))
+  - keep lazily built animations paused at their initial frame ([320e8e7](https://github.com/music-lyric/music-lyric-player-web/commit/320e8e7))
+- `utils`
+  - isolate listener errors during emit ([210296f](https://github.com/music-lyric/music-lyric-player-web/commit/210296f))
+
+### Performance
+
+- `dom`
+  - reuse element snapshot to avoid map lookup ([8c375b9](https://github.com/music-lyric/music-lyric-player-web/commit/8c375b9))
+  - build syllable animations only within an active window ([bce3cea](https://github.com/music-lyric/music-lyric-player-web/commit/bce3cea))
+
+### Refactor
+
+- `dom`
+  - remove unused config getter ([412d2ee](https://github.com/music-lyric/music-lyric-player-web/commit/412d2ee))
+  - build all css var keys through shared helpers ([f2481dc](https://github.com/music-lyric/music-lyric-player-web/commit/f2481dc))
+
 ## v0.10.0 (2026-05-17)
 
 ### Feature
