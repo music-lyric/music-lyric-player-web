@@ -158,6 +158,10 @@ export class DomLyricPlayer {
     return this.root.element
   }
 
+  get instanceId() {
+    return this.root.instanceId
+  }
+
   destroy() {
     this.player.event.remove('play', this.onPlay)
     this.player.event.remove('pause', this.onPause)
