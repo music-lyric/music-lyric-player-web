@@ -1,13 +1,20 @@
-import type { NestedKeys } from '@root/types'
+import type { NestedKeys, PathValue } from '@root/types'
 
 import { Event } from '@root/event'
 
-import { mergeObject, cloneObjectDeep, compareObject } from '@root/object'
+import { mergeObject, cloneObjectDeep, compareObject, getObject, setObject } from '@root/object'
 
 export interface ConfigManagerEventMap<Full, Keys> {
   update: (changeKeys: Set<Keys>, config: Full) => void
   reset: (config: Full) => void
 }
+
+/**
+ * Flat patch keyed by dot-paths (`a.b.c`); each value is typed to the value living at that path.
+ */
+export type ConfigSetPayload<Full, Keys> = Partial<{
+  [K in Extract<Keys, string>]: PathValue<Full, K>
+}>
 
 export class ConfigManager<Full, Init, Keys = NestedKeys<Full>> {
   readonly event = new Event<ConfigManagerEventMap<Full, Keys>>()
@@ -23,6 +30,10 @@ export class ConfigManager<Full, Init, Keys = NestedKeys<Full>> {
     }
   }
 
+  /**
+   * Deep-merge a (partial) config object into the current one. To write by dot-path, use `set` instead.
+   * Emits `update` with the changed paths, only when something actually changed.
+   */
   update(target: Init) {
     if (!target) {
       return
@@ -37,6 +48,9 @@ export class ConfigManager<Full, Init, Keys = NestedKeys<Full>> {
     }
   }
 
+  /**
+   * Restore every value back to the defaults. Emits `update` (the changed paths) and then `reset`.
+   */
   reset() {
     const prev = cloneObjectDeep(this.now)
     this.now = cloneObjectDeep(this.def)
@@ -49,6 +63,47 @@ export class ConfigManager<Full, Init, Keys = NestedKeys<Full>> {
     this.event.emit('reset', this.now)
   }
 
+  /**
+   * Read a single value by dot-path. To read the whole config, use `current`.
+   */
+  get<K extends Extract<Keys, string>>(key: K): PathValue<Full, K> {
+    return getObject(this.now, key) as PathValue<Full, K>
+  }
+
+  /**
+   * Write by dot-path. Accepts a single `key, value` pair or a flat patch of several paths at once.
+   * Mirrors `update`: clone, apply, diff, and only emit `update` when something actually changed.
+   */
+  set<K extends Extract<Keys, string>>(key: K, value: PathValue<Full, K>): void
+  set(values: ConfigSetPayload<Full, Keys>): void
+  set(input: Extract<Keys, string> | ConfigSetPayload<Full, Keys>, value?: unknown) {
+    if (!input) {
+      return
+    }
+
+    const prev = this.now
+    const next = cloneObjectDeep(prev)
+    const target = next as Record<string, unknown>
+
+    if (typeof input === 'string') {
+      setObject(target, input, value)
+    } else {
+      for (const key of Object.keys(input)) {
+        setObject(target, key, (input as Record<string, unknown>)[key])
+      }
+    }
+
+    this.now = next
+
+    const changed = compareObject(prev, this.now) as Set<Keys>
+    if (changed.size) {
+      this.event.emit('update', changed, this.now)
+    }
+  }
+
+  /**
+   * The whole current config. To read a single value, use `get(key)`.
+   */
   get current() {
     return this.now
   }
