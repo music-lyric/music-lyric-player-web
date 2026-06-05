@@ -80,7 +80,9 @@ export class InterludeLineElement extends BaseLineElement {
   }
 
   private updateAllDotStyle(isPlay: boolean, isActive: boolean, currentTime: number) {
-    const duration = Math.floor(this.info.time.duration / DOT_COUNT)
+    // Guard against a non-finite or negative lyric duration so dot timing stays valid.
+    const rawDuration = this.info.time.duration
+    const duration = Number.isFinite(rawDuration) ? Math.max(0, Math.floor(rawDuration / DOT_COUNT)) : 0
     for (let i = 0; i < DOT_COUNT; i++) {
       const element = this.dots[i]
       if (!element) {

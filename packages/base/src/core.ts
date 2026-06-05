@@ -208,7 +208,7 @@ export class BaseLyricPlayer {
   play(time?: number) {
     this.pause()
 
-    if (typeof time === 'number' && !Number.isNaN(time)) {
+    if (typeof time === 'number' && Number.isFinite(time)) {
       this.time.seek = time
       this.handleSyncTime(time)
     }

@@ -380,7 +380,8 @@ export class EmphasizeAnimation {
     this.float.updateDelay(adjustment)
 
     const localTime = relativeTime > 0 ? relativeTime : 0
-    const disableRate = this.config.disablePlaybackRate
+    // Clamp to the documented @min 1; 0 or negative would stall or reverse the wind-down.
+    const disableRate = Math.max(1, this.config.disablePlaybackRate)
 
     this.main.drive(isPlay, isActive, relativeTime, localTime, disableRate)
     this.glow.drive(isPlay, isActive, relativeTime, localTime, disableRate)

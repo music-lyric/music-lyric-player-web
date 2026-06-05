@@ -24,7 +24,9 @@ export class FloatAnimation {
       return
     }
 
-    const duration = Math.max(1000, this.wordInfo.time.duration)
+    // Guard against a non-finite lyric duration so WAAPI timing stays valid.
+    const rawDuration = this.wordInfo.time.duration
+    const duration = Number.isFinite(rawDuration) ? Math.max(1000, rawDuration) : 1000
     this.duration = duration
 
     const delay = this.wordInfo.time.start - this.lineInfo.time.start
