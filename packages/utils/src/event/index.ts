@@ -31,7 +31,12 @@ export class Event<M extends { [K in keyof M]: (...args: any[]) => any }> {
 
     for (const callback of [...callbacks]) {
       const fn = callback as (...args: Parameters<M[K]>) => ReturnType<M[K]>
-      fn(...args)
+      // Isolate listeners: one throwing must not stop the rest of the chain.
+      try {
+        fn(...args)
+      } catch (error) {
+        console.error(error)
+      }
     }
   }
 
