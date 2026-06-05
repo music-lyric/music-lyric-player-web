@@ -8,6 +8,10 @@ export interface MaskGenerateInput {
   height: number
 }
 
+const MASK_NORMAL_OPACITY = 'var(--mask-normal-opacity)'
+
+const MASK_ACTIVE_OPACITY = 'var(--mask-active-opacity)'
+
 export class MaskAnimationHost {
   // Word info buffers
   private wordStartTimes!: Float64Array
@@ -158,7 +162,7 @@ export class MaskAnimationHost {
       const widthInTotal = widthRatio / widthSize
       const leftPos = (1 - widthInTotal) / 2
 
-      const maskImage = `linear-gradient(to right, rgba(0, 0, 0, 1) ${leftPos * 100}%, rgba(0, 0, 0, 0.4) ${(leftPos + widthInTotal) * 100}%)`
+      const maskImage = `linear-gradient(to right, rgba(0, 0, 0, ${MASK_ACTIVE_OPACITY}) ${leftPos * 100}%, rgba(0, 0, 0, ${MASK_NORMAL_OPACITY}) ${(leftPos + widthInTotal) * 100}%)`
       const maskSize = `${widthSize * 100}% 100%`
 
       // Leftmost mask position: the mask sits fully to the left of the word box, leaving the entire word unrevealed.
