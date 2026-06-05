@@ -1,12 +1,19 @@
 import { applyClassName } from '@root/utils'
+import { createRandomHex } from '@music-lyric-player/utils'
 
 import styles from './index.module.scss'
 
+const INSTANCE_ATTRIBUTE = 'lyric-player-instance-id'
+
 export class Root {
+  private readonly id: string
   private readonly dom: HTMLDivElement
 
   constructor() {
+    this.id = createRandomHex(3)
+
     this.dom = document.createElement('div')
+    this.dom.setAttribute(INSTANCE_ATTRIBUTE, this.id)
     applyClassName(this.dom, [styles.root])
   }
 
@@ -23,10 +30,18 @@ export class Root {
   }
 
   /**
-   * CSS selector that targets this root element. Used by StyleManager to scope
-   * runtime CSS variables.
+   * Unique id of this player instance, also reflected on the root element via the `lyric-player-instance` attribute.
+   */
+  get instanceId() {
+    return this.id
+  }
+
+  /**
+   * CSS selector that uniquely targets this root element. Combines the scoped
+   * class with a per-instance attribute so StyleManager's runtime CSS variables
+   * stay isolated when multiple players coexist on the page.
    */
   get scope() {
-    return `.${styles.root}`
+    return `.${styles.root}[${INSTANCE_ATTRIBUTE}="${this.id}"]`
   }
 }
