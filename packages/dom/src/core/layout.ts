@@ -218,9 +218,11 @@ export class LayoutManager {
       topPositions[i] = baseTop + currentSpace
     }
 
-    const firstActiveIndex = isInScroll
+    const rawFirstActiveIndex = isInScroll
       ? (this.lineManager.queryElementIndexes(scroll.activeIndex)?.[0] ?? activeElementIndexes[0] ?? 0)
       : (activeElementIndexes[0] ?? 0)
+    // Clamp to a valid element index so an out-of-range value can't turn the offset into NaN and propagate to every line.
+    const firstActiveIndex = Math.min(Math.max(rawFirstActiveIndex, 0), elementCount - 1)
 
     const firstElement = elements[firstActiveIndex]
     const firstElementHeight = firstElement?.height ?? 0
