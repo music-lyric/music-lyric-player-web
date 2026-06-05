@@ -1,9 +1,12 @@
 import type { ComponentContext } from '@root/components/context'
 import type { DomLyricPlayerConfig } from '@root/config'
 
-import { applyClassName } from '@root/utils'
+import { applyClassName, buildLineVarKey } from '@root/utils'
 
 import styles from './index.module.scss'
+
+const ANIMATION_DURATION_KEY = buildLineVarKey('animation', '', 'duration')
+const ANIMATION_DELAY_KEY = buildLineVarKey('animation', '', 'delay')
 
 export enum LineElementType {
   Normal,
@@ -70,12 +73,14 @@ export abstract class BaseLineElement {
       style.transform = `translate(${current.left || 0}px, ${current.top || 0}px) scale(${current.scale || 1})`
     }
 
+    // Pushed to the wrapper as CSS vars so the scss transition can derive per-property timing from them:
+    // `transform` uses them as-is, while `opacity` / `filter` run at a fraction of the duration to lead the move.
     if (current.transitionDuration !== prev.transitionDuration) {
-      style.transitionDuration = `${current.transitionDuration || 0}ms`
+      style.setProperty(ANIMATION_DURATION_KEY, `${current.transitionDuration || 0}ms`)
     }
 
     if (current.transitionDelay !== prev.transitionDelay) {
-      style.transitionDelay = `${current.transitionDelay || 0}ms`
+      style.setProperty(ANIMATION_DELAY_KEY, `${current.transitionDelay || 0}ms`)
     }
 
     // `opacity` depends on both `hide` (override to 0) and `opacity` itself.

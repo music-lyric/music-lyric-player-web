@@ -12,17 +12,21 @@
   position: absolute;
   width: build-player-var('container-width');
 
+  --lyric-player-line-animation-duration: 1000ms;
+  --lyric-player-line-animation-delay: 0ms;
+
+  // transform uses the full duration. opacity and filter run at 50% of it (same delay)
   transition:
-    transform 1s build-player-var('scroll-easing'),
-    opacity 0.6s ease,
-    filter 0.6s ease;
+    transform build-line-var('animation', '', 'duration') build-player-var('scroll-easing') build-line-var('animation', '', 'delay'),
+    opacity calc(#{build-line-var('animation', '', 'duration')} * 0.5) ease build-line-var('animation', '', 'delay'),
+    filter calc(#{build-line-var('animation', '', 'duration')} * 0.5) ease build-line-var('animation', '', 'delay');
 
   will-change: transform;
   opacity: 1;
 
-  justify-content: build-player-var('line-position');
-  text-align: build-player-var('line-position');
-  transform-origin: build-player-var('line-position') center;
+  justify-content: build-line-var('position');
+  text-align: build-line-var('position');
+  transform-origin: build-line-var('position') center;
 
   pointer-events: none;
 }

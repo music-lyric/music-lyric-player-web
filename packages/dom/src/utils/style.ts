@@ -20,3 +20,18 @@ export const applyClassName = (element: HTMLDivElement, names: string[]) => {
     element.classList.add(name)
   }
 }
+
+/**
+ * Build a line-scoped CSS custom property key under the `--lyric-player-` namespace, mirroring the scss `build-line-var`.
+ * @example `('animation', '', 'duration')` -> `--lyric-player-line-animation-duration`
+ */
+export const buildLineVarKey = (module: string, sub?: string, suffix?: string) => {
+  let name = `line-${module}`
+  if (sub) {
+    name += `-${sub}`
+  }
+  if (suffix) {
+    name += `-${suffix}`
+  }
+  return `--lyric-player-${name}`
+}
