@@ -227,6 +227,8 @@ export class BaseLyricPlayer {
     if (this.state.playing) {
       this.time.seek = this.handleGetCurrentTime()
       this.state.playing = false
+      // Only emit when actually transitioning from playing to paused
+      this.event.emit('pause', this.time.seek)
     }
     if (this.state.frameId !== null) {
       cancelAnimationFrame(this.state.frameId)
@@ -236,8 +238,6 @@ export class BaseLyricPlayer {
       clearTimeout(this.state.timerId)
       this.state.timerId = null
     }
-
-    this.event.emit('pause', this.handleGetCurrentTime())
   }
 
   /**
