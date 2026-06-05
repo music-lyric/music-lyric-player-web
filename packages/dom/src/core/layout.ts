@@ -193,7 +193,7 @@ export class LayoutManager {
       }
 
       const lastTop = topPositions[i - 1]
-      const lastElement = this.lineManager.queryElement(i - 1)
+      const lastElement = elements[i - 1]
       const lastHeight = lastElement?.height ?? 0
       const baseTop = lastTop + lastHeight
 
