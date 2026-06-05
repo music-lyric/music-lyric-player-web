@@ -2,6 +2,7 @@
   "app.title": "练习场",
   "app.subtitle": "一个动画丰富、高度可自定义的 Web 播放器",
   "app.changeLanguage": "切换语言",
+  "app.github": "在 GitHub 上查看",
 
   "tabs.audio": "音频",
   "tabs.lyric": "歌词",

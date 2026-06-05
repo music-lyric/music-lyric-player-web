@@ -2,6 +2,7 @@
   "app.title": "Lyric Player Playground",
   "app.subtitle": "An animation-rich, highly customizable web lyric player",
   "app.changeLanguage": "Change language",
+  "app.github": "View on GitHub",
 
   "tabs.audio": "Audio",
   "tabs.lyric": "Lyric",
