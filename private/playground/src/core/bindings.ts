@@ -98,6 +98,14 @@ export const BASE_SECTIONS: SectionBinding[] = [
           { path: 'base.bridgeActive', labelKey: 'settings.field.bridgeActive', type: 'toggle' },
         ],
       },
+      {
+        titleKey: 'settings.group.offset',
+        fields: [
+          { path: 'base.offset.global', labelKey: 'settings.field.offsetGlobal', type: 'number', min: -5000, max: 5000, step: 50 },
+          { path: 'base.offset.useMeta', labelKey: 'settings.field.offsetUseMeta', type: 'toggle' },
+          { path: 'base.offset.resetTempOnLyricChange', labelKey: 'settings.field.offsetResetTemp', type: 'toggle' },
+        ],
+      },
     ],
   },
 ]

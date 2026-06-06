@@ -105,6 +105,11 @@
   "settings.field.driverAnimation": "requestAnimationFrame",
   "settings.field.driverTimer": "setTimeout",
   "settings.field.bridgeActive": "Bridge Active Gap",
+
+  "settings.group.offset": "Offset",
+  "settings.field.offsetGlobal": "Global Offset (ms)",
+  "settings.field.offsetUseMeta": "Use Lyric Meta Offset",
+  "settings.field.offsetResetTemp": "Reset Temp On Lyric Change",
   "settings.field.padding": "Padding",
   "settings.field.enabled": "Enabled",
   "settings.field.visible": "Visible",

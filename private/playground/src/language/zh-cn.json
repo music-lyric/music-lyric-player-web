@@ -105,6 +105,11 @@
   "settings.field.driverAnimation": "requestAnimationFrame",
   "settings.field.driverTimer": "setTimeout",
   "settings.field.bridgeActive": "桥接激活间隔",
+
+  "settings.group.offset": "偏移",
+  "settings.field.offsetGlobal": "全局偏移 (ms)",
+  "settings.field.offsetUseMeta": "使用歌词内置偏移",
+  "settings.field.offsetResetTemp": "切歌重置临时偏移",
   "settings.field.padding": "内边距",
   "settings.field.enabled": "启用",
   "settings.field.visible": "可见",
