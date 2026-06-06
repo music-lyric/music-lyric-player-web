@@ -230,10 +230,10 @@ export class BaseLyricPlayer {
 
     switch (this.config.current.driver) {
       case 'animation':
-        this.state.frameId = window.requestAnimationFrame(this.onTick)
+        this.state.frameId = globalThis.requestAnimationFrame(this.onTick)
         break
       case 'timer':
-        this.state.timerId = window.setTimeout(this.onTick, 16)
+        this.state.timerId = globalThis.setTimeout(this.onTick, 16)
         break
     }
   }
@@ -291,11 +291,11 @@ export class BaseLyricPlayer {
       this.event.emit('pause', this.time.seek)
     }
     if (this.state.frameId !== null) {
-      cancelAnimationFrame(this.state.frameId)
+      globalThis.cancelAnimationFrame(this.state.frameId)
       this.state.frameId = null
     }
     if (this.state.timerId !== null) {
-      clearTimeout(this.state.timerId)
+      globalThis.clearTimeout(this.state.timerId)
       this.state.timerId = null
     }
   }
