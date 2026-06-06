@@ -1,7 +1,7 @@
 import type { Line } from '@music-lyric-kit/lyric'
 import type { BaseLyricPlayerEventMap } from './interface'
 
-import { Info } from '@music-lyric-kit/lyric'
+import { Info, MetaType } from '@music-lyric-kit/lyric'
 import { ConfigManager, Event } from '@music-lyric-player/utils'
 import { BaseLyricPlayerConfig } from './config'
 
@@ -24,6 +24,11 @@ export class BaseLyricPlayer {
     start: number
     seek: number
   }
+
+  private offset: {
+    temp: number
+    meta: number
+  }
   private info: Info
 
   constructor() {
@@ -41,14 +46,51 @@ export class BaseLyricPlayer {
       start: 0,
       seek: 0,
     }
+
+    this.offset = {
+      temp: 0,
+      meta: 0,
+    }
     this.info = new Info()
+
+    this.config.event.add('update', this.onConfigUpdate)
   }
 
+  private onConfigUpdate = (keys: BaseLyricPlayerConfig.RootKeySet) => {
+    // Toggling meta usage re-derives the lyric offset from the current info.
+    const metaToggled = keys.has('offset.useMeta')
+    if (metaToggled) {
+      this.handleRefreshOffset()
+    }
+    // Offset changed = time shift, re-match active lines against the new effective time.
+    if (metaToggled || keys.has('offset.global')) {
+      this.handleSyncTime()
+    }
+  }
+
+  // Get current playback time.
   private handleGetCurrentTime() {
     if (!this.state.playing) {
       return this.time.seek
     }
     return this.time.seek + (performance.now() - this.time.start)
+  }
+
+  // Real playback time shifted by the combined offset; all lyric matching runs against this.
+  private handleGetEffectiveTime() {
+    return this.handleGetCurrentTime() + this.currentOffset
+  }
+
+  // Refresh meta offset.
+  private handleRefreshOffset() {
+    if (this.config.current.offset.useMeta) {
+      const meta = this.info.metas.find((item) => item.type === MetaType.Offset)
+      const value = meta?.content
+      const result = typeof value === 'number' && Number.isFinite(value) ? value : 0
+      this.offset.meta = result
+    } else {
+      this.offset.meta = 0
+    }
   }
 
   private handleGetLineTime(index: number): number {
@@ -98,7 +140,19 @@ export class BaseLyricPlayer {
     this.event.emit('linesUpdate', bridged.lines, bridged.index, this.handleGetActiveIndex(), isSeek)
   }
 
-  private handleSyncTime(time: number) {
+  private handleSyncTime(time?: number) {
+    if (!this.info.lines.length) {
+      return
+    }
+
+    if (time === undefined) {
+      time = this.handleGetEffectiveTime()
+    }
+
+    if (!Number.isFinite(time)) {
+      return
+    }
+
     const lines: Line[] = []
     const index: number[] = []
 
@@ -171,7 +225,7 @@ export class BaseLyricPlayer {
       return
     }
 
-    const now = this.handleGetCurrentTime()
+    const now = this.handleGetEffectiveTime()
     this.handleUpdateActiveLines(now)
 
     switch (this.config.current.driver) {
@@ -192,6 +246,11 @@ export class BaseLyricPlayer {
     this.pause()
     this.info = info
 
+    this.handleRefreshOffset()
+    if (this.config.current.offset.resetTempOnLyricChange) {
+      this.offset.temp = 0
+    }
+
     this.active.lines = []
     this.active.index = []
 
@@ -211,7 +270,7 @@ export class BaseLyricPlayer {
 
     if (typeof time === 'number' && Number.isFinite(time)) {
       this.time.seek = time
-      this.handleSyncTime(time)
+      this.handleSyncTime()
     }
 
     this.time.start = performance.now()
@@ -247,6 +306,7 @@ export class BaseLyricPlayer {
   dispose() {
     this.pause()
     this.event.clear()
+    this.config.event.remove('update', this.onConfigUpdate)
 
     this.active.lines = []
     this.active.index = []
@@ -255,20 +315,31 @@ export class BaseLyricPlayer {
   }
 
   /**
+   * Update the temp offset in ms (the user's temporary adjustment).
+   * Stacked on top of the global config offset and the lyric's meta offset, then resyncs immediately.
+   * @param value temp offset in ms; non-finite values are treated as 0.
+   */
+  updateTempOffset(value: number) {
+    this.offset.temp = Number.isFinite(value) ? value : 0
+    this.handleSyncTime()
+  }
+
+  /**
    * Find all active lines at the given time (ms). Does not mutate internal state.
    * Assumes `info.lines` is sorted by `time.start` ascending.
    * @param time time in ms to find active lines for.
    */
   matchLinesWithTime(time: number): { lines: Line[]; index: number[] } {
+    const effective = time + this.currentOffset
     const lines: Line[] = []
     const index: number[] = []
     for (let i = 0; i < this.info.lines.length; i++) {
       const line = this.info.lines[i]
       // Lines are assumed sorted by time.start ascending, so the first line starting after `time` ends the scan.
-      if (line.time.start > time) {
+      if (line.time.start > effective) {
         break
       }
-      if (this.handleGetLineTime(i) > time) {
+      if (this.handleGetLineTime(i) > effective) {
         lines.push(line)
         index.push(i)
       }
@@ -316,5 +387,13 @@ export class BaseLyricPlayer {
    */
   get currentTime() {
     return this.handleGetCurrentTime()
+  }
+
+  /**
+   * The current effective lyric offset in ms (config offset + lyric meta offset + temp offset).
+   */
+  get currentOffset() {
+    const value = this.config.current.offset.global + this.offset.meta + this.offset.temp
+    return Number.isFinite(value) ? value : 0
   }
 }

@@ -2,6 +2,27 @@ import type { ConfigManager, DeepRequired, NestedKeys } from '@music-lyric-playe
 
 import { freezeObjectDeep } from '@music-lyric-player/utils'
 
+export interface Offset {
+  /**
+   * Global offset in ms, applied to every song.
+   *
+   * @default 0
+   */
+  global?: number
+  /**
+   * Whether to apply the offset carried by the lyric's own meta (`MetaType.Offset`).
+   *
+   * @default true
+   */
+  useMeta?: boolean
+  /**
+   * Whether loading a new lyric via `updateLyric` resets the temp offset (set via `updateTempOffset`) back to 0.
+   *
+   * @default true
+   */
+  resetTempOnLyricChange?: boolean
+}
+
 export interface Root {
   /**
    * Driver type for playback scheduling.
@@ -21,6 +42,10 @@ export interface Root {
    * @default true
    */
   bridgeActive?: boolean
+  /**
+   * Lyric time offset settings.
+   */
+  offset?: Offset
 }
 
 /**
@@ -46,4 +71,9 @@ export type RootManager = ConfigManager<RootRequired, Root>
 export const DEFAULT: Root = freezeObjectDeep({
   driver: 'animation',
   bridgeActive: true,
+  offset: {
+    global: 0,
+    useMeta: true,
+    resetTempOnLyricChange: true,
+  },
 })
