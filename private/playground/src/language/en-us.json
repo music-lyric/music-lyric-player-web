@@ -72,6 +72,7 @@
 
   "settings.toolbarMeta": "Auto-saves on change",
   "settings.reset": "Reset",
+  "settings.default": "Default",
   "settings.scope.base": "Base Player",
   "settings.scope.dom": "DOM Player",
   "settings.section.basePlayer": "Player",

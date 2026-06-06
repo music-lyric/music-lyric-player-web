@@ -72,6 +72,7 @@
 
   "settings.toolbarMeta": "修改后自动保存",
   "settings.reset": "重置",
+  "settings.default": "默认",
   "settings.scope.base": "基础播放器",
   "settings.scope.dom": "DOM 播放器",
   "settings.section.basePlayer": "播放器",

@@ -27,9 +27,12 @@
       </template>
 
       <template v-else-if="field.type === 'select'">
-        <select :class="[$style.ctrl, $style.select]" :value="value" @change="settings.apply(field.path, ($event.target as HTMLSelectElement).value)">
-          <option v-for="o in field.options" :key="o.value" :value="o.value">{{ t(o.labelKey) }}</option>
-        </select>
+        <SettingSelect
+          :options="field.options ?? []"
+          :model-value="value"
+          :default-value="resolvedDefault"
+          @update:model-value="settings.apply(field.path, $event)"
+        />
       </template>
 
       <template v-else-if="field.type === 'toggle'">
@@ -49,6 +52,8 @@ import { BaseLyricPlayerConfig, DomLyricPlayerConfig } from 'music-lyric-player'
 import { computed, inject } from 'vue'
 import { useI18n } from '@root/composables/useI18n'
 import { resolveInheritedValue } from '@root/utils'
+
+import SettingSelect from './setting-select.vue'
 
 const props = defineProps<{ field: FieldBinding }>()
 
