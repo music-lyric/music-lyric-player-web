@@ -1,6 +1,18 @@
+import { Event } from '@music-lyric-player/utils'
 import { DomLyricPlayerConfig } from '@root/config'
 
+export interface ComponentEventMap {
+  /**
+   * When a line's DOM is clicked, carrying the owning line index.
+   * @param index The owning line's index in the current lyric info.
+   * @param event The original DOM mouse event.
+   */
+  'line-click': (index: number, event: MouseEvent) => void
+}
+
 export class ComponentContext {
+  readonly event: Event<ComponentEventMap> = new Event()
+
   private client: DomLyricPlayerConfig.RootManager
 
   constructor(client: DomLyricPlayerConfig.RootManager) {

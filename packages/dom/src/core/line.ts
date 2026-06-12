@@ -105,11 +105,13 @@ export class LineManager {
 
         case LineType.Normal: {
           const element = new NormalLineElement(component.context, line, false)
+          element.index = currentLineIndex
           newElementMap.set(currentElementIndex, element)
           indexes.push(currentElementIndex)
 
           for (const background of line.background ?? []) {
             const backgroundElement = new NormalLineElement(component.context, background, true)
+            backgroundElement.index = currentLineIndex
             newElementMap.set(elementIndex, backgroundElement)
             indexes.push(elementIndex)
             elementIndex++

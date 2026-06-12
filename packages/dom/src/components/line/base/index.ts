@@ -32,6 +32,7 @@ export abstract class BaseLineElement {
     dom: HTMLDivElement
     width: number
     height: number
+    index: number
     active: boolean
     animated: boolean
     played: boolean
@@ -44,12 +45,19 @@ export abstract class BaseLineElement {
       dom: document.createElement('div'),
       width: 0,
       height: 0,
+      index: -1,
       active: false,
       animated: false,
       played: false,
       position: '',
       style: {},
     }
+
+    this.wrapper.dom.addEventListener('click', this.handleClick)
+  }
+
+  private handleClick = (event: MouseEvent) => {
+    this.context.event.emit('line-click', this.wrapper.index, event)
   }
 
   updateSize() {
@@ -109,8 +117,16 @@ export abstract class BaseLineElement {
   abstract reset(time: number): void
 
   destroy(): void {
+    this.wrapper.dom.removeEventListener('click', this.handleClick)
     this.wrapper.dom.replaceChildren()
     this.wrapper.dom.remove()
+  }
+
+  set index(value: number) {
+    this.wrapper.index = value
+  }
+  get index() {
+    return this.wrapper.index
   }
 
   set active(value: boolean) {

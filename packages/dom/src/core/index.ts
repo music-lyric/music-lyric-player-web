@@ -1,7 +1,8 @@
 import type { Line, Info } from '@music-lyric-kit/lyric'
+import type { DomLyricPlayerEventMap } from '@root/interface'
 
 import { BaseLyricPlayer } from '@music-lyric-player/base'
-import { ConfigManager, hasKeyContaining } from '@music-lyric-player/utils'
+import { ConfigManager, Event, hasKeyContaining } from '@music-lyric-player/utils'
 
 import { DomLyricPlayerConfig } from '@root/config'
 import { ComponentContext, Root, Container } from '@root/components'
@@ -16,6 +17,7 @@ import { StyleManager } from './style'
 
 export class DomLyricPlayer {
   public config: DomLyricPlayerConfig.RootManager
+  public readonly event: Event<DomLyricPlayerEventMap> = new Event()
 
   private context: CoreContext
   private player: BaseLyricPlayer
@@ -66,6 +68,8 @@ export class DomLyricPlayer {
     this.container.event.add('change-size', this.onSizeUpdate)
 
     this.config.event.add('update', this.onConfigUpdate)
+
+    componentContext.event.add('line-click', this.handleLineClick)
   }
 
   private flushLayoutUpdate = () => {
@@ -154,6 +158,19 @@ export class DomLyricPlayer {
     this.layoutManager.update()
   }
 
+  private handleLineClick = (index: number, event: MouseEvent) => {
+    if (this.context.destroyed) {
+      return
+    }
+
+    const lines = this.player.currentInfo.lines
+    if (index < 0 || index >= lines.length) {
+      return
+    }
+
+    this.event.emit('lineClick', lines[index], index, event)
+  }
+
   get element() {
     return this.root.element
   }
@@ -171,6 +188,8 @@ export class DomLyricPlayer {
     this.container.event.remove('change-size', this.onSizeUpdate)
     this.config.event.remove('update', this.onConfigUpdate)
 
+    this.context.component.context.event.remove('line-click', this.handleLineClick)
+
     this.context.destroy()
 
     this.frameScheduler.destroy()
@@ -181,5 +200,7 @@ export class DomLyricPlayer {
     this.styleManager.destroy()
     this.container.destroy()
     this.root.destroy()
+
+    this.event.clear()
   }
 }
