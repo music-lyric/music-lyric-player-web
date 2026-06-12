@@ -70,6 +70,7 @@ export class DomLyricPlayer {
     this.config.event.add('update', this.onConfigUpdate)
 
     componentContext.event.add('line-click', this.handleLineClick)
+    componentContext.event.add('line-context-menu', this.handleLineContextMenu)
   }
 
   private flushLayoutUpdate = () => {
@@ -158,17 +159,31 @@ export class DomLyricPlayer {
     this.layoutManager.update()
   }
 
-  private handleLineClick = (index: number, event: MouseEvent) => {
+  private resolveLine(index: number): Line | null {
     if (this.context.destroyed) {
-      return
+      return null
     }
 
     const lines = this.player.currentInfo.lines
     if (index < 0 || index >= lines.length) {
-      return
+      return null
     }
 
-    this.event.emit('lineClick', lines[index], index, event)
+    return lines[index]
+  }
+
+  private handleLineClick = (index: number, event: MouseEvent) => {
+    const line = this.resolveLine(index)
+    if (line) {
+      this.event.emit('lineClick', line, index, event)
+    }
+  }
+
+  private handleLineContextMenu = (index: number, event: MouseEvent) => {
+    const line = this.resolveLine(index)
+    if (line) {
+      this.event.emit('lineContextMenu', line, index, event)
+    }
   }
 
   get element() {
@@ -189,6 +204,7 @@ export class DomLyricPlayer {
     this.config.event.remove('update', this.onConfigUpdate)
 
     this.context.component.context.event.remove('line-click', this.handleLineClick)
+    this.context.component.context.event.remove('line-context-menu', this.handleLineContextMenu)
 
     this.context.destroy()
 

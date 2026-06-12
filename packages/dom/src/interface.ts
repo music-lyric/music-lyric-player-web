@@ -8,4 +8,12 @@ export interface DomLyricPlayerEventMap {
    * @param event The original DOM mouse event.
    */
   lineClick: (line: Line, index: number, event: MouseEvent) => void
+
+  /**
+   * When a lyric line is right-clicked by the user.
+   * @param line The right-clicked lyric line.
+   * @param index The right-clicked line's index in the current lyric info.
+   * @param event The original DOM mouse event.
+   */
+  lineContextMenu: (line: Line, index: number, event: MouseEvent) => void
 }

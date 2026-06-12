@@ -8,6 +8,13 @@ export interface ComponentEventMap {
    * @param event The original DOM mouse event.
    */
   'line-click': (index: number, event: MouseEvent) => void
+
+  /**
+   * When a line's DOM is right-clicked, carrying the owning line index.
+   * @param index The owning line's index in the current lyric info.
+   * @param event The original DOM mouse event.
+   */
+  'line-context-menu': (index: number, event: MouseEvent) => void
 }
 
 export class ComponentContext {

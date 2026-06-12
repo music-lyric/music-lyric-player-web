@@ -54,10 +54,15 @@ export abstract class BaseLineElement {
     }
 
     this.wrapper.dom.addEventListener('click', this.handleClick)
+    this.wrapper.dom.addEventListener('contextmenu', this.handleContextMenu)
   }
 
   private handleClick = (event: MouseEvent) => {
     this.context.event.emit('line-click', this.wrapper.index, event)
+  }
+
+  private handleContextMenu = (event: MouseEvent) => {
+    this.context.event.emit('line-context-menu', this.wrapper.index, event)
   }
 
   updateSize() {
@@ -118,6 +123,7 @@ export abstract class BaseLineElement {
 
   destroy(): void {
     this.wrapper.dom.removeEventListener('click', this.handleClick)
+    this.wrapper.dom.removeEventListener('contextmenu', this.handleContextMenu)
     this.wrapper.dom.replaceChildren()
     this.wrapper.dom.remove()
   }
