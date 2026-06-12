@@ -192,7 +192,7 @@ export const usePlayer = ({ defaults }: UsePlayerOptions) => {
 
   // Clicking a lyric line seeks playback to that line's start time.
   dom.event.add('lineClick', (line) => {
-    seekToTime(line.time.start)
+    seekToTime(base.convertContentTime(line.time.start))
   })
 
   const applyBasePatch = (patch: Partial<BaseLyricPlayerConfig.Root>) => {

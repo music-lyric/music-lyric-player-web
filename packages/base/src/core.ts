@@ -348,6 +348,15 @@ export class BaseLyricPlayer {
   }
 
   /**
+   * Convert a content (lyric) time to the playback clock by removing the active offset.
+   * Seeking playback to the returned time makes a line at `contentTime` become active.
+   * @param contentTime content time in ms (e.g. a line's start).
+   */
+  convertContentTime(contentTime: number): number {
+    return contentTime - this.currentOffset
+  }
+
+  /**
    * Whether the player is currently playing.
    */
   get currentPlaying() {
