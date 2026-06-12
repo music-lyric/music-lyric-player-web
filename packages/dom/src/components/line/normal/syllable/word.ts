@@ -1,4 +1,4 @@
-import type { LineNormal, WordNormal } from '@music-lyric-kit/lyric'
+import type { Lyric } from '@music-lyric-kit/lyric'
 import type { ComponentContext } from '@root/components/context'
 import type { DomLyricPlayerConfig } from '@root/config'
 
@@ -22,8 +22,8 @@ export class WordElement {
 
   constructor(
     private readonly context: ComponentContext,
-    private readonly wordInfo: WordNormal,
-    private readonly lineInfo: LineNormal,
+    private readonly wordInfo: Lyric.WordNormal,
+    private readonly lineInfo: Lyric.LineNormal,
   ) {
     this.dom = document.createElement('div')
     this.size = { width: 0, height: 0 }

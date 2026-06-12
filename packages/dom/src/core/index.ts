@@ -1,4 +1,4 @@
-import type { Line, Info } from '@music-lyric-kit/lyric'
+import type { Lyric } from '@music-lyric-kit/lyric'
 import type { DomLyricPlayerEventMap } from '@root/interface'
 
 import { BaseLyricPlayer } from '@music-lyric-player/base'
@@ -130,7 +130,7 @@ export class DomLyricPlayer {
     }
   }
 
-  private onLyricUpdate = (_info: Info) => {
+  private onLyricUpdate = (_info: Lyric.Info) => {
     this.scrollManager.clear()
     this.lineManager.updateLines(this.player.currentInfo.lines)
     this.layoutManager.reset()
@@ -139,7 +139,7 @@ export class DomLyricPlayer {
     })
   }
 
-  private onLinesUpdate = (_lines: Line[], _indexes: number[], _index: number, isSeek: boolean) => {
+  private onLinesUpdate = (_lines: Lyric.Line[], _indexes: number[], _index: number, isSeek: boolean) => {
     this.scheduleLayoutUpdate({
       isSeek,
     })
@@ -159,7 +159,7 @@ export class DomLyricPlayer {
     this.layoutManager.update()
   }
 
-  private resolveLine(index: number): Line | null {
+  private resolveLine(index: number): Lyric.Line | null {
     if (this.context.destroyed) {
       return null
     }

@@ -1,14 +1,13 @@
-import type { Line } from '@music-lyric-kit/lyric'
 import type { BaseLyricPlayerEventMap } from './interface'
 
-import { Info, MetaType, Version } from '@music-lyric-kit/lyric'
+import { Lyric } from '@music-lyric-kit/lyric'
 import { ConfigManager, Event } from '@music-lyric-player/utils'
 import { BaseLyricPlayerConfig } from './config'
 
 import { satisfies } from 'semver'
 
 // Parse results must satisfy this caret range of the supported lyric format version, else they are rejected.
-const SUPPORTED_VERSION_RANGE = `^${Version}`
+const SUPPORTED_VERSION_RANGE = `^${Lyric.Version}`
 
 export class BaseLyricPlayer {
   readonly config: BaseLyricPlayerConfig.RootManager = new ConfigManager(BaseLyricPlayerConfig.DEFAULT as BaseLyricPlayerConfig.RootRequired)
@@ -22,7 +21,7 @@ export class BaseLyricPlayer {
     scanIndex: number
   }
   private active: {
-    lines: Line[]
+    lines: Lyric.Line[]
     index: number[]
   }
   private time: {
@@ -34,7 +33,7 @@ export class BaseLyricPlayer {
     temp: number
     meta: number
   }
-  private info: Info
+  private info: Lyric.Info
 
   constructor() {
     this.state = {
@@ -56,7 +55,7 @@ export class BaseLyricPlayer {
       temp: 0,
       meta: 0,
     }
-    this.info = new Info()
+    this.info = new Lyric.Info()
 
     this.config.event.add('update', this.onConfigUpdate)
   }
@@ -89,7 +88,7 @@ export class BaseLyricPlayer {
   // Refresh meta offset.
   private handleRefreshOffset() {
     if (this.config.current.offset.useMeta) {
-      const meta = this.info.metas.find((item) => item.type === MetaType.Offset)
+      const meta = this.info.metas.find((item) => item.type === Lyric.MetaType.Offset)
       const value = meta?.content
       const result = typeof value === 'number' && Number.isFinite(value) ? value : 0
       this.offset.meta = result
@@ -116,7 +115,7 @@ export class BaseLyricPlayer {
     return this.active.index.length > 0 ? this.active.index[0] : -1
   }
 
-  private handleBridgeActive(lines: Line[], index: number[]): { lines: Line[]; index: number[] } {
+  private handleBridgeActive(lines: Lyric.Line[], index: number[]): { lines: Lyric.Line[]; index: number[] } {
     if (!this.config.current.bridgeActive || index.length < 2) {
       return { lines, index }
     }
@@ -125,11 +124,11 @@ export class BaseLyricPlayer {
     if (max - min + 1 === index.length) {
       return { lines, index }
     }
-    const existing = new Map<number, Line>()
+    const existing = new Map<number, Lyric.Line>()
     for (let i = 0; i < index.length; i++) {
       existing.set(index[i], lines[i])
     }
-    const bridgedLines: Line[] = []
+    const bridgedLines: Lyric.Line[] = []
     const bridgedIndex: number[] = []
     for (let i = min; i <= max; i++) {
       const line = existing.get(i) ?? this.info.lines[i]
@@ -158,7 +157,7 @@ export class BaseLyricPlayer {
       return
     }
 
-    const lines: Line[] = []
+    const lines: Lyric.Line[] = []
     const index: number[] = []
 
     let firstIndex = this.info.lines.length
@@ -187,7 +186,7 @@ export class BaseLyricPlayer {
   private handleUpdateActiveLines(now: number) {
     let hasChanged = false
 
-    const newActiveLines: Line[] = []
+    const newActiveLines: Lyric.Line[] = []
     const newActiveIndex: number[] = []
 
     for (let i = 0; i < this.active.lines.length; i++) {
@@ -243,7 +242,7 @@ export class BaseLyricPlayer {
     }
   }
 
-  updateLyric(info: Info) {
+  updateLyric(info: Lyric.Info) {
     if (!info) {
       return
     }
@@ -252,7 +251,7 @@ export class BaseLyricPlayer {
     let target = info
     if (!satisfies(info.version, SUPPORTED_VERSION_RANGE)) {
       console.warn(`[music-lyric-player] ignored lyric with incompatible version "${info.version}", expected "${SUPPORTED_VERSION_RANGE}"`)
-      target = new Info()
+      target = new Lyric.Info()
     }
 
     this.pause()
@@ -323,7 +322,7 @@ export class BaseLyricPlayer {
     this.active.lines = []
     this.active.index = []
 
-    this.info = new Info()
+    this.info = new Lyric.Info()
   }
 
   /**
@@ -341,9 +340,9 @@ export class BaseLyricPlayer {
    * Assumes `info.lines` is sorted by `time.start` ascending.
    * @param time time in ms to find active lines for.
    */
-  matchLinesWithTime(time: number): { lines: Line[]; index: number[] } {
+  matchLinesWithTime(time: number): { lines: Lyric.Line[]; index: number[] } {
     const effective = time + this.currentOffset
-    const lines: Line[] = []
+    const lines: Lyric.Line[] = []
     const index: number[] = []
     for (let i = 0; i < this.info.lines.length; i++) {
       const line = this.info.lines[i]

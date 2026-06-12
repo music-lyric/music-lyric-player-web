@@ -1,4 +1,4 @@
-import type { LineInterlude } from '@music-lyric-kit/lyric'
+import type { Lyric } from '@music-lyric-kit/lyric'
 import type { ComponentContext } from '@root/components/context'
 import type { DomLyricPlayerConfig } from '@root/config'
 import type { LineElementStyle } from '../base'
@@ -23,7 +23,7 @@ export class InterludeLineElement extends BaseLineElement {
 
   constructor(
     context: ComponentContext,
-    private readonly info: LineInterlude,
+    private readonly info: Lyric.LineInterlude,
   ) {
     super(context)
 

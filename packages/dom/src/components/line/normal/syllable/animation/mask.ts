@@ -1,9 +1,9 @@
-import type { LineNormal, WordNormal } from '@music-lyric-kit/lyric'
+import type { Lyric } from '@music-lyric-kit/lyric'
 import type { ComponentContext } from '@root/components/context'
 import type { DomLyricPlayerConfig } from '@root/config'
 
 export interface MaskGenerateInput {
-  info: WordNormal
+  info: Lyric.WordNormal
   width: number
   height: number
 }
@@ -28,7 +28,7 @@ export class MaskAnimationHost {
 
   constructor(
     private readonly context: ComponentContext,
-    private readonly lineInfo: LineNormal,
+    private readonly lineInfo: Lyric.LineNormal,
     private readonly wordCount: number,
   ) {
     this.init()
@@ -255,8 +255,8 @@ export class MaskAnimation {
   constructor(
     private readonly host: HTMLDivElement,
     private readonly context: ComponentContext,
-    private readonly wordInfo: WordNormal,
-    private readonly lineInfo: LineNormal,
+    private readonly wordInfo: Lyric.WordNormal,
+    private readonly lineInfo: Lyric.LineNormal,
   ) {}
 
   private applyMaskStyle() {

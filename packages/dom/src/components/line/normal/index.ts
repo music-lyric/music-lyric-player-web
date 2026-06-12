@@ -1,4 +1,4 @@
-import type { LineNormal } from '@music-lyric-kit/lyric'
+import type { Lyric } from '@music-lyric-kit/lyric'
 import type { ComponentContext } from '@root/components/context'
 import type { DomLyricPlayerConfig } from '@root/config'
 
@@ -18,7 +18,7 @@ export class NormalLineElement extends BaseLineElement {
     return LineElementType.Normal as const
   }
 
-  private readonly content: LineNormal
+  private readonly content: Lyric.LineNormal
 
   private container: HTMLDivElement
   private syllable: SyllableElement | null = null
@@ -28,7 +28,7 @@ export class NormalLineElement extends BaseLineElement {
   private backgroundEnterDelay: number = 0
   private backgroundRetractDelay: number = 0
 
-  constructor(context: ComponentContext, info: LineNormal, isBackground: boolean) {
+  constructor(context: ComponentContext, info: Lyric.LineNormal, isBackground: boolean) {
     super(context)
 
     this.content = info

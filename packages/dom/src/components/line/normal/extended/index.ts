@@ -1,8 +1,7 @@
-import type { LineNormal } from '@music-lyric-kit/lyric'
 import type { ComponentContext } from '@root/components/context'
 import type { DomLyricPlayerConfig } from '@root/config'
 
-import { ExtendedType } from '@music-lyric-kit/lyric'
+import { Lyric } from '@music-lyric-kit/lyric'
 
 import { applyClassName } from '@root/utils'
 
@@ -11,10 +10,10 @@ import styles from './index.module.scss'
 export class ExtendedElement {
   private context: ComponentContext
 
-  private info: LineNormal
+  private info: Lyric.LineNormal
   private content: HTMLDivElement
 
-  constructor(context: ComponentContext, info: LineNormal) {
+  constructor(context: ComponentContext, info: Lyric.LineNormal) {
     this.context = context
     this.info = info
     this.content = document.createElement('div')
@@ -35,7 +34,7 @@ export class ExtendedElement {
         continue
       }
       switch (item.type) {
-        case ExtendedType.Translate: {
+        case Lyric.ExtendedType.Translate: {
           if (!config.translate.visible) {
             break
           }
@@ -49,7 +48,7 @@ export class ExtendedElement {
           this.content.appendChild(element)
           break
         }
-        case ExtendedType.Roman: {
+        case Lyric.ExtendedType.Roman: {
           if (!config.roman.visible) {
             break
           }

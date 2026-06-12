@@ -1,9 +1,8 @@
-import type { LineNormal } from '@music-lyric-kit/lyric'
 import type { ComponentContext } from '@root/components/context'
 import type { DomLyricPlayerConfig } from '@root/config'
 import type { MaskGenerateInput } from './animation'
 
-import { WordType } from '@music-lyric-kit/lyric'
+import { Lyric } from '@music-lyric-kit/lyric'
 import { WordElement } from './word'
 import { MaskAnimationHost } from './animation'
 
@@ -19,13 +18,13 @@ export class SyllableElement {
 
   constructor(
     private readonly context: ComponentContext,
-    private readonly info: LineNormal,
+    private readonly info: Lyric.LineNormal,
   ) {
     this.dom = document.createElement('div')
 
     let wordCount = 0
     for (const item of info.content.words) {
-      if (item.type === WordType.Normal) wordCount++
+      if (item.type === Lyric.WordType.Normal) wordCount++
     }
     this.maskHost = new MaskAnimationHost(context, info, wordCount)
 
@@ -64,7 +63,7 @@ export class SyllableElement {
     const frag = document.createDocumentFragment()
     for (const item of this.info.content.words) {
       switch (item.type) {
-        case WordType.Normal: {
+        case Lyric.WordType.Normal: {
           const node = new WordElement(this.context, item, this.info)
 
           if (isInSpace) {
@@ -76,7 +75,7 @@ export class SyllableElement {
           frag.appendChild(node.element)
           break
         }
-        case WordType.Space: {
+        case Lyric.WordType.Space: {
           const prev = this.words[this.words.length - 1]
           if (prev) {
             prev.element.classList.add(styles.spaceEnd)

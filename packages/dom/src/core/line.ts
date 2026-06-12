@@ -1,9 +1,8 @@
-import type { Line } from '@music-lyric-kit/lyric'
 import type { LineElement } from '@root/components'
 import type { DomLyricPlayerConfig } from '@root/config'
 import type { CoreContext } from './context'
 
-import { LineType } from '@music-lyric-kit/lyric'
+import { Lyric } from '@music-lyric-kit/lyric'
 import { hasKeyContaining } from '@music-lyric-player/utils'
 import { NormalLineElement, InterludeLineElement, LineElementType } from '@root/components'
 
@@ -78,7 +77,7 @@ export class LineManager {
     return this.currentIndexMap.get(lineIndex)
   }
 
-  updateLines(lines: Line[]) {
+  updateLines(lines: Lyric.Line[]) {
     const { component } = this.context
 
     const newElementMap = new Map<number, LineElement>()
@@ -96,14 +95,14 @@ export class LineManager {
       elementIndex++
 
       switch (line.type) {
-        case LineType.Interlude: {
+        case Lyric.LineType.Interlude: {
           const element = new InterludeLineElement(component.context, line)
           newElementMap.set(currentElementIndex, element)
           indexes.push(currentElementIndex)
           break
         }
 
-        case LineType.Normal: {
+        case Lyric.LineType.Normal: {
           const element = new NormalLineElement(component.context, line, false)
           element.index = currentLineIndex
           newElementMap.set(currentElementIndex, element)

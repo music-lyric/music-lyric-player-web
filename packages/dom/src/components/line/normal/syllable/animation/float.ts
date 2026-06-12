@@ -1,4 +1,4 @@
-import type { LineNormal, WordNormal } from '@music-lyric-kit/lyric'
+import type { Lyric } from '@music-lyric-kit/lyric'
 import type { ComponentContext } from '@root/components/context'
 import type { DomLyricPlayerConfig } from '@root/config'
 
@@ -11,8 +11,8 @@ export class FloatAnimation {
   constructor(
     private readonly host: HTMLDivElement,
     private readonly context: ComponentContext,
-    private readonly wordInfo: WordNormal,
-    private readonly lineInfo: LineNormal,
+    private readonly wordInfo: Lyric.WordNormal,
+    private readonly lineInfo: Lyric.LineNormal,
   ) {}
 
   // Built lazily on activate so off-window words don't hold a compositor layer.
