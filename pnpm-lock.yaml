@@ -53,6 +53,13 @@ importers:
       '@music-lyric-player/utils':
         specifier: workspace:^
         version: link:../utils
+      semver:
+        specifier: ^7.7.4
+        version: 7.7.4
+    devDependencies:
+      '@types/semver':
+        specifier: ^7.7.1
+        version: 7.7.1
 
   packages/dom:
     dependencies:

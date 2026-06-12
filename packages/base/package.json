@@ -35,6 +35,10 @@
     "@music-lyric-kit/lyric": "^0.4.0"
   },
   "dependencies": {
-    "@music-lyric-player/utils": "workspace:^"
+    "@music-lyric-player/utils": "workspace:^",
+    "semver": "^7.7.4"
+  },
+  "devDependencies": {
+    "@types/semver": "^7.7.1"
   }
 }

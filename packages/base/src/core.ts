@@ -1,9 +1,14 @@
 import type { Line } from '@music-lyric-kit/lyric'
 import type { BaseLyricPlayerEventMap } from './interface'
 
-import { Info, MetaType } from '@music-lyric-kit/lyric'
+import { Info, MetaType, Version } from '@music-lyric-kit/lyric'
 import { ConfigManager, Event } from '@music-lyric-player/utils'
 import { BaseLyricPlayerConfig } from './config'
+
+import { satisfies } from 'semver'
+
+// Parse results must satisfy this caret range of the supported lyric format version, else they are rejected.
+const SUPPORTED_VERSION_RANGE = `^${Version}`
 
 export class BaseLyricPlayer {
   readonly config: BaseLyricPlayerConfig.RootManager = new ConfigManager(BaseLyricPlayerConfig.DEFAULT as BaseLyricPlayerConfig.RootRequired)
@@ -243,8 +248,15 @@ export class BaseLyricPlayer {
       return
     }
 
+    // Reject parse results whose lyric format version is incompatible, clearing any current lyric.
+    let target = info
+    if (!satisfies(info.version, SUPPORTED_VERSION_RANGE)) {
+      console.warn(`[music-lyric-player] ignored lyric with incompatible version "${info.version}", expected "${SUPPORTED_VERSION_RANGE}"`)
+      target = new Info()
+    }
+
     this.pause()
-    this.info = info
+    this.info = target
 
     this.handleRefreshOffset()
     if (this.config.current.offset.resetTempOnLyricChange) {
@@ -257,7 +269,7 @@ export class BaseLyricPlayer {
     this.state.scanIndex = 0
     this.time.seek = 0
 
-    this.event.emit('lyricUpdate', info)
+    this.event.emit('lyricUpdate', target)
     this.event.emit('linesUpdate', [], [], -1, false)
   }
 
