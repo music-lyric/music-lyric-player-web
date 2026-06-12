@@ -9,8 +9,8 @@ const CONTAINER_WIDTH_KEY = buildRootVariableKey('container-width')
 const CONTAINER_HEIGHT_KEY = buildRootVariableKey('container-height')
 
 export interface ContainerEventMap {
-  'change-visible': (visible: boolean) => void
-  'change-size': (width: number, height: number) => void
+  changeVisible: (visible: boolean) => void
+  changeSize: (width: number, height: number) => void
   scroll: (event: globalThis.Event) => void
   wheel: (event: WheelEvent) => void
 }
@@ -55,7 +55,7 @@ export class Container {
     }
 
     this.isVisible = visible
-    this.event.emit('change-visible', visible)
+    this.event.emit('changeVisible', visible)
   }
 
   private handleResize = (entries: ResizeObserverEntry[]) => {
@@ -70,7 +70,7 @@ export class Container {
     }
 
     this.size = { width, height }
-    this.event.emit('change-size', width, height)
+    this.event.emit('changeSize', width, height)
 
     const domStyle = this.dom.style
     domStyle.setProperty(CONTAINER_WIDTH_KEY, `${width}px`)

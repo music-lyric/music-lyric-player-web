@@ -58,11 +58,11 @@ export abstract class BaseLineElement {
   }
 
   private handleClick = (event: MouseEvent) => {
-    this.context.event.emit('line-click', this.wrapper.index, event)
+    this.context.event.emit('lineClick', this.wrapper.index, event)
   }
 
   private handleContextMenu = (event: MouseEvent) => {
-    this.context.event.emit('line-context-menu', this.wrapper.index, event)
+    this.context.event.emit('lineContextMenu', this.wrapper.index, event)
   }
 
   updateSize() {

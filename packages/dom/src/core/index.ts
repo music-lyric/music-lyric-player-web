@@ -65,12 +65,12 @@ export class DomLyricPlayer {
     this.player.event.add('lyricUpdate', this.onLyricUpdate)
     this.player.event.add('linesUpdate', this.onLinesUpdate)
 
-    this.container.event.add('change-size', this.onSizeUpdate)
+    this.container.event.add('changeSize', this.onSizeUpdate)
 
     this.config.event.add('update', this.onConfigUpdate)
 
-    componentContext.event.add('line-click', this.handleLineClick)
-    componentContext.event.add('line-context-menu', this.handleLineContextMenu)
+    componentContext.event.add('lineClick', this.handleLineClick)
+    componentContext.event.add('lineContextMenu', this.handleLineContextMenu)
   }
 
   private flushLayoutUpdate = () => {
@@ -200,11 +200,11 @@ export class DomLyricPlayer {
     this.player.event.remove('lyricUpdate', this.onLyricUpdate)
     this.player.event.remove('linesUpdate', this.onLinesUpdate)
 
-    this.container.event.remove('change-size', this.onSizeUpdate)
+    this.container.event.remove('changeSize', this.onSizeUpdate)
     this.config.event.remove('update', this.onConfigUpdate)
 
-    this.context.component.context.event.remove('line-click', this.handleLineClick)
-    this.context.component.context.event.remove('line-context-menu', this.handleLineContextMenu)
+    this.context.component.context.event.remove('lineClick', this.handleLineClick)
+    this.context.component.context.event.remove('lineContextMenu', this.handleLineContextMenu)
 
     this.context.destroy()
 
