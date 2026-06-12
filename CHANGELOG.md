@@ -1,3 +1,25 @@
+## v0.12.0 (2026-06-12)
+
+### Feature
+
+- bump lyric model version ([f9796b8](https://github.com/music-lyric/music-lyric-player-web/commit/f9796b8))
+- `base`
+  - reject lyric updates with incompatible version ([3792073](https://github.com/music-lyric/music-lyric-player-web/commit/3792073))
+  - convert content time to playback time with offset ([8e8f743](https://github.com/music-lyric/music-lyric-player-web/commit/8e8f743))
+  - add offset support ([7a61a93](https://github.com/music-lyric/music-lyric-player-web/commit/7a61a93))
+- `dom`
+  - emit line context menu event on line right click ([e06e3d5](https://github.com/music-lyric/music-lyric-player-web/commit/e06e3d5))
+  - emit line click event on line click ([7194d77](https://github.com/music-lyric/music-lyric-player-web/commit/7194d77))
+
+### Refactor
+
+- `base`
+  - use global this instead of window for timers ([f1eef80](https://github.com/music-lyric/music-lyric-player-web/commit/f1eef80))
+- `dom`
+  - unify event names to camel case ([83e2c41](https://github.com/music-lyric/music-lyric-player-web/commit/83e2c41))
+  - tighten spacing before background lines ([cc0993f](https://github.com/music-lyric/music-lyric-player-web/commit/cc0993f))
+  - reimplement interlude dot animation with web animation api ([ddec1ed](https://github.com/music-lyric/music-lyric-player-web/commit/ddec1ed))
+
 ## v0.11.0 (2026-06-06)
 
 ### Document
