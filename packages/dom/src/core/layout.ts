@@ -202,7 +202,9 @@ export class LayoutManager {
         if (!isInScroll && !isActiveElement) {
           topPositions[i] = baseTop - element.height
         } else {
-          topPositions[i] = baseTop + currentSpace * 0.2
+          // Keep the first background line clear of the main line; tuck stacked ones in tighter.
+          const afterBackground = lastElement?.type === LineElementType.Normal && lastElement.isBackground
+          topPositions[i] = baseTop + currentSpace * (afterBackground ? 0.03 : 0.2)
         }
         continue
       }
