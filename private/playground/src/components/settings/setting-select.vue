@@ -2,19 +2,22 @@
   <div :class="$style.select">
     <button ref="triggerEl" type="button" :class="[$style.trigger, { [$style.open]: open }]" @click="toggle">
       <span :class="[$style.value, { [$style.placeholder]: isDefault }]">{{ currentLabel }}</span>
-      <svg :class="$style.arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg
+        :class="$style.arrow"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
         <path d="m6 9 6 6 6-6" />
       </svg>
     </button>
 
     <Teleport to="body">
       <ul v-if="open" ref="menuEl" :class="$style.menu" :style="menuStyle">
-        <li
-          v-for="o in options"
-          :key="o.value"
-          :class="[$style.option, { [$style.selected]: o.value === effective }]"
-          @click="choose(o.value)"
-        >
+        <li v-for="o in options" :key="o.value" :class="[$style.option, { [$style.selected]: o.value === effective }]" @click="choose(o.value)">
           <span :class="$style.optionLabel">{{ t(o.labelKey) }}</span>
           <span v-if="o.value === defaultValue" :class="$style.defaultTag">{{ t('settings.default') }}</span>
           <svg

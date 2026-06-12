@@ -29,7 +29,9 @@
   // Switch opacity instantly here (no fade) so unsung syllables hold normal brightness while the wipe reveals them
   // word by word, instead of the whole line fading up and fighting the wipe. The fade-out on leaving active is kept above.
   [active] & {
-    --mask-normal-opacity: calc(#{build-line-variable('normal', 'syllable', 'opacity')} / #{build-line-variable('normal', 'syllable-active', 'opacity')});
+    --mask-normal-opacity: calc(
+      #{build-line-variable('normal', 'syllable', 'opacity')} / #{build-line-variable('normal', 'syllable-active', 'opacity')}
+    );
     transition-duration: 0s;
   }
 }
