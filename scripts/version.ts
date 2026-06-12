@@ -6,9 +6,9 @@ import { parseArgs } from 'node:util'
 import { exec } from './utils'
 import { rootVersion, root, targets } from './target'
 
-const handleUpdate = async (id: string, root: string, newVersion: string) => {
+const handleUpdate = async (id: string, dir: string, newVersion: string) => {
   try {
-    const pkgPath = join(root, 'package.json')
+    const pkgPath = join(dir, 'package.json')
     const pkgContent = await readFile(pkgPath, 'utf-8')
     const pkg = JSON.parse(pkgContent)
 
@@ -25,9 +25,9 @@ const handleUpdate = async (id: string, root: string, newVersion: string) => {
 const main = async () => {
   const { values } = parseArgs({
     options: {
-      current: {
+      target: {
         type: 'string',
-        short: 'c',
+        short: 't',
       },
       git: {
         type: 'boolean',
@@ -43,10 +43,10 @@ const main = async () => {
     strict: false,
   })
 
-  const newVersion = values.current
+  const newVersion = values.target
 
   if (!newVersion || typeof newVersion !== 'string') {
-    console.error('please give target version, use --current 1.14.514')
+    console.error('please give target version, use --target 1.14.514')
     process.exit(1)
   }
 
@@ -63,12 +63,12 @@ const main = async () => {
   console.log(`prepare: ${rootVersion} -> ${newVersion}`)
   console.log('\n')
 
-  handleUpdate('root', root, newVersion)
+  await handleUpdate('root', root, newVersion)
   for (const target of targets) {
     if (target.private) {
       continue
     }
-    handleUpdate(target.id, target.root, newVersion)
+    await handleUpdate(target.id, target.root, newVersion)
   }
 
   console.log('\n')
@@ -95,7 +95,7 @@ const main = async () => {
       stdio: 'inherit',
       cwd: process.cwd(),
     })
-    await exec('git', ['commit', '-m', `"release: v${newVersion}"`], {
+    await exec('git', ['commit', '-m', `release: v${newVersion}`], {
       stdio: 'inherit',
       cwd: process.cwd(),
     })
