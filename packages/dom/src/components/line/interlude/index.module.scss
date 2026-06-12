@@ -6,7 +6,7 @@
   padding-bottom: 6px;
   gap: 12px;
 
-  transform: scale(0.6);
+  transform: scale(0.8);
   transform-origin: build-line-variable('position') center;
 
   transition:
@@ -18,6 +18,8 @@
 
     width: build-line-variable('interlude', '', 'size');
     height: build-line-variable('interlude', '', 'size');
+
+    transition: opacity 0.3s linear;
 
     opacity: build-line-variable('interlude', '', 'opacity');
     background-color: build-line-variable('interlude', '', 'color');
@@ -33,9 +35,6 @@
     .dot {
       opacity: build-line-variable('interlude', 'active', 'opacity');
       background-color: build-line-variable('interlude', 'active', 'color');
-
-      transition-property: opacity;
-      transition-timing-function: linear;
     }
   }
 

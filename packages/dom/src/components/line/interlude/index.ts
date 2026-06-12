@@ -1,8 +1,10 @@
 import type { LineInterlude } from '@music-lyric-kit/lyric'
 import type { ComponentContext } from '@root/components/context'
 import type { DomLyricPlayerConfig } from '@root/config'
+import type { LineElementStyle } from '../base'
 
 import { BaseLineElement, LineElementType } from '../base'
+import { Dot } from './dot'
 
 import { applyClassName } from '@root/utils'
 
@@ -16,7 +18,8 @@ export class InterludeLineElement extends BaseLineElement {
   }
 
   private container: HTMLDivElement
-  private dots: HTMLDivElement[]
+  private dots: Dot[]
+  private animationActive = false
 
   constructor(
     context: ComponentContext,
@@ -28,8 +31,12 @@ export class InterludeLineElement extends BaseLineElement {
     this.element.appendChild(this.container)
 
     this.dots = []
+    for (let i = 0; i < DOT_COUNT; i++) {
+      const dot = new Dot(context, i)
+      this.dots.push(dot)
+      this.container.appendChild(dot.element)
+    }
 
-    this.buildDots()
     this.updateConfig()
   }
 
@@ -37,58 +44,35 @@ export class InterludeLineElement extends BaseLineElement {
     applyClassName(this.container, [styles.interlude, this.context.config.line.interlude.className])
   }
 
-  private buildDots() {
-    for (let i = 0; i < DOT_COUNT; i++) {
-      const dot = document.createElement('div')
-      applyClassName(dot, [styles.dot])
-      this.dots.push(dot)
-      this.container.appendChild(dot)
+  private buildAnimations() {
+    const raw = this.info.time.duration
+    const slice = Number.isFinite(raw) ? Math.max(0, Math.floor(raw / DOT_COUNT)) : 0
+    for (const dot of this.dots) {
+      dot.build(slice)
     }
   }
 
-  private updateDotStyle(
-    dot: { element: HTMLDivElement; time: number; duration: number },
-    isPlay: boolean,
-    isActive: boolean,
-    currentTime: number,
-  ): void {
-    const dotStyle = dot.element.style
-
-    if (!isActive) {
-      dotStyle.transitionDuration = '200ms'
-      dotStyle.transitionDelay = '0ms'
-      dotStyle.opacity = ''
+  private updateAnimations(active: boolean) {
+    if (this.animationActive === active) {
       return
     }
-
-    if (!isPlay && dot.time + dot.duration - currentTime > 0) {
-      dotStyle.transitionDuration = '0s'
-      dotStyle.transitionDelay = '0ms'
-
-      const opacity = Math.max(0.2 + (0.7 * (currentTime - dot.time)) / dot.duration, 0.2)
-      dotStyle.opacity = opacity.toFixed(3)
-      return
+    this.animationActive = active
+    if (active) {
+      this.buildAnimations()
+    } else {
+      this.disposeAnimations()
     }
-
-    const duration1 = Math.round(dot.duration)
-    const duration2 = Math.round(dot.duration + 150)
-    const delay = Math.round(dot.time - currentTime)
-
-    dotStyle.transitionDuration = `${duration1}ms, ${duration2}ms`
-    dotStyle.transitionDelay = `${delay}ms`
-    dotStyle.opacity = ''
   }
 
-  private updateAllDotStyle(isPlay: boolean, isActive: boolean, currentTime: number) {
-    // Guard against a non-finite or negative lyric duration so dot timing stays valid.
-    const rawDuration = this.info.time.duration
-    const duration = Number.isFinite(rawDuration) ? Math.max(0, Math.floor(rawDuration / DOT_COUNT)) : 0
-    for (let i = 0; i < DOT_COUNT; i++) {
-      const element = this.dots[i]
-      if (!element) {
-        continue
-      }
-      this.updateDotStyle({ element, duration, time: this.info.time.start + duration * i }, isPlay, isActive, currentTime)
+  private driveAnimations(isPlay: boolean, isActive: boolean, relativeTime: number) {
+    for (const dot of this.dots) {
+      dot.drive(isPlay, isActive, relativeTime)
+    }
+  }
+
+  private disposeAnimations() {
+    for (const dot of this.dots) {
+      dot.dispose()
     }
   }
 
@@ -98,17 +82,36 @@ export class InterludeLineElement extends BaseLineElement {
     if (!keys || keys.has('line.interlude.className')) {
       this.buildClassName()
     }
+
+    if (!this.animationActive) {
+      return
+    }
+    if (keys && !keys.has('line.interlude.style')) {
+      return
+    }
+
+    this.buildAnimations()
+  }
+
+  override updateStyle(current: LineElementStyle) {
+    super.updateStyle(current)
+    this.updateAnimations(this.animated)
   }
 
   override play(time: number, isActive: boolean) {
-    this.updateAllDotStyle(true, isActive, time)
+    this.driveAnimations(true, isActive, time - this.info.time.start)
   }
 
   override pause(time: number, isActive: boolean) {
-    this.updateAllDotStyle(false, isActive, time)
+    this.driveAnimations(false, isActive, time - this.info.time.start)
   }
 
   override reset(time: number) {
-    this.updateAllDotStyle(false, false, time)
+    this.driveAnimations(false, false, time - this.info.time.start)
+  }
+
+  override destroy() {
+    this.disposeAnimations()
+    super.destroy()
   }
 }
