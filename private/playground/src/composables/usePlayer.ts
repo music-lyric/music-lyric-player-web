@@ -151,14 +151,18 @@ export const usePlayer = ({ defaults }: UsePlayerOptions) => {
     base.play(time * 1000)
   }
 
-  const seek = (ratio: number) => {
+  const seekToTime = (ms: number) => {
     if (!hasAudio.value || !duration.value) return
-    const time = ratio * duration.value
+    const time = Math.min(Math.max(ms, 0) / 1000, duration.value)
     audio.currentTime = time
     currentTime.value = audio.currentTime
     isSeeking = false
     base.play(audio.currentTime * 1000)
     if (!isPlaying.value) base.pause()
+  }
+
+  const seek = (ratio: number) => {
+    seekToTime(ratio * duration.value * 1000)
   }
 
   const setVolume = (val: number) => {
@@ -185,6 +189,11 @@ export const usePlayer = ({ defaults }: UsePlayerOptions) => {
   }
   audio.addEventListener('timeupdate', onAudioTimeUpdate)
   audio.addEventListener('ended', onAudioEnded)
+
+  // Clicking a lyric line seeks playback to that line's start time.
+  dom.event.add('lineClick', (line) => {
+    seekToTime(line.time.start)
+  })
 
   const applyBasePatch = (patch: Partial<BaseLyricPlayerConfig.Root>) => {
     base.config.update(patch)
