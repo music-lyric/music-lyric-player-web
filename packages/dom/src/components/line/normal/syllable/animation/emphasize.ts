@@ -160,11 +160,12 @@ class MainEffect extends EffectBase {
     for (let i = 0; i < count; i++) {
       const offset = count / 2 - i
       const value = delay + stagger * i
+      // 3D transforms (scale3d / translate3d) promote each character to a GPU layer so the scale plays on the compositor without edge shimmer.
       const animation = chars[i].animate(
         [
-          { offset: 0, transform: 'scale(1) translate(0px, 0px)', easing: riseEasing },
-          { offset: 0.5, transform: `scale(${peakScale}) translate(${round(-offsetX * offset, 3)}px, ${offsetY}px)`, easing: peakEasing },
-          { offset: 1, transform: 'scale(1) translate(0px, 0px)' },
+          { offset: 0, transform: 'scale3d(1, 1, 1) translate3d(0px, 0px, 0px)', easing: riseEasing },
+          { offset: 0.5, transform: `scale3d(${peakScale}, ${peakScale}, 1) translate3d(${round(-offsetX * offset, 3)}px, ${offsetY}px, 0px)`, easing: peakEasing },
+          { offset: 1, transform: 'scale3d(1, 1, 1) translate3d(0px, 0px, 0px)' },
         ],
         {
           duration: duration,
