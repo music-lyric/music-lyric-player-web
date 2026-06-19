@@ -1,3 +1,11 @@
+## v0.12.1 (2026-06-19)
+
+### Fix
+
+- `dom`
+  - disable pointer events on fully transparent played line ([0028f56](https://github.com/music-lyric/music-lyric-player-web/commit/0028f56))
+  - add opacity transition for extended line ([87bdbb0](https://github.com/music-lyric/music-lyric-player-web/commit/87bdbb0))
+
 ## v0.12.0 (2026-06-12)
 
 ### Feature
