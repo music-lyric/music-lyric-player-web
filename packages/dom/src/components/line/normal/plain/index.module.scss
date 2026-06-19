@@ -1,0 +1,6 @@
+@use '../../common.scss' as *;
+
+.plain {
+  @include apply-line-font('syllable');
+  @include apply-line-style('syllable');
+}

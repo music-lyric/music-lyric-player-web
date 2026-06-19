@@ -77,8 +77,10 @@ export class LineManager {
     return this.currentIndexMap.get(lineIndex)
   }
 
-  updateLines(lines: Lyric.Line[]) {
+  updateLines(info: Lyric.Info) {
     const { component } = this.context
+
+    const isSyllable = info.type === Lyric.InfoType.Syllable
 
     const newElementMap = new Map<number, LineElement>()
     const newIndexMap = new Map<number, number[]>()
@@ -86,7 +88,7 @@ export class LineManager {
     let lineIndex = 0
     let elementIndex = 0
 
-    for (const line of lines) {
+    for (const line of info.lines) {
       const currentLineIndex = lineIndex
       const currentElementIndex = elementIndex
       const indexes: number[] = []
@@ -103,13 +105,13 @@ export class LineManager {
         }
 
         case Lyric.LineType.Normal: {
-          const element = new NormalLineElement(component.context, line, false)
+          const element = new NormalLineElement(component.context, line, false, isSyllable)
           element.index = currentLineIndex
           newElementMap.set(currentElementIndex, element)
           indexes.push(currentElementIndex)
 
           for (const background of line.background ?? []) {
-            const backgroundElement = new NormalLineElement(component.context, background, true)
+            const backgroundElement = new NormalLineElement(component.context, background, true, isSyllable)
             backgroundElement.index = currentLineIndex
             newElementMap.set(elementIndex, backgroundElement)
             indexes.push(elementIndex)

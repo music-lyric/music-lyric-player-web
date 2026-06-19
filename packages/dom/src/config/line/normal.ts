@@ -354,9 +354,9 @@ export interface SyllableEmphasizeAnimation {
  */
 export interface Syllable extends Base {
   /**
-   * Whether to enable syllable‑level highlighting.
-   * When disabled, the entire line lights up at once instead of progressing
-   * syllable by syllable.
+   * Whether to render syllable‑level (karaoke) highlighting.
+   * When disabled, the line is rendered as plain text with only the normal / active / played state styles.
+   * Lyrics without syllable timing always fall back to plain text regardless of this flag.
    * @default true
    */
   enabled?: boolean
