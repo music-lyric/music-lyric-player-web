@@ -1,3 +1,26 @@
+## v0.13.0 (2026-06-20)
+
+### Feature
+
+- `dom`
+  - add plain line ([e81ffd4](https://github.com/music-lyric/music-lyric-player-web/commit/e81ffd4))
+  - amplify emphasize float on background lines ([e8c8c7f](https://github.com/music-lyric/music-lyric-player-web/commit/e8c8c7f))
+
+### Fix
+
+- `dom`
+  - relayout and redrive line body on syllable enable toggle ([b03be0a](https://github.com/music-lyric/music-lyric-player-web/commit/b03be0a))
+
+### Performance
+
+- `dom`
+  - promote emphasize scale to gpu layer via 3d transform ([de6fc95](https://github.com/music-lyric/music-lyric-player-web/commit/de6fc95))
+
+### Refactor
+
+- `dom`
+  - split syllable glow easing into rise and fall ([17f607c](https://github.com/music-lyric/music-lyric-player-web/commit/17f607c))
+
 ## v0.12.1 (2026-06-19)
 
 ### Fix
