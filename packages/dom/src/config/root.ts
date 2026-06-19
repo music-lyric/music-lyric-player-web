@@ -190,6 +190,10 @@ export const DEFAULT: Root = freezeObjectDeep({
                 },
                 amplitude: 2,
                 easing: 'cubic-bezier(0.45, 0, 0.55, 1)',
+                background: {
+                  enabled: true,
+                  scale: 2,
+                },
               },
             },
           },

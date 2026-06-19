@@ -73,7 +73,7 @@ export class NormalLineElement extends BaseLineElement {
 
   private buildSyllable() {
     this.removeSyllable()
-    this.syllable = new SyllableElement(this.context, this.content)
+    this.syllable = new SyllableElement(this.context, this.content, this.backgroundEnable)
     this.container.appendChild(this.syllable.element)
   }
   private removeSyllable() {

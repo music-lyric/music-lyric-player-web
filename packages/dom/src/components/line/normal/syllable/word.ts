@@ -24,13 +24,14 @@ export class WordElement {
     private readonly context: ComponentContext,
     private readonly wordInfo: Lyric.WordNormal,
     private readonly lineInfo: Lyric.LineNormal,
+    private readonly isBackground: boolean,
   ) {
     this.dom = document.createElement('div')
     this.size = { width: 0, height: 0 }
     this.animtion = {
       float: new FloatAnimation(this.dom, this.context, this.wordInfo, this.lineInfo),
       mask: new MaskAnimation(this.dom, this.context, this.wordInfo, this.lineInfo),
-      emphasize: new EmphasizeAnimation(this.context, this.wordInfo, this.lineInfo, this.chars),
+      emphasize: new EmphasizeAnimation(this.context, this.wordInfo, this.lineInfo, this.chars, this.isBackground),
     }
 
     if (this.animtion.emphasize.enable) {

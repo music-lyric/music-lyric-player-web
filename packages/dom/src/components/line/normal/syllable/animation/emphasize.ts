@@ -245,7 +245,7 @@ class FloatEffect extends EffectBase {
     return this.config.enabled
   }
 
-  init(baseDuration: number, delay: number, stagger: number) {
+  init(baseDuration: number, delay: number, stagger: number, isBackground: boolean) {
     this.dispose()
 
     if (!this.enabled) {
@@ -266,7 +266,9 @@ class FloatEffect extends EffectBase {
     this.reset(duration, delay, stagger, leading)
 
     const easing = config.easing
-    const peakTransform = `translateY(${round(-config.amplitude, 3)}px)`
+    const background = config.background
+    const amplitudeScale = isBackground && background.enabled ? background.scale : 1
+    const peakTransform = `translateY(${round(-config.amplitude * amplitudeScale, 3)}px)`
 
     const animations = this.animations
     for (let i = 0; i < count; i++) {
@@ -310,6 +312,7 @@ export class EmphasizeAnimation {
     private readonly wordInfo: Lyric.WordNormal,
     private readonly lineInfo: Lyric.LineNormal,
     private readonly chars: HTMLSpanElement[],
+    private readonly isBackground: boolean,
   ) {
     this.main = new MainEffect(context, chars)
     this.glow = new GlowEffect(context, chars)
@@ -364,7 +367,7 @@ export class EmphasizeAnimation {
     const params = this.params
     this.main.init(params.mainIntensity, params.duration, params.delay, params.stagger)
     this.glow.init(params.glowIntensity, params.duration, params.delay, params.stagger)
-    this.float.init(params.duration, params.delay, params.stagger)
+    this.float.init(params.duration, params.delay, params.stagger, this.isBackground)
 
     this.inited = true
   }
@@ -434,7 +437,7 @@ export class EmphasizeAnimation {
       this.glow.init(params.glowIntensity, params.duration, params.delay, params.stagger)
     }
     if (keys.has('line.normal.syllable.animation.emphasize.effects.float')) {
-      this.float.init(params.duration, params.delay, params.stagger)
+      this.float.init(params.duration, params.delay, params.stagger, this.isBackground)
     }
   }
 

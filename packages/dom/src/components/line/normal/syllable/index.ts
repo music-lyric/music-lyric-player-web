@@ -19,6 +19,7 @@ export class SyllableElement {
   constructor(
     private readonly context: ComponentContext,
     private readonly info: Lyric.LineNormal,
+    private readonly isBackground: boolean,
   ) {
     this.dom = document.createElement('div')
 
@@ -64,7 +65,7 @@ export class SyllableElement {
     for (const item of this.info.content.words) {
       switch (item.type) {
         case Lyric.WordType.Normal: {
-          const node = new WordElement(this.context, item, this.info)
+          const node = new WordElement(this.context, item, this.info, this.isBackground)
 
           if (isInSpace) {
             node.element.classList.add(styles.spaceStart)

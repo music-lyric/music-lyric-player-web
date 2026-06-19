@@ -243,6 +243,23 @@ export interface SyllableEmphasizeAnimationFloatDuration {
 }
 
 /**
+ * Amplified float for background lines, layered on the emphasize float.
+ */
+export interface SyllableEmphasizeAnimationFloatBackground {
+  /**
+   * Whether background lines get an amplified float.
+   * @default true
+   */
+  enabled?: boolean
+  /**
+   * Float amplitude multiplier applied on background lines.
+   * @default 2
+   * @min 0
+   */
+  scale?: number
+}
+
+/**
  * Secondary sine‑wave float layered on top of the per‑word float animation.
  *
  * Stacks via `composite: add`, so it adds to — rather than replaces — the outer float.
@@ -268,6 +285,10 @@ export interface SyllableEmphasizeAnimationFloat {
    * @default "cubic-bezier(0.45, 0, 0.55, 1)"
    */
   easing?: string
+  /**
+   * Amplified float for background lines. See {@link SyllableEmphasizeAnimationFloatBackground}.
+   */
+  background?: SyllableEmphasizeAnimationFloatBackground
 }
 
 /**
