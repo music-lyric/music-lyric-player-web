@@ -10,6 +10,14 @@
   @include apply-line-font('base');
   @include apply-line-style('base');
 
+  // A played line at zero opacity is visually hidden yet still captures clicks.
+  // Drop pointer-events when that opacity resolves to 0 so the hidden line ignores input.
+  [played] & {
+    @container style(--lyric-player-line-normal-base-played-opacity: 0) {
+      pointer-events: none;
+    }
+  }
+
   &::before {
     content: '';
     display: block;
