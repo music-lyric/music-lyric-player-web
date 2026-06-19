@@ -198,11 +198,15 @@ export interface SyllableEmphasizeAnimationGlow {
    */
   color?: string
   /**
-   * CSS easing applied to both halves of the `rest → peak → rest` glow envelope.
-   * A symmetric S‑curve is recommended.
+   * CSS easing applied from offset `0` to the peak at `0.5`.
    * @default "cubic-bezier(0.2, 0.4, 0.58, 1)"
    */
-  easing?: string
+  easingRise?: string
+  /**
+   * CSS easing applied from the peak at `0.5` back to rest at `1`.
+   * @default "cubic-bezier(0.3, 0, 0.58, 1)"
+   */
+  easingFall?: string
   /**
    * Maximum glow radius, in `px`. The runtime additionally clamps the radius by the
    * duration‑derived intensity so very short syllables get a tighter halo.

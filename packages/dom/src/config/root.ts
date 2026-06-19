@@ -177,7 +177,8 @@ export const DEFAULT: Root = freezeObjectDeep({
               glow: {
                 enabled: true,
                 color: '#000000',
-                easing: 'cubic-bezier(0.2, 0.4, 0.58, 1)',
+                easingRise: 'cubic-bezier(0.2, 0.4, 0.58, 1)',
+                easingFall: 'cubic-bezier(0.3, 0, 0.58, 1)',
                 maxRadius: 9,
                 maxAlpha: 1,
               },

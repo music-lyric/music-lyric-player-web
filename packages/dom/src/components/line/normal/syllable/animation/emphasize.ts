@@ -219,8 +219,8 @@ class GlowEffect extends EffectBase {
       const value = delay + stagger * i
       const animation = chars[i].animate(
         [
-          { offset: 0, textShadow: reset, easing: config.easing },
-          { offset: 0.5, textShadow: peak, easing: config.easing },
+          { offset: 0, textShadow: reset, easing: config.easingRise },
+          { offset: 0.5, textShadow: peak, easing: config.easingFall },
           { offset: 1, textShadow: reset },
         ],
         {
