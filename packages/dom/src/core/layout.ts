@@ -7,6 +7,9 @@ import { LineElementType } from '@root/components'
 
 const GAUSSIAN_SIGMA = 2.2
 
+// Beyond this offset the gaussian falls below ~0.02% and is visually indistinguishable from its limit, so far lines skip the exp entirely.
+const GAUSSIAN_CUTOFF = 4 * GAUSSIAN_SIGMA
+
 // Lines within this many elements of the active line keep their animations built; others release them to drop compositor layers.
 // The buffer also lets a just-passed line finish its wind-down before release.
 const ANIMATION_ACTIVE_WINDOW = 2
@@ -25,6 +28,9 @@ export class LayoutManager {
   ) {}
 
   private gaussian(offset: number): number {
+    if (offset > GAUSSIAN_CUTOFF || offset < -GAUSSIAN_CUTOFF) {
+      return 0
+    }
     return Math.exp(-(offset * offset) / (2 * GAUSSIAN_SIGMA * GAUSSIAN_SIGMA))
   }
 
@@ -159,22 +165,23 @@ export class LayoutManager {
     const activePercent = Math.min(Math.max(config.current.scroll.anchor, 0), 100)
     const activePosition = currentContainerHeight * (activePercent / 100)
 
-    // Snapshot the element map into an array once so the rest of `update`
-    // can use O(1) array indexing instead of `Map.get` per line.
-    const elements = Array.from(this.lineManager.elementMap.values())
+    // Cached insertion-ordered element list from the line manager
+    // So the rest of `update` can use O(1) array indexing without re-materializing the map each pass.
+    const elements = this.lineManager.elementList
 
     let activeElementSet: ReadonlySet<number>
-    let activeElementIndexes: number[]
+    let firstActiveElementIndex: number
 
     const cachedActiveSet = this.lineManager.queryActiveElementSet(player.currentIndex)
     if (cachedActiveSet.size > 0) {
       activeElementSet = cachedActiveSet
-      activeElementIndexes = [...cachedActiveSet]
+      // Only the first active element index is needed below; read it from the set without materializing an array.
+      firstActiveElementIndex = cachedActiveSet.values().next().value ?? 0
     } else {
       // No active elements (e.g. before the song starts). Fall back to line 0
       const fallback = this.lineManager.queryElementIndexes(0) ?? [0]
       activeElementSet = new Set(fallback)
-      activeElementIndexes = fallback.slice()
+      firstActiveElementIndex = fallback[0] ?? 0
     }
 
     const topPositions: number[] = new Array(elementCount)
@@ -221,8 +228,8 @@ export class LayoutManager {
     }
 
     const rawFirstActiveIndex = isInScroll
-      ? (this.lineManager.queryElementIndexes(scroll.activeIndex)?.[0] ?? activeElementIndexes[0] ?? 0)
-      : (activeElementIndexes[0] ?? 0)
+      ? (this.lineManager.queryElementIndexes(scroll.activeIndex)?.[0] ?? firstActiveElementIndex)
+      : firstActiveElementIndex
     // Clamp to a valid element index so an out-of-range value can't turn the offset into NaN and propagate to every line.
     const firstActiveIndex = Math.min(Math.max(rawFirstActiveIndex, 0), elementCount - 1)
 
@@ -233,7 +240,7 @@ export class LayoutManager {
     const currentOffset = activePosition - currentActiveOffset
     const currentTime = player.currentTime
 
-    const activeIndex = activeElementIndexes[0] ?? 0
+    const activeIndex = firstActiveElementIndex
 
     const currentLineIndex = player.currentIndex[0] ?? -1
     const currentDirection =

@@ -10,6 +10,9 @@ export class LineManager {
   private currentElementMap: Map<number, LineElement> = new Map()
   private currentIndexMap: Map<number, number[]> = new Map()
 
+  // Insertion-ordered snapshot of `currentElementMap`, rebuilt only on membership change so layout can index it without re-materializing the map each pass.
+  private currentElementList: LineElement[] = []
+
   private cachedActiveLineIndexes: number[] = []
   private cachedActiveSet: ReadonlySet<number> = new Set()
 
@@ -17,6 +20,10 @@ export class LineManager {
 
   get elementMap(): ReadonlyMap<number, LineElement> {
     return this.currentElementMap
+  }
+
+  get elementList(): readonly LineElement[] {
+    return this.currentElementList
   }
 
   get elementSize() {
@@ -133,6 +140,7 @@ export class LineManager {
 
     this.currentElementMap = newElementMap
     this.currentIndexMap = newIndexMap
+    this.currentElementList = Array.from(newElementMap.values())
 
     this.updateAlign()
   }
@@ -192,6 +200,7 @@ export class LineManager {
 
     this.currentElementMap.clear()
     this.currentIndexMap.clear()
+    this.currentElementList = []
 
     this.cachedActiveLineIndexes = []
     this.cachedActiveSet = new Set()

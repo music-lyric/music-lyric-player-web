@@ -247,10 +247,12 @@ export class MaskAnimation {
   private delay: number = 0
   private active = false
 
-  // Latest mask data, cached so activate() can (re)build without recomputation.
   private cachedImage = ''
   private cachedSize = ''
   private cachedFrames?: Keyframe[]
+
+  private appliedImage = ''
+  private appliedSize = ''
 
   constructor(
     private readonly host: HTMLDivElement,
@@ -261,8 +263,14 @@ export class MaskAnimation {
 
   private applyMaskStyle() {
     const style = this.host.style
-    style.maskImage = this.cachedImage
-    style.maskSize = this.cachedSize
+    if (this.appliedImage !== this.cachedImage) {
+      this.appliedImage = this.cachedImage
+      style.maskImage = this.cachedImage
+    }
+    if (this.appliedSize !== this.cachedSize) {
+      this.appliedSize = this.cachedSize
+      style.maskSize = this.cachedSize
+    }
   }
 
   private build() {
