@@ -29,7 +29,7 @@
   transform-origin: build-line-variable('position') center;
 
   // Only lines inside the animation window get a compositor layer.
-  &[animated] {
+  &[animatable] {
     will-change: transform;
   }
 }

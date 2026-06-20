@@ -95,7 +95,7 @@ export class InterludeLineElement extends BaseLineElement {
 
   override updateStyle(current: LineElementStyle) {
     super.updateStyle(current)
-    this.updateAnimations(this.animated)
+    this.updateAnimations(this.animatable)
   }
 
   override play(time: number, isActive: boolean) {

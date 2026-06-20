@@ -34,7 +34,7 @@ export abstract class BaseLineElement {
     height: number
     index: number
     active: boolean
-    animated: boolean
+    animatable: boolean
     played: boolean
     position: string
     style: LineElementStyle
@@ -47,7 +47,7 @@ export abstract class BaseLineElement {
       height: 0,
       index: -1,
       active: false,
-      animated: false,
+      animatable: false,
       played: false,
       position: '',
       style: {},
@@ -151,19 +151,19 @@ export abstract class BaseLineElement {
   }
 
   // Whether this line is inside the animation window (active line ± buffer), set by layout each frame.
-  set animated(value: boolean) {
-    if (value === this.wrapper.animated) {
+  set animatable(value: boolean) {
+    if (value === this.wrapper.animatable) {
       return
     }
     if (value) {
-      this.wrapper.dom.setAttribute('animated', '')
+      this.wrapper.dom.setAttribute('animatable', '')
     } else {
-      this.wrapper.dom.removeAttribute('animated')
+      this.wrapper.dom.removeAttribute('animatable')
     }
-    this.wrapper.animated = value
+    this.wrapper.animatable = value
   }
-  get animated() {
-    return this.wrapper.animated
+  get animatable() {
+    return this.wrapper.animatable
   }
 
   set played(value: boolean) {

@@ -172,7 +172,7 @@ export class NormalLineElement extends BaseLineElement {
 
   override updateStyle(current: LineElementStyle) {
     super.updateStyle(current)
-    this.main?.updateActive(this.animated)
+    this.main?.updateActive(this.animatable)
   }
 
   override destroy() {

@@ -305,7 +305,7 @@ export class LayoutManager {
       }
 
       // `isActiveLine` always wins so duet / background active elements keep animations even past the window.
-      element.animated = isActiveLine || Math.abs(indexOffset) <= ANIMATION_ACTIVE_WINDOW
+      element.animatable = isActiveLine || Math.abs(indexOffset) <= ANIMATION_ACTIVE_WINDOW
 
       element.updateStyle(currentStyle)
 
