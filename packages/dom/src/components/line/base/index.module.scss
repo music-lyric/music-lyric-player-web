@@ -15,18 +15,21 @@
   position: absolute;
   width: build-root-variable('container-width');
 
+  opacity: 1;
+
   // transform uses the full duration. opacity and filter run at 50% of it (same delay)
   transition:
     transform build-line-variable('animation', '', 'duration') build-root-variable('scroll-easing') build-line-variable('animation', '', 'delay'),
     opacity calc(#{build-line-variable('animation', '', 'duration')} * 0.5) ease build-line-variable('animation', '', 'delay'),
     filter calc(#{build-line-variable('animation', '', 'duration')} * 0.5) ease build-line-variable('animation', '', 'delay');
 
-  will-change: transform;
-  opacity: 1;
-
+  pointer-events: none;
   justify-content: build-line-variable('position');
   text-align: build-line-variable('position');
   transform-origin: build-line-variable('position') center;
 
-  pointer-events: none;
+  // Only lines inside the animation window get a compositor layer.
+  &[animated] {
+    will-change: transform;
+  }
 }
