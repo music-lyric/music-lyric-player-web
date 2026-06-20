@@ -106,6 +106,7 @@
   "settings.field.driverAnimation": "requestAnimationFrame",
   "settings.field.driverTimer": "setTimeout",
   "settings.field.bridgeActive": "桥接激活间隔",
+  "settings.field.mergeWindow": "合并窗口 (ms)",
 
   "settings.group.offset": "偏移",
   "settings.field.offsetGlobal": "全局偏移 (ms)",

@@ -106,6 +106,7 @@
   "settings.field.driverAnimation": "requestAnimationFrame",
   "settings.field.driverTimer": "setTimeout",
   "settings.field.bridgeActive": "Bridge Active Gap",
+  "settings.field.mergeWindow": "Merge Window (ms)",
 
   "settings.group.offset": "Offset",
   "settings.field.offsetGlobal": "Global Offset (ms)",

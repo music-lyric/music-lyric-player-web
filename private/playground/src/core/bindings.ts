@@ -96,6 +96,7 @@ export const BASE_SECTIONS: SectionBinding[] = [
         fields: [
           { path: 'base.driver', labelKey: 'settings.field.driver', type: 'select', options: DRIVER_MODES },
           { path: 'base.bridgeActive', labelKey: 'settings.field.bridgeActive', type: 'toggle' },
+          { path: 'base.mergeWindow', labelKey: 'settings.field.mergeWindow', type: 'number', min: 0, max: 2000, step: 50 },
         ],
       },
       {
