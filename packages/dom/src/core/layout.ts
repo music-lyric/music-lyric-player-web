@@ -10,10 +10,6 @@ const GAUSSIAN_SIGMA = 2.2
 // Beyond this offset the gaussian falls below ~0.02% and is visually indistinguishable from its limit, so far lines skip the exp entirely.
 const GAUSSIAN_CUTOFF = 4 * GAUSSIAN_SIGMA
 
-// Lines within this many elements of the active line keep their animations built; others release them to drop compositor layers.
-// The buffer also lets a just-passed line finish its wind-down before release.
-const ANIMATION_ACTIVE_WINDOW = 2
-
 export interface TransitionResult {
   duration: number
   delay: number
@@ -162,6 +158,9 @@ export class LayoutManager {
     const currentSpace = Math.max(0, config.current.layout.gap)
     const currentContainerHeight = Math.max(0, component.container.height)
 
+    // Lines within this many elements of the active line keep their animations built and stay layer-promoted; the buffer also lets a just-passed line finish its wind-down before release.
+    const animationWindow = Math.max(0, Math.floor(config.current.line.animationWindow))
+
     const activePercent = Math.min(Math.max(config.current.scroll.anchor, 0), 100)
     const activePosition = currentContainerHeight * (activePercent / 100)
 
@@ -305,7 +304,7 @@ export class LayoutManager {
       }
 
       // `isActiveLine` always wins so duet / background active elements keep animations even past the window.
-      element.animatable = isActiveLine || Math.abs(indexOffset) <= ANIMATION_ACTIVE_WINDOW
+      element.animatable = isActiveLine || Math.abs(indexOffset) <= animationWindow
 
       element.updateStyle(currentStyle)
 

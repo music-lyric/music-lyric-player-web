@@ -125,6 +125,7 @@ export const DEFAULT: Root = freezeObjectDeep({
 
   line: {
     className: '',
+    animationWindow: 2,
     normal: {
       base: {
         className: '',

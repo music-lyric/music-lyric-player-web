@@ -15,6 +15,13 @@ export interface Root {
    */
   className?: string
   /**
+   * Number of lines on each side of the active line that keep their per-line animations built and stay promoted to a compositor layer.
+   * Larger values reduce pops when the active line changes quickly, at the cost of more simultaneous animations and layers.
+   * @default 2
+   * @min 0
+   */
+  animationWindow?: number
+  /**
    * Vocal line configuration.
    */
   normal?: Normal.Root
