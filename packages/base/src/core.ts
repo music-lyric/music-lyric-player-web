@@ -34,6 +34,7 @@ export class BaseLyricPlayer {
     meta: number
   }
   private info: Lyric.Info
+  private mergedLineEnd: number[] = []
 
   constructor() {
     this.state = {
@@ -68,6 +69,11 @@ export class BaseLyricPlayer {
     }
     // Offset changed = time shift, re-match active lines against the new effective time.
     if (metaToggled || keys.has('offset.global')) {
+      this.handleSyncTime()
+    }
+    // Merge threshold changed: rebuild merged ends and re-match active lines.
+    if (keys.has('mergeWindow')) {
+      this.handleBuildMergedLineEnd()
       this.handleSyncTime()
     }
   }
@@ -109,6 +115,37 @@ export class BaseLyricPlayer {
     const line = this.info.lines[index]
     const nextLine = this.info.lines[index + 1]
     return Math.max(line.time.end, nextLine.time.start)
+  }
+
+  private handleBuildMergedLineEnd() {
+    const count = this.info.lines.length
+    const merged: number[] = new Array(count)
+    if (count === 0) {
+      this.mergedLineEnd = merged
+      return
+    }
+
+    const threshold = Math.max(0, this.config.current.mergeWindow)
+
+    let nextRaw = this.handleGetLineTime(count - 1)
+    merged[count - 1] = nextRaw
+    for (let i = count - 2; i >= 0; i--) {
+      const raw = this.handleGetLineTime(i)
+      // Within threshold of the next line's deactivation: extend to the cluster's later end so they leave together; `max` guarantees a line is never cut short.
+      if (threshold > 0 && Math.abs(nextRaw - raw) < threshold) {
+        merged[i] = Math.max(raw, merged[i + 1])
+      } else {
+        merged[i] = raw
+      }
+      nextRaw = raw
+    }
+
+    this.mergedLineEnd = merged
+  }
+
+  private handleGetMergedLineTime(index: number): number {
+    const value = this.mergedLineEnd[index]
+    return value === undefined ? this.handleGetLineTime(index) : value
   }
 
   private handleGetActiveIndex() {
@@ -169,7 +206,7 @@ export class BaseLyricPlayer {
         break
       }
 
-      if (this.handleGetLineTime(i) > time) {
+      if (this.handleGetMergedLineTime(i) > time) {
         lines.push(line)
         index.push(i)
       }
@@ -193,7 +230,7 @@ export class BaseLyricPlayer {
       const line = this.active.lines[i]
       const infoIndex = this.active.index[i]
 
-      if (now >= this.handleGetLineTime(infoIndex)) {
+      if (now >= this.handleGetMergedLineTime(infoIndex)) {
         hasChanged = true
       } else {
         newActiveLines.push(line)
@@ -204,7 +241,7 @@ export class BaseLyricPlayer {
     while (this.state.scanIndex < this.info.lines.length) {
       const nextLine = this.info.lines[this.state.scanIndex]
       if (now >= nextLine.time.start) {
-        if (now < this.handleGetLineTime(this.state.scanIndex)) {
+        if (now < this.handleGetMergedLineTime(this.state.scanIndex)) {
           newActiveLines.push(nextLine)
           newActiveIndex.push(this.state.scanIndex)
           hasChanged = true
@@ -256,6 +293,7 @@ export class BaseLyricPlayer {
 
     this.pause()
     this.info = target
+    this.handleBuildMergedLineEnd()
 
     this.handleRefreshOffset()
     if (this.config.current.offset.resetTempOnLyricChange) {
@@ -350,7 +388,7 @@ export class BaseLyricPlayer {
       if (line.time.start > effective) {
         break
       }
-      if (this.handleGetLineTime(i) > effective) {
+      if (this.handleGetMergedLineTime(i) > effective) {
         lines.push(line)
         index.push(i)
       }

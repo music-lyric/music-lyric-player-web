@@ -43,6 +43,16 @@ export interface Root {
    */
   bridgeActive?: boolean
   /**
+   * Merge the deactivation of consecutive lines whose raw end times fall within this many ms,
+   * so close‑ending lines leave the active state together instead of one‑by‑one, avoiding a double scroll jump.
+   *
+   * Earlier‑ending lines are only ever extended to the cluster's later end, never cut short.
+   * `0` disables merging.
+   *
+   * @default 300
+   */
+  mergeWindow?: number
+  /**
    * Lyric time offset settings.
    */
   offset?: Offset
@@ -71,6 +81,7 @@ export type RootManager = ConfigManager<RootRequired, Root>
 export const DEFAULT: Root = freezeObjectDeep({
   driver: 'animation',
   bridgeActive: true,
+  mergeWindow: 300,
   offset: {
     global: 0,
     useMeta: true,
