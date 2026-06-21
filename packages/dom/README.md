@@ -1,12 +1,8 @@
 # @music-lyric-player/dom
 
-> DOM renderer for `music-lyric-player`.
-
 Renders the timing state produced by [`@music-lyric-player/base`](https://github.com/music-lyric/music-lyric-player-web/tree/main/packages/base) to the DOM. Uses CSS transforms, filters, and the Web Animations API for GPU-friendly visuals: per-syllable wipe, float, distance-based blur and scale, container edge fade, and four scroll modes.
 
 Every visual concern is a deeply optional config slice and can be updated live mid-playback without remount or flicker.
-
-Part of [music-lyric-player-web](https://github.com/music-lyric/music-lyric-player-web).
 
 ## Install
 

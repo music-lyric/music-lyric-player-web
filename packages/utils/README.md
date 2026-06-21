@@ -1,26 +1,12 @@
 # @music-lyric-player/utils
 
-> Shared utilities for the `music-lyric-player` family.
-
 Internal helpers consumed by [`@music-lyric-player/base`](https://github.com/music-lyric/music-lyric-player-web/tree/main/packages/base) and [`@music-lyric-player/dom`](https://github.com/music-lyric/music-lyric-player-web/tree/main/packages/dom). You usually do not need to install this directly — it is pulled in transitively.
-
-Part of [music-lyric-player-web](https://github.com/music-lyric/music-lyric-player-web).
 
 ## Install
 
 ```shell
 npm install @music-lyric-player/utils
 ```
-
-## What's inside
-
-| Export                                          | Purpose                                                                                                |
-| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `ConfigManager`                                 | Reactive, deeply-mergeable typed config with an `update` event that emits the set of changed key paths |
-| `Event`                                         | Typed event emitter with `add` / `remove` / `emit` / `clear`                                           |
-| `deepCompare`, `freezeDeep`, `hasKeyContaining` | Object helpers used by the renderer for change-detection and read-only state                           |
-| `random`, `regex`                               | Small pure helpers                                                                                     |
-| `DeepPartial`, `DeepRequired`, `NestedKeys`     | Type helpers used by config types                                                                      |
 
 ## Example
 

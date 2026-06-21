@@ -1,10 +1,6 @@
 # @music-lyric-player/playground
 
-Local dev playground for `music-lyric-player`.
-
 Private Vue 3 + Vite app used to develop, demo, and tweak the player against real audio and lyric data.
-
-Part of [music-lyric-player-web](https://github.com/music-lyric/music-lyric-player-web).
 
 ## Run
 
@@ -14,8 +10,6 @@ From the repository root:
 pnpm install
 pnpm run dev
 ```
-
-The dev server listens on `http://localhost:9090` by default.
 
 ## What's in it
 

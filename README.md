@@ -19,20 +19,20 @@
 </p>
 
 <p align="center">
-  English | <a href="./README.zh-CN.md">简体中文</a> | <a href="./README.zh-TW.md">繁體中文</a>
+  English | <a href="./README.zh-Hans.md">简体中文</a> | <a href="./README.zh-Hant.md">繁體中文</a>
 </p>
 
 > [!WARNING]
 >
-> This project is currently under development, and some interfaces are not yet stable.
+> This project is under active development; some APIs are not yet stable.
 
 ## Features
 
-- **Built-in animations**: per-syllable float and karaoke wipe, distance-based blur and scale, container edge fade. Every effect is independently toggleable and tunable
-- **Four scroll modes**: smooth, ripple, directional, stagger. A single field changes the entire scroll feel
+- **Built-in animations**: per-syllable float and karaoke wipe, distance-based blur and scale, and container edge fade — every effect toggles and tunes independently
+- **Four scroll modes**: smooth, ripple, directional, and stagger; one field changes the entire scroll feel
 - **Lyric-aware rendering**: syllable-level highlighting, translation and romanization sub-lines, interlude markers, and per-state styling for normal / active / played
-- **Configure everything, live**: every visual concern (container / layout / effect / scroll / line) is its own deeply optional slice. Override what matters and update mid-playback without remount or flicker
-- **Pluggable, GPU-friendly**: timing and state live in `base` with zero DOM dependency; rendering uses CSS transforms and filters in `dom`. Plug in your own renderer if needed
+- **Configure everything, live**: every visual concern (container / layout / effect / scroll / line) is its own deeply optional slice — override what matters and update mid-playback without remount or flicker
+- **Pluggable, GPU-friendly**: timing and state live in `base` with zero DOM dependency; rendering uses CSS transforms and filters in `dom`, so you can plug in your own renderer
 
 ## Install
 
@@ -46,41 +46,10 @@ npm install music-lyric-player music-lyric-kit
 
 ## Usage
 
-The player is composed of two layers: `BaseLyricPlayer` owns timing and lyric state, while `DomLyricPlayer` renders the result to the DOM. The two are typically used together.
-
-### Base player
-
-If you're building a custom renderer, depend on `@music-lyric-player/base` directly. It contains pure timing and state logic, with no DOM dependency.
+`BaseLyricPlayer` owns timing and lyric state, while `DomLyricPlayer` renders the result to the DOM. They are typically used together — install `music-lyric-player` (above) and import both directly from it.
 
 ```js
-import { BaseLyricPlayer } from '@music-lyric-player/base'
-
-const base = new BaseLyricPlayer()
-
-const callback = () => {}
-
-// Play event
-base.event.add('play', callback)
-// Pause event
-base.event.add('pause', callback)
-// Lyric update event
-base.event.add('lyricUpdate', callback)
-// Lines update event
-base.event.add('linesUpdate', callback)
-
-// Update lyric
-// Pass in the parsed result from music-lyric-kit
-base.updateLyric(result)
-
-// Play
-base.play(0)
-```
-
-### DOM player
-
-```js
-import { BaseLyricPlayer } from '@music-lyric-player/base'
-import { DomLyricPlayer } from '@music-lyric-player/dom'
+import { BaseLyricPlayer, DomLyricPlayer } from 'music-lyric-player'
 import { ParserPipeline } from 'music-lyric-kit'
 
 // Create
@@ -111,7 +80,7 @@ base.play(0)
 base.pause()
 ```
 
-Every visual aspect is mapped to a config field. Pass only the fields you want to change, leave the rest at their defaults. Updates can be applied at any time, including mid-playback.
+Every visual aspect maps to a config field. Pass only the fields you want to change; the rest keep their defaults. Updates apply any time, including mid-playback.
 
 ```js
 dom.config.update({
@@ -131,6 +100,30 @@ dom.config.update({
     },
   },
 })
+```
+
+### Base player only
+
+If you only need timing and state — for example to build your own renderer — install just `@music-lyric-player/base` (no DOM dependency) and import from it.
+
+```shell
+npm install @music-lyric-player/base music-lyric-kit
+```
+
+```js
+import { BaseLyricPlayer } from '@music-lyric-player/base'
+
+const base = new BaseLyricPlayer()
+
+// Subscribe to timing / state events
+base.event.add('play', (time) => {})
+base.event.add('pause', (time) => {})
+base.event.add('lyricUpdate', (info) => {})
+base.event.add('linesUpdate', (lines, indexes, firstActiveIndex, isSeek) => {})
+
+// Feed the parsed result from music-lyric-kit (parsed as shown above), then play
+base.updateLyric(result)
+base.play(0)
 ```
 
 ## Packages
