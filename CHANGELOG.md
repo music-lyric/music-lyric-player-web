@@ -1,3 +1,27 @@
+## v0.14.0 (2026-06-22)
+
+### Document
+
+- restructure readme ([6a5b326](https://github.com/music-lyric/music-lyric-player-web/commit/6a5b326))
+
+### Feature
+
+- `base`
+  - merge close-ending lines to deactivate together ([385c47d](https://github.com/music-lyric/music-lyric-player-web/commit/385c47d))
+- `dom`
+  - expose line animation window as config ([b015171](https://github.com/music-lyric/music-lyric-player-web/commit/b015171))
+
+### Performance
+
+- `dom`
+  - trim layout and mask hot-path overhead ([5d33cd3](https://github.com/music-lyric/music-lyric-player-web/commit/5d33cd3))
+  - scope line will-change to the active window ([8c6da41](https://github.com/music-lyric/music-lyric-player-web/commit/8c6da41))
+
+### Refactor
+
+- `dom`
+  - rename line animated flag to animatable ([270ba26](https://github.com/music-lyric/music-lyric-player-web/commit/270ba26))
+
 ## v0.13.0 (2026-06-20)
 
 ### Feature
