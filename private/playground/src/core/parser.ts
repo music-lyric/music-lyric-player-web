@@ -8,26 +8,26 @@ const buildPipeline = (input: ParserPipelineInput, options: ParserOptions) => {
   const pipeline = new ParserPipeline(input).parse()
 
   if (options.pureClean.enabled) {
-    pipeline.pureClean({ firstLineWithMusicInfo: options.pureClean.firstLineWithMusicInfo } as never)
+    pipeline.pure.clean({ firstLineWithMusicInfo: options.pureClean.firstLineWithMusicInfo } as never)
   }
   if (options.pureExtract.enabled) {
-    pipeline.pureExtract()
+    pipeline.pure.extractCreator()
   }
   if (options.agentExtract.enabled) {
-    pipeline.agentExtract()
+    pipeline.agent.extract()
   }
   if (options.backgroundExtract.enabled) {
-    pipeline.backgroundExtract({
+    pipeline.background.extract({
       fullLine: options.backgroundExtract.fullLine,
       inLine: options.backgroundExtract.inLine,
       crossLine: options.backgroundExtract.crossLine,
     })
   }
   if (options.backgroundClean.enabled) {
-    pipeline.backgroundClean()
+    pipeline.background.clean()
   }
   if (options.interludeInsert.enabled) {
-    pipeline.interludeInsert({
+    pipeline.interlude.insert({
       checkTime: {
         first: options.interludeInsert.first,
         normal: options.interludeInsert.normal,
@@ -35,14 +35,17 @@ const buildPipeline = (input: ParserPipelineInput, options: ParserOptions) => {
     })
   }
   if (options.spaceInsert.enabled) {
-    pipeline.spaceInsert({
+    pipeline.space.insert({
       original: options.spaceInsert.original,
       extended: options.spaceInsert.extended,
     } as never)
   }
   if (options.stressMark.enabled) {
-    pipeline.stressMark({ checkTime: options.stressMark.checkTime })
+    pipeline.stress.mark({ checkTime: options.stressMark.checkTime })
   }
+
+  pipeline.language.infer()
+  pipeline.language.calculatePercent()
 
   return pipeline.final()
 }

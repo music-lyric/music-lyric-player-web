@@ -16,7 +16,7 @@ export class PlainElement {
   updateConfig(keys?: DomLyricPlayerConfig.RootKeySet) {
     if (!keys) {
       applyClassName(this.dom, [styles.plain])
-      this.dom.innerText = this.info.content.original
+      this.dom.innerText = this.info.original
     }
   }
 

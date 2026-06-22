@@ -24,7 +24,7 @@ export class SyllableElement {
     this.dom = document.createElement('div')
 
     let wordCount = 0
-    for (const item of info.content.words) {
+    for (const item of info.words) {
       if (item.type === Lyric.WordType.Normal) wordCount++
     }
     this.maskHost = new MaskAnimationHost(context, info, wordCount)
@@ -62,7 +62,7 @@ export class SyllableElement {
 
     let isInSpace = false
     const frag = document.createDocumentFragment()
-    for (const item of this.info.content.words) {
+    for (const item of this.info.words) {
       switch (item.type) {
         case Lyric.WordType.Normal: {
           const node = new WordElement(this.context, item, this.info, this.isBackground)

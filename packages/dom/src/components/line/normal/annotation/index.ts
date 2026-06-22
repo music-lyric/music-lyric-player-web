@@ -27,41 +27,31 @@ export class ExtendedElement {
 
   private buildContent() {
     const config = this.context.config.line.normal.extended
-
     this.content.replaceChildren()
-    for (const item of this.info.content.extended) {
-      if (!item.content?.trim()) {
-        continue
+
+    if (config.translate.visible) {
+      const translate = this.info.annotation.translates?.[0]
+      if (translate) {
+        const element = document.createElement('div')
+        element.innerText = translate.content
+
+        const className = [styles.translate, config.translate.className]
+        applyClassName(element, className)
+
+        this.content.appendChild(element)
       }
-      switch (item.type) {
-        case Lyric.ExtendedType.Translate: {
-          if (!config.translate.visible) {
-            break
-          }
+    }
 
-          const element = document.createElement('div')
-          element.innerText = item.content
+    if (config.roman.visible) {
+      const roman = this.info.annotation.romans?.[0]
+      if (roman) {
+        const element = document.createElement('div')
+        element.innerText = roman.content
 
-          const className = [styles.translate, config.translate.className]
-          applyClassName(element, className)
+        const className = [styles.roman, config.roman.className]
+        applyClassName(element, className)
 
-          this.content.appendChild(element)
-          break
-        }
-        case Lyric.ExtendedType.Roman: {
-          if (!config.roman.visible) {
-            break
-          }
-
-          const element = document.createElement('div')
-          element.innerText = item.content
-
-          const className = [styles.roman, config.roman.className]
-          applyClassName(element, className)
-
-          this.content.appendChild(element)
-          break
-        }
+        this.content.appendChild(element)
       }
     }
   }

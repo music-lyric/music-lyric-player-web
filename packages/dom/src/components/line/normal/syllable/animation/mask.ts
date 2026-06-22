@@ -101,8 +101,8 @@ export class MaskAnimationHost {
 
     for (let i = 0; i < wordCount; i++) {
       const word = wordInfos[i]
-      wordStartTimes[i] = word.info.time.start - lineStart
-      wordDurations[i] = word.info.time.duration
+      wordStartTimes[i] = word.info.time!.start - lineStart
+      wordDurations[i] = word.info.time!.duration
       wordWidths[i] = word.width
       wordHeights[i] = word.height
       wordFrontWidths[i + 1] = wordFrontWidths[i] + word.width

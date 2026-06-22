@@ -5,7 +5,7 @@ import type { DomLyricPlayerConfig } from '@root/config'
 import { BaseLineElement, LineElementType, type LineElementStyle } from '../base'
 import { SyllableElement } from './syllable'
 import { PlainElement } from './plain'
-import { ExtendedElement } from './extended'
+import { ExtendedElement } from './annotation'
 
 import { applyClassName, buildLineVariableKey } from '@root/utils'
 
@@ -115,7 +115,7 @@ export class NormalLineElement extends BaseLineElement {
     this.extended = null
   }
   private get needShowExtended() {
-    return this.content.content.extended.length > 0 && this.context.config.line.normal.extended.visible
+    return this.context.config.line.normal.extended.visible
   }
 
   override updateConfig(keys?: DomLyricPlayerConfig.RootKeySet): void {

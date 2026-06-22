@@ -164,7 +164,11 @@ class MainEffect extends EffectBase {
       const animation = chars[i].animate(
         [
           { offset: 0, transform: 'scale3d(1, 1, 1) translate3d(0px, 0px, 0px)', easing: riseEasing },
-          { offset: 0.5, transform: `scale3d(${peakScale}, ${peakScale}, 1) translate3d(${round(-offsetX * offset, 3)}px, ${offsetY}px, 0px)`, easing: peakEasing },
+          {
+            offset: 0.5,
+            transform: `scale3d(${peakScale}, ${peakScale}, 1) translate3d(${round(-offsetX * offset, 3)}px, ${offsetY}px, 0px)`,
+            easing: peakEasing,
+          },
           { offset: 1, transform: 'scale3d(1, 1, 1) translate3d(0px, 0px, 0px)' },
         ],
         {
@@ -324,7 +328,7 @@ export class EmphasizeAnimation {
     if (!this.config.enabled) {
       return false
     }
-    if (!this.wordInfo.config.stress || !this.wordInfo.content) {
+    if (!this.wordInfo.stress || !this.wordInfo.content) {
       return false
     }
     const effects = this.config.effects
@@ -341,7 +345,7 @@ export class EmphasizeAnimation {
   private get params() {
     // Short syllables get a much softer treatment (cubic); long ones less than linear (sqrt).
     const min = Math.max(0, this.config.minDuration)
-    const raw = Math.max(min, this.wordInfo.time.duration)
+    const raw = Math.max(min, this.wordInfo.time!.duration)
 
     let mainIntensity = raw / 2000
     mainIntensity = mainIntensity > 1 ? Math.sqrt(mainIntensity) : mainIntensity ** 3
@@ -352,7 +356,7 @@ export class EmphasizeAnimation {
     glowIntensity = clamp(glowIntensity * 0.5, 0, 0.8)
 
     const duration = Number.isFinite(raw) ? raw : 0
-    const delay = this.wordInfo.time.start - this.lineInfo.time.start
+    const delay = this.wordInfo.time!.start - this.lineInfo.time.start
     const stagger = duration / 2.5 / this.chars.length
 
     return { mainIntensity, glowIntensity, duration, delay, stagger }

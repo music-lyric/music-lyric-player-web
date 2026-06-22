@@ -87,7 +87,7 @@ export class LineManager {
   updateLines(info: Lyric.Info) {
     const { component } = this.context
 
-    const isSyllable = info.type === Lyric.InfoType.Syllable
+    const isSyllable = info.timing === Lyric.InfoTiming.Syllable
 
     const newElementMap = new Map<number, LineElement>()
     const newIndexMap = new Map<number, number[]>()

@@ -16,8 +16,8 @@ export class BaseLyricPlayer {
 
   private state: {
     playing: boolean
-    frameId: number | null
-    timerId: number | null
+    frameId: ReturnType<typeof globalThis.requestAnimationFrame> | null
+    timerId: ReturnType<typeof globalThis.setTimeout> | null
     scanIndex: number
   }
   private active: {
@@ -94,8 +94,7 @@ export class BaseLyricPlayer {
   // Refresh meta offset.
   private handleRefreshOffset() {
     if (this.config.current.offset.useMeta) {
-      const meta = this.info.metas.find((item) => item.type === Lyric.MetaType.Offset)
-      const value = meta?.content
+      const value = this.info.meta.offsets[0]?.value
       const result = typeof value === 'number' && Number.isFinite(value) ? value : 0
       this.offset.meta = result
     } else {
