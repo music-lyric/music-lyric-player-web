@@ -50,6 +50,11 @@ const LINE_SLOTS: SelectOption[] = [
   { value: 'annotation-roman', labelKey: 'settings.field.lineSlotRoman' },
 ]
 
+const MAIN_USE_MODES: SelectOption[] = [
+  { value: 'syllable', labelKey: 'settings.field.mainUseSyllable' },
+  { value: 'plain', labelKey: 'settings.field.mainUsePlain' },
+]
+
 const stateFields = (prefix: string, includePlayed = false): GroupBinding[] => {
   const groups: GroupBinding[] = [
     {
@@ -248,22 +253,22 @@ export const DOM_SECTIONS: SectionBinding[] = [
         ],
       },
       {
-        id: 'dom.line.normal.syllable',
-        titleKey: 'settings.section.lineNormalSyllable',
+        id: 'dom.line.normal.main',
+        titleKey: 'settings.section.lineNormalMain',
         groups: [
           {
             fields: [
-              { path: 'dom.line.normal.syllable.enabled', labelKey: 'settings.field.enabled', type: 'toggle' },
+              { path: 'dom.line.normal.main.use', labelKey: 'settings.field.mainUse', type: 'select', options: MAIN_USE_MODES },
             ],
           },
-          fontFields('dom.line.normal.syllable'),
-          ...stateFields('dom.line.normal.syllable', true),
+          fontFields('dom.line.normal.main.syllable'),
+          ...stateFields('dom.line.normal.main.syllable', true),
           {
             titleKey: 'settings.group.floatAnimation',
             fields: [
-              { path: 'dom.line.normal.syllable.animation.float.enabled', labelKey: 'settings.field.enabled', type: 'toggle' },
+              { path: 'dom.line.normal.main.syllable.animation.float.enabled', labelKey: 'settings.field.enabled', type: 'toggle' },
               {
-                path: 'dom.line.normal.syllable.animation.float.from',
+                path: 'dom.line.normal.main.syllable.animation.float.from',
                 labelKey: 'settings.field.floatFrom',
                 type: 'number',
                 step: 0.5,
@@ -271,7 +276,7 @@ export const DOM_SECTIONS: SectionBinding[] = [
                 max: 50,
               },
               {
-                path: 'dom.line.normal.syllable.animation.float.to',
+                path: 'dom.line.normal.main.syllable.animation.float.to',
                 labelKey: 'settings.field.floatTo',
                 type: 'number',
                 step: 0.5,
@@ -283,9 +288,9 @@ export const DOM_SECTIONS: SectionBinding[] = [
           {
             titleKey: 'settings.group.maskAnimation',
             fields: [
-              { path: 'dom.line.normal.syllable.animation.mask.enabled', labelKey: 'settings.field.enabled', type: 'toggle' },
+              { path: 'dom.line.normal.main.syllable.animation.mask.enabled', labelKey: 'settings.field.enabled', type: 'toggle' },
               {
-                path: 'dom.line.normal.syllable.animation.mask.feather.normal',
+                path: 'dom.line.normal.main.syllable.animation.mask.feather.normal',
                 labelKey: 'settings.field.maskFeatherNormal',
                 type: 'number',
                 min: 0,
@@ -293,7 +298,7 @@ export const DOM_SECTIONS: SectionBinding[] = [
                 step: 0.05,
               },
               {
-                path: 'dom.line.normal.syllable.animation.mask.feather.first',
+                path: 'dom.line.normal.main.syllable.animation.mask.feather.first',
                 labelKey: 'settings.field.maskFeatherFirst',
                 type: 'number',
                 min: 0,
@@ -301,7 +306,7 @@ export const DOM_SECTIONS: SectionBinding[] = [
                 step: 0.05,
               },
               {
-                path: 'dom.line.normal.syllable.animation.mask.feather.last',
+                path: 'dom.line.normal.main.syllable.animation.mask.feather.last',
                 labelKey: 'settings.field.maskFeatherLast',
                 type: 'number',
                 min: 0,
@@ -313,9 +318,9 @@ export const DOM_SECTIONS: SectionBinding[] = [
           {
             titleKey: 'settings.group.emphasizeAnimation',
             fields: [
-              { path: 'dom.line.normal.syllable.animation.emphasize.enabled', labelKey: 'settings.field.enabled', type: 'toggle' },
+              { path: 'dom.line.normal.main.syllable.animation.emphasize.enabled', labelKey: 'settings.field.enabled', type: 'toggle' },
               {
-                path: 'dom.line.normal.syllable.animation.emphasize.minDuration',
+                path: 'dom.line.normal.main.syllable.animation.emphasize.minDuration',
                 labelKey: 'settings.field.emphasizeMinDuration',
                 type: 'number',
                 min: 0,
@@ -323,7 +328,7 @@ export const DOM_SECTIONS: SectionBinding[] = [
                 step: 100,
               },
               {
-                path: 'dom.line.normal.syllable.animation.emphasize.disablePlaybackRate',
+                path: 'dom.line.normal.main.syllable.animation.emphasize.disablePlaybackRate',
                 labelKey: 'settings.field.emphasizeDisableRate',
                 type: 'number',
                 min: 1,
@@ -335,9 +340,9 @@ export const DOM_SECTIONS: SectionBinding[] = [
           {
             titleKey: 'settings.group.emphasizeMain',
             fields: [
-              { path: 'dom.line.normal.syllable.animation.emphasize.effects.main.enabled', labelKey: 'settings.field.enabled', type: 'toggle' },
+              { path: 'dom.line.normal.main.syllable.animation.emphasize.effects.main.enabled', labelKey: 'settings.field.enabled', type: 'toggle' },
               {
-                path: 'dom.line.normal.syllable.animation.emphasize.effects.main.scale',
+                path: 'dom.line.normal.main.syllable.animation.emphasize.effects.main.scale',
                 labelKey: 'settings.field.emphasizeMainScale',
                 type: 'number',
                 min: 0,
@@ -345,7 +350,7 @@ export const DOM_SECTIONS: SectionBinding[] = [
                 step: 0.01,
               },
               {
-                path: 'dom.line.normal.syllable.animation.emphasize.effects.main.offsetHorizontal',
+                path: 'dom.line.normal.main.syllable.animation.emphasize.effects.main.offsetHorizontal',
                 labelKey: 'settings.field.emphasizeMainOffsetH',
                 type: 'number',
                 min: 0,
@@ -353,7 +358,7 @@ export const DOM_SECTIONS: SectionBinding[] = [
                 step: 0.1,
               },
               {
-                path: 'dom.line.normal.syllable.animation.emphasize.effects.main.offsetVertical',
+                path: 'dom.line.normal.main.syllable.animation.emphasize.effects.main.offsetVertical',
                 labelKey: 'settings.field.emphasizeMainOffsetV',
                 type: 'number',
                 min: 0,
@@ -361,12 +366,12 @@ export const DOM_SECTIONS: SectionBinding[] = [
                 step: 0.1,
               },
               {
-                path: 'dom.line.normal.syllable.animation.emphasize.effects.main.easingRise',
+                path: 'dom.line.normal.main.syllable.animation.emphasize.effects.main.easingRise',
                 labelKey: 'settings.field.emphasizeMainEasingRise',
                 type: 'text',
               },
               {
-                path: 'dom.line.normal.syllable.animation.emphasize.effects.main.easingFall',
+                path: 'dom.line.normal.main.syllable.animation.emphasize.effects.main.easingFall',
                 labelKey: 'settings.field.emphasizeMainEasingFall',
                 type: 'text',
               },
@@ -375,14 +380,14 @@ export const DOM_SECTIONS: SectionBinding[] = [
           {
             titleKey: 'settings.group.emphasizeGlow',
             fields: [
-              { path: 'dom.line.normal.syllable.animation.emphasize.effects.glow.enabled', labelKey: 'settings.field.enabled', type: 'toggle' },
+              { path: 'dom.line.normal.main.syllable.animation.emphasize.effects.glow.enabled', labelKey: 'settings.field.enabled', type: 'toggle' },
               {
-                path: 'dom.line.normal.syllable.animation.emphasize.effects.glow.color',
+                path: 'dom.line.normal.main.syllable.animation.emphasize.effects.glow.color',
                 labelKey: 'settings.field.emphasizeGlowColor',
                 type: 'text',
               },
               {
-                path: 'dom.line.normal.syllable.animation.emphasize.effects.glow.maxRadius',
+                path: 'dom.line.normal.main.syllable.animation.emphasize.effects.glow.maxRadius',
                 labelKey: 'settings.field.emphasizeGlowMaxRadius',
                 type: 'number',
                 min: 0,
@@ -390,7 +395,7 @@ export const DOM_SECTIONS: SectionBinding[] = [
                 step: 0.5,
               },
               {
-                path: 'dom.line.normal.syllable.animation.emphasize.effects.glow.maxAlpha',
+                path: 'dom.line.normal.main.syllable.animation.emphasize.effects.glow.maxAlpha',
                 labelKey: 'settings.field.emphasizeGlowMaxAlpha',
                 type: 'number',
                 min: 0,
@@ -398,7 +403,7 @@ export const DOM_SECTIONS: SectionBinding[] = [
                 step: 0.05,
               },
               {
-                path: 'dom.line.normal.syllable.animation.emphasize.effects.glow.easing',
+                path: 'dom.line.normal.main.syllable.animation.emphasize.effects.glow.easing',
                 labelKey: 'settings.field.emphasizeGlowEasing',
                 type: 'text',
               },
@@ -407,9 +412,9 @@ export const DOM_SECTIONS: SectionBinding[] = [
           {
             titleKey: 'settings.group.emphasizeFloat',
             fields: [
-              { path: 'dom.line.normal.syllable.animation.emphasize.effects.float.enabled', labelKey: 'settings.field.enabled', type: 'toggle' },
+              { path: 'dom.line.normal.main.syllable.animation.emphasize.effects.float.enabled', labelKey: 'settings.field.enabled', type: 'toggle' },
               {
-                path: 'dom.line.normal.syllable.animation.emphasize.effects.float.amplitude',
+                path: 'dom.line.normal.main.syllable.animation.emphasize.effects.float.amplitude',
                 labelKey: 'settings.field.emphasizeFloatAmplitude',
                 type: 'number',
                 min: 0,
@@ -417,7 +422,7 @@ export const DOM_SECTIONS: SectionBinding[] = [
                 step: 0.5,
               },
               {
-                path: 'dom.line.normal.syllable.animation.emphasize.effects.float.duration.scale',
+                path: 'dom.line.normal.main.syllable.animation.emphasize.effects.float.duration.scale',
                 labelKey: 'settings.field.emphasizeFloatDurationScale',
                 type: 'number',
                 min: 0,
@@ -425,7 +430,7 @@ export const DOM_SECTIONS: SectionBinding[] = [
                 step: 0.1,
               },
               {
-                path: 'dom.line.normal.syllable.animation.emphasize.effects.float.duration.lead',
+                path: 'dom.line.normal.main.syllable.animation.emphasize.effects.float.duration.lead',
                 labelKey: 'settings.field.emphasizeFloatDurationLead',
                 type: 'number',
                 min: 0,
@@ -433,7 +438,7 @@ export const DOM_SECTIONS: SectionBinding[] = [
                 step: 50,
               },
               {
-                path: 'dom.line.normal.syllable.animation.emphasize.effects.float.easing',
+                path: 'dom.line.normal.main.syllable.animation.emphasize.effects.float.easing',
                 labelKey: 'settings.field.emphasizeFloatEasing',
                 type: 'text',
               },

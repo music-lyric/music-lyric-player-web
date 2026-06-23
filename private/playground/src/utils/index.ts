@@ -47,7 +47,7 @@ const INHERIT_CHAIN: Array<[string, string]> = [
   ['dom.line.normal.annotation.translate', 'dom.line.normal.annotation.base'],
   ['dom.line.normal.annotation.roman', 'dom.line.normal.annotation.base'],
   ['dom.line.normal.annotation.base', 'dom.line.normal.base'],
-  ['dom.line.normal.syllable', 'dom.line.normal.base'],
+  ['dom.line.normal.main.syllable', 'dom.line.normal.base'],
 ]
 
 const INHERITABLE_SUBPATHS = ['font.', 'style.']
