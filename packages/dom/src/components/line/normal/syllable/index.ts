@@ -6,7 +6,9 @@ import { Lyric } from '@music-lyric-kit/lyric'
 import { WordElement } from './word'
 import { MaskAnimationHost } from './animation'
 
-import { applyClassName, applyRole, PlayerRole } from '@root/utils'
+import { PlayerRole } from '@root/constants'
+
+import { applyClassName, applyRole } from '@root/utils'
 
 import styles from './index.module.scss'
 
@@ -101,7 +103,7 @@ export class SyllableElement {
   updateConfig(keys?: DomLyricPlayerConfig.RootKeySet) {
     if (!keys) {
       applyClassName(this.dom, [styles.syllable])
-      applyRole(this.dom, PlayerRole.text)
+      applyRole(this.dom, PlayerRole.line.normal.text.self)
       this.init()
       return
     }

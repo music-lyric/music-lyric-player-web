@@ -1,9 +1,9 @@
-import { applyClassName, applyRole, PlayerRole } from '@root/utils'
+import { PlayerAttribute, PlayerRole } from '@root/constants'
+
+import { applyClassName, applyRole } from '@root/utils'
 import { createRandomHex } from '@music-lyric-player/utils'
 
 import styles from './index.module.scss'
-
-const INSTANCE_ATTRIBUTE = 'data-instance-id'
 
 export class Root {
   private readonly id: string
@@ -13,7 +13,7 @@ export class Root {
     this.id = createRandomHex(3)
 
     this.dom = document.createElement('div')
-    this.dom.setAttribute(INSTANCE_ATTRIBUTE, this.id)
+    this.dom.setAttribute(PlayerAttribute.instanceId, this.id)
     applyClassName(this.dom, [styles.root])
     applyRole(this.dom, PlayerRole.root)
   }
@@ -43,6 +43,6 @@ export class Root {
    * stay isolated when multiple players coexist on the page.
    */
   get scope() {
-    return `.${styles.root}[${INSTANCE_ATTRIBUTE}="${this.id}"]`
+    return `.${styles.root}[${PlayerAttribute.instanceId}="${this.id}"]`
   }
 }

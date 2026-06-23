@@ -1,7 +1,9 @@
 import { Event } from '@music-lyric-player/utils'
 import { ComponentContext } from '@root/components/context'
 
-import { applyClassName, applyRole, PlayerRole, buildRootVariableKey } from '@root/utils'
+import { PlayerRole, PlayerState } from '@root/constants'
+
+import { applyClassName, applyRole, buildRootVariableKey } from '@root/utils'
 
 import styles from './index.module.scss'
 
@@ -90,9 +92,9 @@ export class Container {
     applyClassName(this.dom, [styles.container, this.context.config.container.className])
 
     if (this.context.config.container.fade.enabled) {
-      this.dom.setAttribute('enable-fade', '')
+      this.dom.setAttribute(PlayerState.container.enableFade, '')
     } else {
-      this.dom.removeAttribute('enable-fade')
+      this.dom.removeAttribute(PlayerState.container.enableFade)
     }
   }
 

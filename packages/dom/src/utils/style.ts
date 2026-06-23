@@ -1,3 +1,5 @@
+import { PlayerAttribute } from '@root/constants'
+
 const kebabify = (str: string) => str.replace(/[A-Z]+(?![a-z])|[A-Z]/g, ($, ofs) => (ofs ? '-' : '') + $.toLowerCase())
 
 export const createCssText = (styles: Partial<CSSStyleDeclaration>) => {
@@ -22,30 +24,10 @@ export const applyClassName = (element: HTMLDivElement, names: string[]) => {
 }
 
 /**
- * Stable `data-role` values that tag each player element.
- * They form a public CSS hook, meant to be combined with the instance scope and state attributes.
- * @example `[data-instance-id] [data-role="line"][active]`
- */
-export const PlayerRole = {
-  root: 'root',
-  container: 'container',
-  line: 'line',
-  normal: 'normal',
-  interlude: 'interlude',
-  text: 'text',
-  word: 'word',
-  char: 'char',
-  annotation: 'annotation',
-  translation: 'translation',
-  romanization: 'romanization',
-  dot: 'dot',
-} as const
-
-/**
  * Tag an element with its stable `data-role`, the public CSS hook for targeting internal nodes.
  */
 export const applyRole = (element: HTMLElement, role: string) => {
-  element.setAttribute('data-role', role)
+  element.setAttribute(PlayerAttribute.role, role)
 }
 
 /**

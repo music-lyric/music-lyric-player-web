@@ -6,7 +6,9 @@ import type { LineElementStyle } from '../base'
 import { BaseLineElement, LineElementType } from '../base'
 import { Dot } from './dot'
 
-import { applyClassName, applyRole, PlayerRole } from '@root/utils'
+import { PlayerRole } from '@root/constants'
+
+import { applyClassName, applyRole } from '@root/utils'
 
 import styles from './index.module.scss'
 
@@ -42,7 +44,7 @@ export class InterludeLineElement extends BaseLineElement {
 
   private buildClassName() {
     applyClassName(this.container, [styles.interlude])
-    applyRole(this.container, PlayerRole.interlude)
+    applyRole(this.container, PlayerRole.line.interlude.self)
   }
 
   private buildAnimations() {

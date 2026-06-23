@@ -132,21 +132,21 @@ base.play(0)
 
 每个实例还会在其根元素上反映唯一的 `data-instance-id`，因此你可以将规则限定到单个播放器（通过 `dom.instanceId`），或用裸选择器 `[data-instance-id]` 匹配所有实例。
 
-**元素角色**（单行内部的嵌套结构）：
+**元素角色**（单行内部的嵌套结构；`line-normal` 与 `line-interlude` 为互斥的两种行主体，`*-word` / `*-char` 仅逐字歌词才有）：
 
 ```
 [data-role="root"] [data-instance-id]
 └─ [data-role="container"]
    └─ [data-role="line"]
-      ├─ [data-role="normal"]              // 一行歌词
-      │  ├─ [data-role="text"]             // 主文本，逐字歌词下包含 word
-      │  │  └─ [data-role="word"]
-      │  │     └─ [data-role="char"]
-      │  └─ [data-role="annotation"]       // 主文本下方的扩展行
-      │     ├─ [data-role="translation"]
-      │     └─ [data-role="romanization"]
-      └─ [data-role="interlude"]           // 间奏行（与 normal 互斥）
-         └─ [data-role="dot"]
+      ├─ [data-role="line-normal"]
+      │  ├─ [data-role="line-normal-text"]
+      │  │  └─ [data-role="line-normal-text-word"]
+      │  │     └─ [data-role="line-normal-text-word-char"]
+      │  └─ [data-role="line-normal-annotation"]
+      │     ├─ [data-role="line-normal-annotation-translation"]
+      │     └─ [data-role="line-normal-annotation-romanization"]
+      └─ [data-role="line-interlude"]
+         └─ [data-role="line-interlude-dot"]
 ```
 
 **状态属性**（运行时切换，可在选择器中组合）：
@@ -164,12 +164,12 @@ base.play(0)
 
 ```css
 /* 每个字符发光 */
-[data-instance-id] [data-role="char"] {
+[data-instance-id] [data-role="line-normal-text-word-char"] {
   text-shadow: 0 0 4px currentColor;
 }
 
 /* 强调当前行的文本 */
-[data-instance-id] [data-role="line"][active] [data-role="text"] {
+[data-instance-id] [data-role="line"][active] [data-role="line-normal-text"] {
   font-weight: 700;
 }
 
@@ -179,7 +179,7 @@ base.play(0)
 }
 
 /* 弱化翻译扩展行 */
-[data-instance-id] [data-role="translation"] {
+[data-instance-id] [data-role="line-normal-annotation-translation"] {
   font-size: 0.8em;
   opacity: 0.7;
 }

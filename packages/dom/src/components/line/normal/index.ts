@@ -7,7 +7,9 @@ import { SyllableElement } from './syllable'
 import { PlainElement } from './plain'
 import { AnnotationElement } from './annotation'
 
-import { applyClassName, applyRole, PlayerRole, buildLineVariableKey } from '@root/utils'
+import { PlayerRole } from '@root/constants'
+
+import { applyClassName, applyRole, buildLineVariableKey } from '@root/utils'
 
 import styles from './index.module.scss'
 
@@ -38,7 +40,7 @@ export class NormalLineElement extends BaseLineElement {
     this.syllableEnable = isSyllable
 
     this.container = document.createElement('div')
-    applyRole(this.container, PlayerRole.normal)
+    applyRole(this.container, PlayerRole.line.normal.self)
     this.element.appendChild(this.container)
 
     this.updateConfig()

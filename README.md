@@ -132,21 +132,21 @@ The config covers the common visual tweaks. For finer control, every internal el
 
 Each instance also reflects a unique `data-instance-id` on its root element, so you can scope rules to one player (via `dom.instanceId`) or match every instance with the bare `[data-instance-id]` selector.
 
-**Element roles** (nesting under a single line):
+**Element roles** (nesting under a single line; `line-normal` and `line-interlude` are mutually exclusive bodies, and `*-word` / `*-char` appear only for syllable-timed lyrics):
 
 ```
 [data-role="root"] [data-instance-id]
 └─ [data-role="container"]
    └─ [data-role="line"]
-      ├─ [data-role="normal"]              // a lyric line
-      │  ├─ [data-role="text"]             // main text; wraps words for syllable lyrics
-      │  │  └─ [data-role="word"]
-      │  │     └─ [data-role="char"]
-      │  └─ [data-role="annotation"]       // sub-lines beneath the main text
-      │     ├─ [data-role="translation"]
-      │     └─ [data-role="romanization"]
-      └─ [data-role="interlude"]           // interlude line (alternative to normal)
-         └─ [data-role="dot"]
+      ├─ [data-role="line-normal"]
+      │  ├─ [data-role="line-normal-text"]
+      │  │  └─ [data-role="line-normal-text-word"]
+      │  │     └─ [data-role="line-normal-text-word-char"]
+      │  └─ [data-role="line-normal-annotation"]
+      │     ├─ [data-role="line-normal-annotation-translation"]
+      │     └─ [data-role="line-normal-annotation-romanization"]
+      └─ [data-role="line-interlude"]
+         └─ [data-role="line-interlude-dot"]
 ```
 
 **State attributes** (toggled at runtime — combine them in selectors):
@@ -164,12 +164,12 @@ Each instance also reflects a unique `data-instance-id` on its root element, so 
 
 ```css
 /* Glow on every character */
-[data-instance-id] [data-role="char"] {
+[data-instance-id] [data-role="line-normal-text-word-char"] {
   text-shadow: 0 0 4px currentColor;
 }
 
 /* Emphasize the active line's text */
-[data-instance-id] [data-role="line"][active] [data-role="text"] {
+[data-instance-id] [data-role="line"][active] [data-role="line-normal-text"] {
   font-weight: 700;
 }
 
@@ -179,7 +179,7 @@ Each instance also reflects a unique `data-instance-id` on its root element, so 
 }
 
 /* Tone down the translation sub-line */
-[data-instance-id] [data-role="translation"] {
+[data-instance-id] [data-role="line-normal-annotation-translation"] {
   font-size: 0.8em;
   opacity: 0.7;
 }

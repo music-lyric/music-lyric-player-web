@@ -6,6 +6,7 @@ import { ConfigManager, Event, hasKeyContaining } from '@music-lyric-player/util
 
 import { DomLyricPlayerConfig } from '@root/config'
 import { ComponentContext, Root, Container } from '@root/components'
+import { PlayerState } from '@root/constants'
 
 import { FrameScheduler } from '@root/utils'
 
@@ -155,9 +156,9 @@ export class DomLyricPlayer {
     }
 
     if (scrolling) {
-      this.container.setAttribute('scrolling')
+      this.container.setAttribute(PlayerState.container.scrolling)
     } else {
-      this.container.removeAttribute('scrolling')
+      this.container.removeAttribute(PlayerState.container.scrolling)
     }
 
     this.layoutManager.update()

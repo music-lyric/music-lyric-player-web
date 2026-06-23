@@ -1,7 +1,9 @@
 import type { ComponentContext } from '@root/components/context'
 import type { DomLyricPlayerConfig } from '@root/config'
 
-import { applyClassName, applyRole, PlayerRole, buildLineVariableKey } from '@root/utils'
+import { PlayerRole, PlayerState } from '@root/constants'
+
+import { applyClassName, applyRole, buildLineVariableKey } from '@root/utils'
 
 import styles from './index.module.scss'
 
@@ -53,7 +55,7 @@ export abstract class BaseLineElement {
       style: {},
     }
 
-    applyRole(this.wrapper.dom, PlayerRole.line)
+    applyRole(this.wrapper.dom, PlayerRole.line.self)
 
     this.wrapper.dom.addEventListener('click', this.handleClick)
     this.wrapper.dom.addEventListener('contextmenu', this.handleContextMenu)
@@ -142,9 +144,9 @@ export abstract class BaseLineElement {
       return
     }
     if (value) {
-      this.wrapper.dom.setAttribute('active', '')
+      this.wrapper.dom.setAttribute(PlayerState.line.active, '')
     } else {
-      this.wrapper.dom.removeAttribute('active')
+      this.wrapper.dom.removeAttribute(PlayerState.line.active)
     }
     this.wrapper.active = value
   }
@@ -158,9 +160,9 @@ export abstract class BaseLineElement {
       return
     }
     if (value) {
-      this.wrapper.dom.setAttribute('animatable', '')
+      this.wrapper.dom.setAttribute(PlayerState.line.animatable, '')
     } else {
-      this.wrapper.dom.removeAttribute('animatable')
+      this.wrapper.dom.removeAttribute(PlayerState.line.animatable)
     }
     this.wrapper.animatable = value
   }
@@ -173,9 +175,9 @@ export abstract class BaseLineElement {
       return
     }
     if (value) {
-      this.wrapper.dom.setAttribute('played', '')
+      this.wrapper.dom.setAttribute(PlayerState.line.played, '')
     } else {
-      this.wrapper.dom.removeAttribute('played')
+      this.wrapper.dom.removeAttribute(PlayerState.line.played)
     }
     this.wrapper.played = value
   }
@@ -187,7 +189,7 @@ export abstract class BaseLineElement {
     if (value === this.wrapper.position) {
       return
     }
-    this.wrapper.dom.setAttribute('position', value)
+    this.wrapper.dom.setAttribute(PlayerState.line.position, value)
     this.wrapper.position = value
   }
   get position() {
