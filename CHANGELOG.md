@@ -1,3 +1,29 @@
+## v0.15.0 (2026-06-23)
+
+### Document
+
+- add custom styling guide ([c8cc5e0](https://github.com/music-lyric/music-lyric-player-web/commit/c8cc5e0))
+- `dom`
+  - explain partial default config assertion ([d149cf3](https://github.com/music-lyric/music-lyric-player-web/commit/d149cf3))
+
+### Feature
+
+- bump lyric model version ([15ef889](https://github.com/music-lyric/music-lyric-player-web/commit/15ef889))
+- `base`
+  - add merge limit config ([eed9eee](https://github.com/music-lyric/music-lyric-player-web/commit/eed9eee))
+
+### Refactor
+
+- `base`
+  - split core into collaborators ([642536f](https://github.com/music-lyric/music-lyric-player-web/commit/642536f))
+- `dom`
+  - centralize role and attribute constants ([c598dbc](https://github.com/music-lyric/music-lyric-player-web/commit/c598dbc))
+  - rename instance attribute ([a012c06](https://github.com/music-lyric/music-lyric-player-web/commit/a012c06))
+  - replace class-name with data-role ([23d5884](https://github.com/music-lyric/music-lyric-player-web/commit/23d5884))
+  - split scroll animation into per mode options ([e08e932](https://github.com/music-lyric/music-lyric-player-web/commit/e08e932))
+  - rename normal line extended to annotation ([fb1af97](https://github.com/music-lyric/music-lyric-player-web/commit/fb1af97))
+  - rename normal line extended to annotation ([c9e93ad](https://github.com/music-lyric/music-lyric-player-web/commit/c9e93ad))
+
 ## v0.14.0 (2026-06-22)
 
 ### Document
