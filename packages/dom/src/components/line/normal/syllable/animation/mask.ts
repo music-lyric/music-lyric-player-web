@@ -35,7 +35,7 @@ export class MaskAnimationHost {
   }
 
   private get isEnable() {
-    return this.context.config.line.normal.syllable.animation.mask.enabled
+    return this.context.config.line.normal.main.syllable.animation.mask.enabled
   }
 
   private init() {
@@ -80,7 +80,7 @@ export class MaskAnimationHost {
     // Feather is read on every call so config changes (auto-rebuild via SyllableElement.updateConfig) take effect immediately.
     // Values are clamped here to guard against malformed user input. Negative values would invert the cursor direction;
     // excessive values produce visually broken envelopes.
-    const featherConfig = this.context.config.line.normal.syllable.animation.mask.feather
+    const featherConfig = this.context.config.line.normal.main.syllable.animation.mask.feather
     const featherNormal = Math.max(0, Math.min(2, featherConfig.normal))
     const featherFirst = Math.max(0, Math.min(5, featherConfig.first))
     const featherLast = Math.max(0, Math.min(5, featherConfig.last))

@@ -107,7 +107,7 @@ export class StyleManager {
     const result = {
       // line
       ...this.buildNormalLineConfig('normal-base', line.normal.base),
-      ...this.buildNormalLineConfig('normal-syllable', line.normal.syllable, 'normal-base'),
+      ...this.buildNormalLineConfig('normal-main-syllable', line.normal.main.syllable, 'normal-base'),
       ...this.buildNormalLineConfig('normal-annotation-base', line.normal.annotation.base, 'normal-base'),
       ...this.buildNormalLineConfig('normal-annotation-translate', line.normal.annotation.translate, 'normal-annotation-base'),
       ...this.buildNormalLineConfig('normal-annotation-roman', line.normal.annotation.roman, 'normal-annotation-base'),

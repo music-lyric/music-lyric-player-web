@@ -96,7 +96,7 @@ export class WordElement {
     this.animtion.float.updateConfig(keys)
     this.animtion.mask.updateConfig(keys)
 
-    if (keys && !keys.has('line.normal.syllable.animation.emphasize')) {
+    if (keys && !keys.has('line.normal.main.syllable.animation.emphasize')) {
       return
     }
 

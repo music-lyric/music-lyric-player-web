@@ -125,7 +125,7 @@ abstract class EffectBase {
 
 class MainEffect extends EffectBase {
   private get config() {
-    return this.context.config.line.normal.syllable.animation.emphasize.effects.main
+    return this.context.config.line.normal.main.syllable.animation.emphasize.effects.main
   }
 
   override get enabled() {
@@ -186,7 +186,7 @@ class MainEffect extends EffectBase {
 
 class GlowEffect extends EffectBase {
   private get config() {
-    return this.context.config.line.normal.syllable.animation.emphasize.effects.glow
+    return this.context.config.line.normal.main.syllable.animation.emphasize.effects.glow
   }
 
   override get enabled() {
@@ -243,7 +243,7 @@ class GlowEffect extends EffectBase {
 
 class FloatEffect extends EffectBase {
   private get config() {
-    return this.context.config.line.normal.syllable.animation.emphasize.effects.float
+    return this.context.config.line.normal.main.syllable.animation.emphasize.effects.float
   }
 
   override get enabled() {
@@ -309,7 +309,7 @@ export class EmphasizeAnimation {
   private active = false
 
   private get config() {
-    return this.context.config.line.normal.syllable.animation.emphasize
+    return this.context.config.line.normal.main.syllable.animation.emphasize
   }
 
   constructor(
@@ -416,15 +416,15 @@ export class EmphasizeAnimation {
     }
 
     // Not emphasize changes, nothing to do.
-    if (keys && !keys.has('line.normal.syllable.animation.emphasize')) {
+    if (keys && !keys.has('line.normal.main.syllable.animation.emphasize')) {
       return
     }
 
     if (
       !keys ||
       this.inited !== this.visible ||
-      keys.has('line.normal.syllable.animation.emphasize.enabled') ||
-      keys.has('line.normal.syllable.animation.emphasize.minDuration')
+      keys.has('line.normal.main.syllable.animation.emphasize.enabled') ||
+      keys.has('line.normal.main.syllable.animation.emphasize.minDuration')
     ) {
       this.init()
       return
@@ -435,13 +435,13 @@ export class EmphasizeAnimation {
     }
 
     const params = this.params
-    if (keys.has('line.normal.syllable.animation.emphasize.effects.main')) {
+    if (keys.has('line.normal.main.syllable.animation.emphasize.effects.main')) {
       this.main.init(params.mainIntensity, params.duration, params.delay, params.stagger)
     }
-    if (keys.has('line.normal.syllable.animation.emphasize.effects.glow')) {
+    if (keys.has('line.normal.main.syllable.animation.emphasize.effects.glow')) {
       this.glow.init(params.glowIntensity, params.duration, params.delay, params.stagger)
     }
-    if (keys.has('line.normal.syllable.animation.emphasize.effects.float')) {
+    if (keys.has('line.normal.main.syllable.animation.emphasize.effects.float')) {
       this.float.init(params.duration, params.delay, params.stagger, this.isBackground)
     }
   }

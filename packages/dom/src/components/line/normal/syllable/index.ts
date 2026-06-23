@@ -108,11 +108,11 @@ export class SyllableElement {
       return
     }
 
-    if (keys.has('line.normal.syllable.animation.mask')) {
+    if (keys.has('line.normal.main.syllable.animation.mask')) {
       this.updateMaskInfo()
     }
 
-    if (keys.has('line.normal.syllable.animation.float') || keys.has('line.normal.syllable.animation.emphasize')) {
+    if (keys.has('line.normal.main.syllable.animation.float') || keys.has('line.normal.main.syllable.animation.emphasize')) {
       for (const word of this.words) {
         word.updateConfig(keys)
       }

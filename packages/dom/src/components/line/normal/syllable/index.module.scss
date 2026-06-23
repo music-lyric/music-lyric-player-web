@@ -1,7 +1,7 @@
 @use '../../common.scss' as *;
 
 .syllable {
-  @include apply-line-font('syllable');
+  @include apply-line-font('main-syllable');
 }
 
 .word {
@@ -9,7 +9,7 @@
   // - unsung side defaults to 1 and is pulled down to normal/active on the active line below.
   // - sung side carries the active opacity.
   --mask-normal-opacity: 1;
-  --mask-active-opacity: #{build-line-variable('normal', 'syllable-active', 'opacity')};
+  --mask-active-opacity: #{build-line-variable('normal', 'main-syllable-active', 'opacity')};
 
   --emphasize-padding-horizontal: 0px;
   --emphasize-padding-vertical: 0px;
@@ -23,14 +23,14 @@
   mask-mode: alpha;
   mask-repeat: no-repeat;
 
-  @include apply-line-style('syllable');
+  @include apply-line-style('main-syllable');
 
   // On the singing line the base opacity is the active opacity, so pull the unsung side back down to normal brightness.
   // Switch opacity instantly here (no fade) so unsung syllables hold normal brightness while the wipe reveals them
   // word by word, instead of the whole line fading up and fighting the wipe. The fade-out on leaving active is kept above.
   [active] & {
     --mask-normal-opacity: calc(
-      #{build-line-variable('normal', 'syllable', 'opacity')} / #{build-line-variable('normal', 'syllable-active', 'opacity')}
+      #{build-line-variable('normal', 'main-syllable', 'opacity')} / #{build-line-variable('normal', 'main-syllable-active', 'opacity')}
     );
     transition-duration: 0s;
   }

@@ -19,7 +19,7 @@ export class FloatAnimation {
   private build() {
     this.dispose()
 
-    const config = this.context.config.line.normal.syllable.animation.float
+    const config = this.context.config.line.normal.main.syllable.animation.float
     if (!config.enabled) {
       return
     }
@@ -106,7 +106,7 @@ export class FloatAnimation {
     if (!this.active) {
       return
     }
-    if (keys && !keys.has('line.normal.syllable.animation.float')) {
+    if (keys && !keys.has('line.normal.main.syllable.animation.float')) {
       return
     }
     this.build()

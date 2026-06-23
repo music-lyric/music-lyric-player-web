@@ -79,9 +79,9 @@ export class NormalLineElement extends BaseLineElement {
     applyClassName(this.container, className)
   }
 
-  // Syllable rendering needs both the lyric's syllable timing and the user toggle; otherwise fall back to plain text.
+  // Syllable rendering needs both the lyric's syllable timing and the configured mode; otherwise fall back to plain text.
   private get useSyllable() {
-    return this.syllableEnable && this.context.config.line.normal.syllable.enabled
+    return this.syllableEnable && this.context.config.line.normal.main.use === 'syllable'
   }
 
   private createMain() {
@@ -155,7 +155,7 @@ export class NormalLineElement extends BaseLineElement {
       return
     }
 
-    const syllableToggled = keys.has('line.normal.syllable.enabled')
+    const syllableToggled = keys.has('line.normal.main.use')
     const annotationChanged =
       keys.has('line.normal.annotation.visible') || keys.has('line.normal.annotation.translate') || keys.has('line.normal.annotation.roman')
 

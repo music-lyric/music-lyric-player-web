@@ -118,8 +118,8 @@ export class DomLyricPlayer {
     this.styleManager.updateConfig(keys)
     this.lineManager.updateConfig(keys)
 
-    // Toggling syllable rendering swaps the line body, so re-measure and force a play/pause pass to drive the new element.
-    const updateSize = hasKeyContaining(keys, 'font') || hasKeyContaining(keys, 'line.normal.syllable.enabled')
+    // Toggling the main render mode swaps the line body, so re-measure and force a play/pause pass to drive the new element.
+    const updateSize = hasKeyContaining(keys, 'font') || hasKeyContaining(keys, 'line.normal.main.use')
     this.scheduleLayoutUpdate({ updateSize })
   }
 
