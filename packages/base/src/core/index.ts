@@ -1,8 +1,12 @@
-import type { BaseLyricPlayerEventMap } from './interface'
+import type { BaseLyricPlayerEventMap } from '@root/interface'
 
 import { Lyric } from '@music-lyric-kit/lyric'
 import { ConfigManager, Event } from '@music-lyric-player/utils'
-import { BaseLyricPlayerConfig } from './config'
+import { BaseLyricPlayerConfig } from '@root/config'
+
+import { Merger } from './merger'
+import { Offset } from './offset'
+import { Driver } from './driver'
 
 import { satisfies } from 'semver'
 
@@ -16,8 +20,6 @@ export class BaseLyricPlayer {
 
   private state: {
     playing: boolean
-    frameId: ReturnType<typeof globalThis.requestAnimationFrame> | null
-    timerId: ReturnType<typeof globalThis.setTimeout> | null
     scanIndex: number
   }
   private active: {
@@ -28,19 +30,15 @@ export class BaseLyricPlayer {
     start: number
     seek: number
   }
-
-  private offset: {
-    temp: number
-    meta: number
-  }
   private info: Lyric.Info
-  private mergedLineEnd: number[] = []
+
+  private merger: Merger = new Merger()
+  private offset: Offset = new Offset()
+  private driver: Driver = new Driver()
 
   constructor() {
     this.state = {
       playing: false,
-      frameId: null,
-      timerId: null,
       scanIndex: 0,
     }
     this.active = {
@@ -51,11 +49,6 @@ export class BaseLyricPlayer {
       start: 0,
       seek: 0,
     }
-
-    this.offset = {
-      temp: 0,
-      meta: 0,
-    }
     this.info = new Lyric.Info()
 
     this.config.event.add('update', this.onConfigUpdate)
@@ -65,7 +58,7 @@ export class BaseLyricPlayer {
     // Toggling meta usage re-derives the lyric offset from the current info.
     const metaToggled = keys.has('offset.useMeta')
     if (metaToggled) {
-      this.handleRefreshOffset()
+      this.offset.refreshFromMeta(this.info, this.config.current.offset.useMeta)
     }
     // Offset changed = time shift, re-match active lines against the new effective time.
     if (metaToggled || keys.has('offset.global')) {
@@ -91,68 +84,11 @@ export class BaseLyricPlayer {
     return this.handleGetCurrentTime() + this.currentOffset
   }
 
-  // Refresh meta offset.
-  private handleRefreshOffset() {
-    if (this.config.current.offset.useMeta) {
-      const value = this.info.meta.offsets[0]?.value
-      const result = typeof value === 'number' && Number.isFinite(value) ? value : 0
-      this.offset.meta = result
-    } else {
-      this.offset.meta = 0
-    }
-  }
-
-  private handleGetLineTime(index: number): number {
-    if (index < 0 || index >= this.info.lines.length) {
-      return 0
-    }
-
-    if (index === this.info.lines.length - 1) {
-      return Infinity
-    }
-
-    const line = this.info.lines[index]
-    const nextLine = this.info.lines[index + 1]
-    return Math.max(line.time.end, nextLine.time.start)
-  }
-
+  /**
+   * Rebuild the merged line-end table from the current lyric and merge config.
+   */
   private handleBuildMergedLineEnd() {
-    const count = this.info.lines.length
-    const merged: number[] = new Array(count)
-    if (count === 0) {
-      this.mergedLineEnd = merged
-      return
-    }
-
-    const threshold = Math.max(0, this.config.current.mergeWindow)
-    // Cap on how many lines may fold into one batch; `0` or less means unbounded.
-    const rawLimit = this.config.current.mergeLimit
-    const limit = rawLimit > 0 ? rawLimit : Infinity
-
-    let nextRaw = this.handleGetLineTime(count - 1)
-    merged[count - 1] = nextRaw
-    // Lines accumulated in the current batch, counted back from its later end.
-    let batchSize = 1
-    for (let i = count - 2; i >= 0; i--) {
-      const raw = this.handleGetLineTime(i)
-      // Within threshold of the next line's deactivation and the batch still has room: extend to the cluster's later end so they leave together; `max` guarantees a line is never cut short.
-      if (threshold > 0 && batchSize < limit && Math.abs(nextRaw - raw) < threshold) {
-        merged[i] = Math.max(raw, merged[i + 1])
-        batchSize++
-      } else {
-        // Out of threshold, or the batch hit its cap: force-flush here so this line starts a fresh batch.
-        merged[i] = raw
-        batchSize = 1
-      }
-      nextRaw = raw
-    }
-
-    this.mergedLineEnd = merged
-  }
-
-  private handleGetMergedLineTime(index: number): number {
-    const value = this.mergedLineEnd[index]
-    return value === undefined ? this.handleGetLineTime(index) : value
+    this.merger.build(this.info.lines, this.config.current.mergeWindow, this.config.current.mergeLimit)
   }
 
   private handleGetActiveIndex() {
@@ -213,7 +149,7 @@ export class BaseLyricPlayer {
         break
       }
 
-      if (this.handleGetMergedLineTime(i) > time) {
+      if (this.merger.getMergedTime(i) > time) {
         lines.push(line)
         index.push(i)
       }
@@ -237,7 +173,7 @@ export class BaseLyricPlayer {
       const line = this.active.lines[i]
       const infoIndex = this.active.index[i]
 
-      if (now >= this.handleGetMergedLineTime(infoIndex)) {
+      if (now >= this.merger.getMergedTime(infoIndex)) {
         hasChanged = true
       } else {
         newActiveLines.push(line)
@@ -248,7 +184,7 @@ export class BaseLyricPlayer {
     while (this.state.scanIndex < this.info.lines.length) {
       const nextLine = this.info.lines[this.state.scanIndex]
       if (now >= nextLine.time.start) {
-        if (now < this.handleGetMergedLineTime(this.state.scanIndex)) {
+        if (now < this.merger.getMergedTime(this.state.scanIndex)) {
           newActiveLines.push(nextLine)
           newActiveIndex.push(this.state.scanIndex)
           hasChanged = true
@@ -276,14 +212,7 @@ export class BaseLyricPlayer {
     const now = this.handleGetEffectiveTime()
     this.handleUpdateActiveLines(now)
 
-    switch (this.config.current.driver) {
-      case 'animation':
-        this.state.frameId = globalThis.requestAnimationFrame(this.onTick)
-        break
-      case 'timer':
-        this.state.timerId = globalThis.setTimeout(this.onTick, 16)
-        break
-    }
+    this.driver.schedule(this.config.current.driver, this.onTick)
   }
 
   updateLyric(info: Lyric.Info) {
@@ -302,9 +231,9 @@ export class BaseLyricPlayer {
     this.info = target
     this.handleBuildMergedLineEnd()
 
-    this.handleRefreshOffset()
+    this.offset.refreshFromMeta(this.info, this.config.current.offset.useMeta)
     if (this.config.current.offset.resetTempOnLyricChange) {
-      this.offset.temp = 0
+      this.offset.resetTemp()
     }
 
     this.active.lines = []
@@ -319,6 +248,7 @@ export class BaseLyricPlayer {
 
   /**
    * Start playback
+   *
    * @param time Optional time in ms to seek to before starting playback. If not provided, playback will start from the current position.
    */
   play(time?: number) {
@@ -346,14 +276,7 @@ export class BaseLyricPlayer {
       // Only emit when actually transitioning from playing to paused
       this.event.emit('pause', this.time.seek)
     }
-    if (this.state.frameId !== null) {
-      globalThis.cancelAnimationFrame(this.state.frameId)
-      this.state.frameId = null
-    }
-    if (this.state.timerId !== null) {
-      globalThis.clearTimeout(this.state.timerId)
-      this.state.timerId = null
-    }
+    this.driver.cancel()
   }
 
   /**
@@ -372,17 +295,21 @@ export class BaseLyricPlayer {
 
   /**
    * Update the temp offset in ms (the user's temporary adjustment).
+   *
    * Stacked on top of the global config offset and the lyric's meta offset, then resyncs immediately.
+   *
    * @param value temp offset in ms; non-finite values are treated as 0.
    */
   updateTempOffset(value: number) {
-    this.offset.temp = Number.isFinite(value) ? value : 0
+    this.offset.setTemp(value)
     this.handleSyncTime()
   }
 
   /**
    * Find all active lines at the given time (ms). Does not mutate internal state.
+   *
    * Assumes `info.lines` is sorted by `time.start` ascending.
+   *
    * @param time time in ms to find active lines for.
    */
   matchLinesWithTime(time: number): { lines: Lyric.Line[]; index: number[] } {
@@ -395,7 +322,7 @@ export class BaseLyricPlayer {
       if (line.time.start > effective) {
         break
       }
-      if (this.handleGetMergedLineTime(i) > effective) {
+      if (this.merger.getMergedTime(i) > effective) {
         lines.push(line)
         index.push(i)
       }
@@ -405,7 +332,9 @@ export class BaseLyricPlayer {
 
   /**
    * Convert a content (lyric) time to the playback clock by removing the active offset.
+   *
    * Seeking playback to the returned time makes a line at `contentTime` become active.
+   *
    * @param contentTime content time in ms (e.g. a line's start).
    */
   convertContentTime(contentTime: number): number {
@@ -458,7 +387,6 @@ export class BaseLyricPlayer {
    * The current effective lyric offset in ms (config offset + lyric meta offset + temp offset).
    */
   get currentOffset() {
-    const value = this.config.current.offset.global + this.offset.meta + this.offset.temp
-    return Number.isFinite(value) ? value : 0
+    return this.offset.resolve(this.config.current.offset.global)
   }
 }
