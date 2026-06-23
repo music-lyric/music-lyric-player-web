@@ -228,7 +228,6 @@ export const DOM_SECTIONS: SectionBinding[] = [
         id: 'dom.line.normal.base',
         titleKey: 'settings.section.lineNormalBase',
         groups: [
-          { fields: [classNameField('dom.line.normal.base')] },
           fontFields('dom.line.normal.base'),
           ...stateFields('dom.line.normal.base', true),
         ],
@@ -240,7 +239,6 @@ export const DOM_SECTIONS: SectionBinding[] = [
           {
             fields: [
               { path: 'dom.line.normal.syllable.enabled', labelKey: 'settings.field.enabled', type: 'toggle' },
-              classNameField('dom.line.normal.syllable'),
             ],
           },
           fontFields('dom.line.normal.syllable'),
@@ -435,7 +433,6 @@ export const DOM_SECTIONS: SectionBinding[] = [
           {
             fields: [
               { path: 'dom.line.normal.annotation.visible', labelKey: 'settings.field.visible', type: 'toggle' },
-              classNameField('dom.line.normal.annotation.base'),
             ],
           },
           fontFields('dom.line.normal.annotation.base'),
@@ -449,7 +446,6 @@ export const DOM_SECTIONS: SectionBinding[] = [
               {
                 fields: [
                   { path: 'dom.line.normal.annotation.translate.visible', labelKey: 'settings.field.visible', type: 'toggle' },
-                  classNameField('dom.line.normal.annotation.translate'),
                 ],
               },
               fontFields('dom.line.normal.annotation.translate'),
@@ -463,7 +459,6 @@ export const DOM_SECTIONS: SectionBinding[] = [
               {
                 fields: [
                   { path: 'dom.line.normal.annotation.roman.visible', labelKey: 'settings.field.visible', type: 'toggle' },
-                  classNameField('dom.line.normal.annotation.roman'),
                 ],
               },
               fontFields('dom.line.normal.annotation.roman'),
@@ -478,7 +473,6 @@ export const DOM_SECTIONS: SectionBinding[] = [
         groups: [
           {
             fields: [
-              classNameField('dom.line.interlude'),
               { path: 'dom.line.interlude.size', labelKey: 'settings.field.interludeSize', type: 'number', min: 4, max: 64, step: 1 },
             ],
           },
