@@ -1,82 +1,42 @@
-import type { ComponentContext } from '@root/components/context'
-import type { DomLyricPlayerConfig } from '@root/config'
+import type { Lyric } from '@music-lyric-kit/lyric'
+import type { AnnotationBaseElement } from './base'
 
-import { Lyric } from '@music-lyric-kit/lyric'
+import { DomLyricPlayerConfig as Config } from '@root/config'
+import { AnnotationTranslateElement } from './translate'
+import { AnnotationRomanElement } from './roman'
 
-import { PlayerRole } from '@root/constants'
+export { AnnotationBaseElement } from './base'
+export { AnnotationTranslateElement } from './translate'
+export { AnnotationRomanElement } from './roman'
 
-import { applyClassName, applyRole } from '@root/utils'
+const { Slot } = Config.Line.Normal
 
-import styles from './index.module.scss'
+type AnnotationConfig = Config.RootRequired['line']['normal']['annotation']
 
-export class AnnotationElement {
-  private context: ComponentContext
-
-  private info: Lyric.LineNormal
-  private content: HTMLDivElement
-
-  constructor(context: ComponentContext, info: Lyric.LineNormal) {
-    this.context = context
-    this.info = info
-    this.content = document.createElement('div')
-
-    this.updateConfig()
-  }
-
-  private buildClassName() {
-    applyClassName(this.content, [styles.annotation])
-    applyRole(this.content, PlayerRole.line.normal.annotation.self)
-  }
-
-  private buildContent() {
-    const config = this.context.config.line.normal.annotation
-    this.content.replaceChildren()
-
-    if (config.translate.visible) {
-      const translate = this.info.annotation.translates?.[0]
-      if (translate) {
-        const element = document.createElement('div')
-        element.innerText = translate.content
-
-        applyClassName(element, [styles.translate])
-        applyRole(element, PlayerRole.line.normal.annotation.translation)
-
-        this.content.appendChild(element)
-      }
-    }
-
-    if (config.roman.visible) {
-      const roman = this.info.annotation.romans?.[0]
-      if (roman) {
-        const element = document.createElement('div')
-        element.innerText = roman.content
-
-        applyClassName(element, [styles.roman])
-        applyRole(element, PlayerRole.line.normal.annotation.romanization)
-
-        this.content.appendChild(element)
-      }
-    }
-  }
-
-  updateConfig(keys?: DomLyricPlayerConfig.RootKeySet) {
-    if (!keys) {
-      this.buildClassName()
-      this.buildContent()
-      return
-    }
-
-    if (keys.has('line.normal.annotation.translate') || keys.has('line.normal.annotation.roman')) {
-      this.buildContent()
-    }
-  }
-
-  dispose() {
-    this.content.replaceChildren()
-    this.content.remove()
-  }
-
-  get element() {
-    return this.content
-  }
+export interface AnnotationDescriptor {
+  /**
+   * Layout slot this annotation occupies within a line.
+   */
+  readonly slot: Config.Line.Normal.Slot
+  /**
+   * Whether the annotation is turned on for the given annotation config.
+   */
+  isEnabled(annotation: AnnotationConfig): boolean
+  /**
+   * Build the row element for a line.
+   */
+  create(info: Lyric.LineNormal): AnnotationBaseElement
 }
+
+export const ANNOTATION_DESCRIPTORS: readonly AnnotationDescriptor[] = [
+  {
+    slot: Slot.AnnotationTranslate,
+    isEnabled: (annotation) => annotation.translate.visible,
+    create: (info) => new AnnotationTranslateElement(info),
+  },
+  {
+    slot: Slot.AnnotationRoman,
+    isEnabled: (annotation) => annotation.roman.visible,
+    create: (info) => new AnnotationRomanElement(info),
+  },
+]

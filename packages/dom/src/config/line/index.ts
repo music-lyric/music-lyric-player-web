@@ -1,5 +1,6 @@
-import type * as Normal from './normal'
-import type * as Interlude from './interlude'
+import * as Interlude from './interlude'
+
+import * as Normal from './normal'
 
 /**
  * Lyric line configuration.
@@ -31,4 +32,4 @@ export interface Root {
   interlude?: Interlude.Root
 }
 
-export type { Normal, Interlude }
+export { Normal, Interlude }

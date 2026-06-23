@@ -1,15 +1,17 @@
 import type { Lyric } from '@music-lyric-kit/lyric'
 import type { ComponentContext } from '@root/components/context'
-import type { DomLyricPlayerConfig } from '@root/config'
-
-import { BaseLineElement, LineElementType, type LineElementStyle } from '../base'
-import { SyllableElement } from './syllable'
-import { PlainElement } from './plain'
-import { AnnotationElement } from './annotation'
+import type { LineElementStyle } from '../base'
+import type { AnnotationBaseElement } from './annotation'
 
 import { PlayerRole } from '@root/constants'
+import { DomLyricPlayerConfig } from '@root/config'
 
-import { applyClassName, applyRole, buildLineVariableKey } from '@root/utils'
+import { BaseLineElement, LineElementType } from '../base'
+import { SyllableElement } from './syllable'
+import { PlainElement } from './plain'
+import { ANNOTATION_DESCRIPTORS } from './annotation'
+
+import { applyClassName, applyRole, buildLineVariableKey, resolveSort } from '@root/utils'
 
 import styles from './index.module.scss'
 
@@ -25,7 +27,7 @@ export class NormalLineElement extends BaseLineElement {
 
   private container: HTMLDivElement
   private main: SyllableElement | PlainElement | null = null
-  private annotation: AnnotationElement | null = null
+  private annotations: Map<DomLyricPlayerConfig.Line.Normal.Slot, AnnotationBaseElement> = new Map()
 
   private readonly backgroundEnable: boolean
   private readonly syllableEnable: boolean
@@ -85,71 +87,90 @@ export class NormalLineElement extends BaseLineElement {
   private createMain() {
     return this.useSyllable ? new SyllableElement(this.context, this.content, this.backgroundEnable) : new PlainElement(this.content)
   }
-
-  private buildSyllable() {
-    this.removeSyllable()
+  private buildMain() {
+    this.disposeMain()
     this.main = this.createMain()
-    this.container.appendChild(this.main.element)
   }
-  private removeSyllable() {
+  private disposeMain() {
+    // dispose only tears down internal state, so detach the node here to keep it out of the container before a rebuild.
+    const previous = this.main?.element
     this.main?.dispose()
     this.main = null
-  }
-  // Rebuild the body in place when the syllable toggle flips, keeping it ahead of the annotation block.
-  private rebuildMain() {
-    const previous = this.main?.element
-    this.removeSyllable()
     previous?.remove()
-    this.main = this.createMain()
-    if (this.annotation) {
-      this.container.insertBefore(this.main.element, this.annotation.element)
-    } else {
-      this.container.appendChild(this.main.element)
-    }
   }
 
-  private buildAnnotation() {
-    this.removeAnnotation()
-    this.annotation = new AnnotationElement(this.context, this.content)
-    this.container.appendChild(this.annotation.element)
-  }
-  private removeAnnotation() {
-    this.annotation?.dispose()
-    this.annotation = null
-  }
   private get needShowAnnotation() {
     return this.context.config.line.normal.annotation.visible
+  }
+  private buildAnnotations() {
+    this.disposeAnnotations()
+    if (!this.needShowAnnotation) {
+      return
+    }
+    const config = this.context.config.line.normal.annotation
+    for (const descriptor of ANNOTATION_DESCRIPTORS) {
+      if (!descriptor.isEnabled(config)) {
+        continue
+      }
+      const element = descriptor.create(this.content)
+      // A line that simply has no such annotation contributes no row at all.
+      if (!element.hasContent) {
+        element.dispose()
+        continue
+      }
+      this.annotations.set(descriptor.slot, element)
+    }
+  }
+  private disposeAnnotations() {
+    for (const element of this.annotations.values()) {
+      element.dispose()
+    }
+    this.annotations.clear()
+  }
+
+  private resolveSlotElement(slot: DomLyricPlayerConfig.Line.Normal.Slot): HTMLElement | null {
+    if (slot === DomLyricPlayerConfig.Line.Normal.Slot.Main) {
+      return this.main?.element ?? null
+    }
+    return this.annotations.get(slot)?.element ?? null
+  }
+  // Re-append every present row in the configured order; `appendChild` moves existing nodes, so reordering never rebuilds them.
+  private applyOrder() {
+    for (const slot of resolveSort(this.context.config.line.normal.sort)) {
+      const element = this.resolveSlotElement(slot)
+      if (element) {
+        this.container.appendChild(element)
+      }
+    }
   }
 
   override updateConfig(keys?: DomLyricPlayerConfig.RootKeySet): void {
     super.updateConfig(keys)
 
     if (!keys) {
-      this.container.replaceChildren()
       this.applyClassName()
-      this.buildSyllable()
-      if (this.needShowAnnotation) {
-        this.buildAnnotation()
-      } else {
-        this.removeAnnotation()
-      }
+      this.buildMain()
+      this.buildAnnotations()
+      this.applyOrder()
       return
     }
 
-    if (keys.has('line.normal.annotation.visible')) {
-      if (this.needShowAnnotation && !this.annotation) {
-        this.buildAnnotation()
-      } else if (!this.needShowAnnotation && this.annotation) {
-        this.removeAnnotation()
-      }
-    }
+    const syllableToggled = keys.has('line.normal.syllable.enabled')
+    const annotationChanged =
+      keys.has('line.normal.annotation.visible') || keys.has('line.normal.annotation.translate') || keys.has('line.normal.annotation.roman')
 
-    if (keys.has('line.normal.syllable.enabled')) {
-      this.rebuildMain()
+    if (syllableToggled) {
+      this.buildMain()
+    }
+    if (annotationChanged) {
+      this.buildAnnotations()
+    }
+    // Reorder whenever a slot was rebuilt or the sort itself changed.
+    if (syllableToggled || annotationChanged || keys.has('line.normal.sort')) {
+      this.applyOrder()
     }
 
     this.main?.updateConfig(keys)
-    this.annotation?.updateConfig(keys)
   }
 
   override updateSize(): void {
@@ -175,8 +196,8 @@ export class NormalLineElement extends BaseLineElement {
   }
 
   override destroy() {
-    this.removeSyllable()
-    this.removeAnnotation()
+    this.disposeMain()
+    this.disposeAnnotations()
     super.destroy()
   }
 

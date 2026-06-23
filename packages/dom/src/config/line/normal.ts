@@ -415,9 +415,34 @@ export interface Annotation {
 }
 
 /**
+ * Renderable rows of a vocal line, used by {@link Root.sort} to lay them out top‑to‑bottom.
+ */
+export enum Slot {
+  /**
+   * The main vocal line (syllable or plain text).
+   */
+  Main = 'main',
+  /**
+   * The translation annotation row.
+   */
+  AnnotationTranslate = 'annotation-translate',
+  /**
+   * The romanization annotation row.
+   */
+  AnnotationRoman = 'annotation-roman',
+}
+
+/**
  * Configuration for vocal lyric lines.
  */
 export interface Root {
+  /**
+   * Top‑to‑bottom order of the main vocal line and its annotation rows.
+   * Only reorders; visibility stays governed by {@link Annotation} flags, and the main line is always shown.
+   * Unknown or duplicate slots are dropped and any missing slot is appended in canonical order, so the effective value is always a full permutation.
+   * @default [Slot.AnnotationRoman, Slot.Main, Slot.AnnotationTranslate]
+   */
+  sort?: readonly Slot[]
   /**
    * Base appearance of the main vocal line.
    */
