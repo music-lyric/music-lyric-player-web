@@ -80,6 +80,9 @@ const DEFAULT_ANNOTATION_FONT_SIZE = Math.round(DEFAULT_FONT_CONFIG.size! * 0.6)
  * Built‑in default configuration.
  *
  * Used as the fallback when a user‑supplied {@link Root} omits fields.
+ *
+ * This is intentionally a partial default set: syllable and annotation font / style are left unset so they inherit the parent line at runtime (resolved via CSS variable fallbacks in StyleManager).
+ * It is therefore typed as {@link Root} rather than {@link RootRequired}, and asserted back at the ConfigManager boundary.
  */
 export const DEFAULT: Root = freezeObjectDeep({
   container: {

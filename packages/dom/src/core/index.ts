@@ -37,6 +37,8 @@ export class DomLyricPlayer {
   private pendingIsSeek = false
 
   constructor(player: BaseLyricPlayer) {
+    // DEFAULT is a partial default set whose syllable and annotation styles inherit the parent line.
+    // It therefore cannot satisfy RootRequired structurally, so assert it at this boundary.
     const config = new ConfigManager(DomLyricPlayerConfig.DEFAULT as DomLyricPlayerConfig.RootRequired, {})
 
     const componentContext = new ComponentContext(config)
