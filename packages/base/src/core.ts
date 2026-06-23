@@ -71,8 +71,8 @@ export class BaseLyricPlayer {
     if (metaToggled || keys.has('offset.global')) {
       this.handleSyncTime()
     }
-    // Merge threshold changed: rebuild merged ends and re-match active lines.
-    if (keys.has('mergeWindow')) {
+    // Merge settings changed: rebuild merged ends and re-match active lines.
+    if (keys.has('mergeWindow') || keys.has('mergeLimit')) {
       this.handleBuildMergedLineEnd()
       this.handleSyncTime()
     }
@@ -125,16 +125,24 @@ export class BaseLyricPlayer {
     }
 
     const threshold = Math.max(0, this.config.current.mergeWindow)
+    // Cap on how many lines may fold into one batch; `0` or less means unbounded.
+    const rawLimit = this.config.current.mergeLimit
+    const limit = rawLimit > 0 ? rawLimit : Infinity
 
     let nextRaw = this.handleGetLineTime(count - 1)
     merged[count - 1] = nextRaw
+    // Lines accumulated in the current batch, counted back from its later end.
+    let batchSize = 1
     for (let i = count - 2; i >= 0; i--) {
       const raw = this.handleGetLineTime(i)
-      // Within threshold of the next line's deactivation: extend to the cluster's later end so they leave together; `max` guarantees a line is never cut short.
-      if (threshold > 0 && Math.abs(nextRaw - raw) < threshold) {
+      // Within threshold of the next line's deactivation and the batch still has room: extend to the cluster's later end so they leave together; `max` guarantees a line is never cut short.
+      if (threshold > 0 && batchSize < limit && Math.abs(nextRaw - raw) < threshold) {
         merged[i] = Math.max(raw, merged[i + 1])
+        batchSize++
       } else {
+        // Out of threshold, or the batch hit its cap: force-flush here so this line starts a fresh batch.
         merged[i] = raw
+        batchSize = 1
       }
       nextRaw = raw
     }

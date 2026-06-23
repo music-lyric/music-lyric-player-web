@@ -53,6 +53,16 @@ export interface Root {
    */
   mergeWindow?: number
   /**
+   * Maximum number of consecutive lines that {@link mergeWindow} may fold into a single deactivation batch.
+   *
+   * When a run of close‑ending lines is longer than this, the batch is force‑flushed every `mergeLimit` lines so no batch ever holds more than this many lines.
+   *
+   * A value of `0` or less removes the cap; `1` effectively disables merging.
+   *
+   * @default 3
+   */
+  mergeLimit?: number
+  /**
    * Lyric time offset settings.
    */
   offset?: Offset
@@ -82,6 +92,7 @@ export const DEFAULT: Root = freezeObjectDeep({
   driver: 'animation',
   bridgeActive: true,
   mergeWindow: 300,
+  mergeLimit: 3,
   offset: {
     global: 0,
     useMeta: true,

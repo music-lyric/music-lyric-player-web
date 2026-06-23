@@ -51,6 +51,7 @@ base.play(0)
 | `driver`                        | `'animation' \| 'timer'` | `'animation'` | Tick source. `animation` uses `requestAnimationFrame`; `timer` uses `setTimeout(16)`           |
 | `bridgeActive`                  | `boolean`                | `true`        | Promote lines sandwiched between active lines back to active so the block reads as continuous   |
 | `mergeWindow`                   | `number`                 | `300`         | Merge deactivation of consecutive lines whose end times fall within this many ms (`0` disables) |
+| `mergeLimit`                    | `number`                 | `3`           | Max lines per merge batch; longer runs force-flush every `mergeLimit` lines (`0` unbounded)     |
 | `offset.global`                 | `number`                 | `0`           | Global time offset in ms applied to every lyric                                                 |
 | `offset.useMeta`                | `boolean`                | `true`        | Apply the offset carried by the lyric's own meta (`MetaType.Offset`)                            |
 | `offset.resetTempOnLyricChange` | `boolean`                | `true`        | Reset the temp offset (set via `updateTempOffset`) to `0` when a new lyric loads                |
