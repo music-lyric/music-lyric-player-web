@@ -19,7 +19,7 @@ export type Padding =
   | `${PaddingValue} ${PaddingValue} ${PaddingValue} ${PaddingValue}`
 
 /**
- * Font appearance shared by lyric lines and their extended sub‑lines.
+ * Font appearance shared by lyric lines and their annotation sub‑lines.
  */
 export interface FontConfig {
   /**

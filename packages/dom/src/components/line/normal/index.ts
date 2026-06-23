@@ -5,7 +5,7 @@ import type { DomLyricPlayerConfig } from '@root/config'
 import { BaseLineElement, LineElementType, type LineElementStyle } from '../base'
 import { SyllableElement } from './syllable'
 import { PlainElement } from './plain'
-import { ExtendedElement } from './annotation'
+import { AnnotationElement } from './annotation'
 
 import { applyClassName, buildLineVariableKey } from '@root/utils'
 
@@ -23,7 +23,7 @@ export class NormalLineElement extends BaseLineElement {
 
   private container: HTMLDivElement
   private main: SyllableElement | PlainElement | null = null
-  private extended: ExtendedElement | null = null
+  private annotation: AnnotationElement | null = null
 
   private readonly backgroundEnable: boolean
   private readonly syllableEnable: boolean
@@ -92,30 +92,30 @@ export class NormalLineElement extends BaseLineElement {
     this.main?.dispose()
     this.main = null
   }
-  // Rebuild the body in place when the syllable toggle flips, keeping it ahead of the extended block.
+  // Rebuild the body in place when the syllable toggle flips, keeping it ahead of the annotation block.
   private rebuildMain() {
     const previous = this.main?.element
     this.removeSyllable()
     previous?.remove()
     this.main = this.createMain()
-    if (this.extended) {
-      this.container.insertBefore(this.main.element, this.extended.element)
+    if (this.annotation) {
+      this.container.insertBefore(this.main.element, this.annotation.element)
     } else {
       this.container.appendChild(this.main.element)
     }
   }
 
-  private buildExtended() {
-    this.removeExtended()
-    this.extended = new ExtendedElement(this.context, this.content)
-    this.container.appendChild(this.extended.element)
+  private buildAnnotation() {
+    this.removeAnnotation()
+    this.annotation = new AnnotationElement(this.context, this.content)
+    this.container.appendChild(this.annotation.element)
   }
-  private removeExtended() {
-    this.extended?.dispose()
-    this.extended = null
+  private removeAnnotation() {
+    this.annotation?.dispose()
+    this.annotation = null
   }
-  private get needShowExtended() {
-    return this.context.config.line.normal.extended.visible
+  private get needShowAnnotation() {
+    return this.context.config.line.normal.annotation.visible
   }
 
   override updateConfig(keys?: DomLyricPlayerConfig.RootKeySet): void {
@@ -125,10 +125,10 @@ export class NormalLineElement extends BaseLineElement {
       this.container.replaceChildren()
       this.applyClassName()
       this.buildSyllable()
-      if (this.needShowExtended) {
-        this.buildExtended()
+      if (this.needShowAnnotation) {
+        this.buildAnnotation()
       } else {
-        this.removeExtended()
+        this.removeAnnotation()
       }
       return
     }
@@ -137,11 +137,11 @@ export class NormalLineElement extends BaseLineElement {
       this.applyClassName()
     }
 
-    if (keys.has('line.normal.extended.visible')) {
-      if (this.needShowExtended && !this.extended) {
-        this.buildExtended()
-      } else if (!this.needShowExtended && this.extended) {
-        this.removeExtended()
+    if (keys.has('line.normal.annotation.visible')) {
+      if (this.needShowAnnotation && !this.annotation) {
+        this.buildAnnotation()
+      } else if (!this.needShowAnnotation && this.annotation) {
+        this.removeAnnotation()
       }
     }
 
@@ -150,7 +150,7 @@ export class NormalLineElement extends BaseLineElement {
     }
 
     this.main?.updateConfig(keys)
-    this.extended?.updateConfig(keys)
+    this.annotation?.updateConfig(keys)
   }
 
   override updateSize(): void {
@@ -177,7 +177,7 @@ export class NormalLineElement extends BaseLineElement {
 
   override destroy() {
     this.removeSyllable()
-    this.removeExtended()
+    this.removeAnnotation()
     super.destroy()
   }
 

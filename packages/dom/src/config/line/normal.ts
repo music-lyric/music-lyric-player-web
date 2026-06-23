@@ -15,7 +15,7 @@ export interface StateStyle extends StateStyleConfig {
 }
 
 /**
- * Common appearance shared by the main vocal line and its extended sub‑lines.
+ * Common appearance shared by the main vocal line and its annotation sub‑lines.
  */
 export interface Base {
   /**
@@ -369,7 +369,7 @@ export interface Syllable extends Base {
 /**
  * Translation sub‑line.
  *
- * Inherits from {@link Base}; values left unset fall back to `extended.base`.
+ * Inherits from {@link Base}; values left unset fall back to `annotation.base`.
  */
 export interface Translate extends Base {
   /**
@@ -382,7 +382,7 @@ export interface Translate extends Base {
 /**
  * Romanization (e.g. pinyin) sub‑line.
  *
- * Inherits from {@link Base}; values left unset fall back to `extended.base`.
+ * Inherits from {@link Base}; values left unset fall back to `annotation.base`.
  */
 export interface Roman extends Base {
   /**
@@ -393,19 +393,19 @@ export interface Roman extends Base {
 }
 
 /**
- * Extended sub‑lines rendered beneath the main vocal line
+ * Annotation sub‑lines rendered beneath the main vocal line
  * (translation and romanization).
  */
-export interface Extended {
+export interface Annotation {
   /**
-   * Master switch for all extended sub‑lines.
+   * Master switch for all annotation sub‑lines.
    * When `false`, both `translate` and `roman` are hidden regardless of their
    * individual `visible` settings.
    * @default true
    */
   visible?: boolean
   /**
-   * Shared base for all extended sub‑lines.
+   * Shared base for all annotation sub‑lines.
    * Each specific sub‑line inherits these values unless overridden.
    */
   base?: Base
@@ -432,7 +432,7 @@ export interface Root {
    */
   syllable?: Syllable
   /**
-   * Extended sub‑lines (translation / romanization).
+   * Annotation sub‑lines (translation / romanization).
    */
-  extended?: Extended
+  annotation?: Annotation
 }

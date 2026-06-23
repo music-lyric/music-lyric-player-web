@@ -74,7 +74,7 @@ const DEFAULT_FONT_CONFIG: FontConfig = {
   family: 'sans-serif',
 } as const
 
-const DEFAULT_EXTENDED_FONT_SIZE = Math.round(DEFAULT_FONT_CONFIG.size! * 0.6)
+const DEFAULT_ANNOTATION_FONT_SIZE = Math.round(DEFAULT_FONT_CONFIG.size! * 0.6)
 
 /**
  * Built‑in default configuration.
@@ -200,12 +200,12 @@ export const DEFAULT: Root = freezeObjectDeep({
           },
         },
       },
-      extended: {
+      annotation: {
         visible: true,
         base: {
           className: '',
           font: {
-            size: DEFAULT_EXTENDED_FONT_SIZE,
+            size: DEFAULT_ANNOTATION_FONT_SIZE,
           },
           style: {
             normal: {

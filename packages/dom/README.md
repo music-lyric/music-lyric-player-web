@@ -44,7 +44,7 @@ dom.config.update({
     normal: {
       base: { font: { size: 48 } },
       syllable: { animation: { float: { enabled: true, to: 2 }, mask: { enabled: true } } },
-      extended: { visible: true, translate: { visible: true }, roman: { visible: false } },
+      annotation: { visible: true, translate: { visible: true }, roman: { visible: false } },
     },
   },
 })

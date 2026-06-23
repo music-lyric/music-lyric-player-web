@@ -7,7 +7,7 @@ import { applyClassName } from '@root/utils'
 
 import styles from './index.module.scss'
 
-export class ExtendedElement {
+export class AnnotationElement {
   private context: ComponentContext
 
   private info: Lyric.LineNormal
@@ -22,11 +22,11 @@ export class ExtendedElement {
   }
 
   private buildClassName() {
-    applyClassName(this.content, [styles.extended])
+    applyClassName(this.content, [styles.annotation])
   }
 
   private buildContent() {
-    const config = this.context.config.line.normal.extended
+    const config = this.context.config.line.normal.annotation
     this.content.replaceChildren()
 
     if (config.translate.visible) {
@@ -63,7 +63,7 @@ export class ExtendedElement {
       return
     }
 
-    if (keys.has('line.normal.extended.translate') || keys.has('line.normal.extended.roman')) {
+    if (keys.has('line.normal.annotation.translate') || keys.has('line.normal.annotation.roman')) {
       this.buildContent()
     }
   }
