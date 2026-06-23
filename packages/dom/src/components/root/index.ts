@@ -3,7 +3,7 @@ import { createRandomHex } from '@music-lyric-player/utils'
 
 import styles from './index.module.scss'
 
-const INSTANCE_ATTRIBUTE = 'lyric-player-instance-id'
+const INSTANCE_ATTRIBUTE = 'data-instance-id'
 
 export class Root {
   private readonly id: string
@@ -31,7 +31,7 @@ export class Root {
   }
 
   /**
-   * Unique id of this player instance, also reflected on the root element via the `lyric-player-instance` attribute.
+   * Unique id of this player instance, also reflected on the root element via the `data-instance-id` attribute.
    */
   get instanceId() {
     return this.id

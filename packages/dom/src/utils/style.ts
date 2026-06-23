@@ -24,7 +24,7 @@ export const applyClassName = (element: HTMLDivElement, names: string[]) => {
 /**
  * Stable `data-role` values that tag each player element.
  * They form a public CSS hook, meant to be combined with the instance scope and state attributes.
- * @example `[lyric-player-instance-id] [data-role="line"][active]`
+ * @example `[data-instance-id] [data-role="line"][active]`
  */
 export const PlayerRole = {
   root: 'root',
