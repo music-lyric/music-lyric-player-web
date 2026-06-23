@@ -6,7 +6,7 @@ import type { LineElementStyle } from '../base'
 import { BaseLineElement, LineElementType } from '../base'
 import { Dot } from './dot'
 
-import { applyClassName } from '@root/utils'
+import { applyClassName, applyRole, PlayerRole } from '@root/utils'
 
 import styles from './index.module.scss'
 
@@ -41,7 +41,8 @@ export class InterludeLineElement extends BaseLineElement {
   }
 
   private buildClassName() {
-    applyClassName(this.container, [styles.interlude, this.context.config.line.interlude.className])
+    applyClassName(this.container, [styles.interlude])
+    applyRole(this.container, PlayerRole.interlude)
   }
 
   private buildAnimations() {
@@ -79,7 +80,7 @@ export class InterludeLineElement extends BaseLineElement {
   override updateConfig(keys?: DomLyricPlayerConfig.RootKeySet) {
     super.updateConfig(keys)
 
-    if (!keys || keys.has('line.interlude.className')) {
+    if (!keys) {
       this.buildClassName()
     }
 

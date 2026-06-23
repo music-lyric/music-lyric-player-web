@@ -4,7 +4,7 @@ import type { DomLyricPlayerConfig } from '@root/config'
 
 import { EmphasizeAnimation, FloatAnimation, MaskAnimation } from './animation'
 
-import { applyClassName } from '@root/utils'
+import { applyClassName, applyRole, PlayerRole } from '@root/utils'
 
 import styles from './index.module.scss'
 
@@ -58,6 +58,7 @@ export class WordElement {
     for (const char of this.wordInfo.content) {
       const span = document.createElement('span')
       span.classList.add(styles.char)
+      applyRole(span, PlayerRole.char)
       span.textContent = char
       fragment.appendChild(span)
       this.chars.push(span)
@@ -87,6 +88,7 @@ export class WordElement {
   updateConfig(keys?: DomLyricPlayerConfig.RootKeySet) {
     if (!keys) {
       applyClassName(this.dom, [styles.word])
+      applyRole(this.dom, PlayerRole.word)
     }
 
     this.animtion.float.updateConfig(keys)

@@ -1,4 +1,4 @@
-import { applyClassName } from '@root/utils'
+import { applyClassName, applyRole, PlayerRole } from '@root/utils'
 import { createRandomHex } from '@music-lyric-player/utils'
 
 import styles from './index.module.scss'
@@ -15,6 +15,7 @@ export class Root {
     this.dom = document.createElement('div')
     this.dom.setAttribute(INSTANCE_ATTRIBUTE, this.id)
     applyClassName(this.dom, [styles.root])
+    applyRole(this.dom, PlayerRole.root)
   }
 
   destroy() {

@@ -7,7 +7,7 @@ import { SyllableElement } from './syllable'
 import { PlainElement } from './plain'
 import { AnnotationElement } from './annotation'
 
-import { applyClassName, buildLineVariableKey } from '@root/utils'
+import { applyClassName, applyRole, PlayerRole, buildLineVariableKey } from '@root/utils'
 
 import styles from './index.module.scss'
 
@@ -38,6 +38,7 @@ export class NormalLineElement extends BaseLineElement {
     this.syllableEnable = isSyllable
 
     this.container = document.createElement('div')
+    applyRole(this.container, PlayerRole.normal)
     this.element.appendChild(this.container)
 
     this.updateConfig()
@@ -70,7 +71,7 @@ export class NormalLineElement extends BaseLineElement {
   }
 
   private applyClassName() {
-    const className = [styles.normal, this.context.config.line.normal.base.className, this.backgroundEnable ? styles.background : '']
+    const className = [styles.normal, this.backgroundEnable ? styles.background : '']
     applyClassName(this.container, className)
   }
 
@@ -131,10 +132,6 @@ export class NormalLineElement extends BaseLineElement {
         this.removeAnnotation()
       }
       return
-    }
-
-    if (keys.has('line.normal.base.className')) {
-      this.applyClassName()
     }
 
     if (keys.has('line.normal.annotation.visible')) {

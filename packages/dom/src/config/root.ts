@@ -145,7 +145,6 @@ export const DEFAULT: Root = freezeObjectDeep({
     animationWindow: 2,
     normal: {
       base: {
-        className: '',
         font: DEFAULT_FONT_CONFIG,
         style: {
           normal: {
@@ -164,7 +163,6 @@ export const DEFAULT: Root = freezeObjectDeep({
       },
       syllable: {
         enabled: true,
-        className: '',
         animation: {
           float: {
             enabled: true,
@@ -220,7 +218,6 @@ export const DEFAULT: Root = freezeObjectDeep({
       annotation: {
         visible: true,
         base: {
-          className: '',
           font: {
             size: DEFAULT_ANNOTATION_FONT_SIZE,
           },
@@ -235,16 +232,13 @@ export const DEFAULT: Root = freezeObjectDeep({
         },
         translate: {
           visible: true,
-          className: '',
         },
         roman: {
           visible: false,
-          className: '',
         },
       },
     },
     interlude: {
-      className: '',
       size: 16,
       style: {
         normal: {

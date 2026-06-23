@@ -47,12 +47,6 @@ interface StateStyleConfig {
  */
 export interface Root {
   /**
-   * Extra CSS class appended to the interlude container element.
-   *
-   * @default ""
-   */
-  className?: string
-  /**
    * Size of the indicator (e.g. dot diameter), in pixels.
    *
    * @default 16

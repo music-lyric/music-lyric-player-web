@@ -3,7 +3,7 @@ import type { DomLyricPlayerConfig } from '@root/config'
 
 import { Lyric } from '@music-lyric-kit/lyric'
 
-import { applyClassName } from '@root/utils'
+import { applyClassName, applyRole, PlayerRole } from '@root/utils'
 
 import styles from './index.module.scss'
 
@@ -23,6 +23,7 @@ export class AnnotationElement {
 
   private buildClassName() {
     applyClassName(this.content, [styles.annotation])
+    applyRole(this.content, PlayerRole.annotation)
   }
 
   private buildContent() {
@@ -35,8 +36,8 @@ export class AnnotationElement {
         const element = document.createElement('div')
         element.innerText = translate.content
 
-        const className = [styles.translate, config.translate.className]
-        applyClassName(element, className)
+        applyClassName(element, [styles.translate])
+        applyRole(element, PlayerRole.translation)
 
         this.content.appendChild(element)
       }
@@ -48,8 +49,8 @@ export class AnnotationElement {
         const element = document.createElement('div')
         element.innerText = roman.content
 
-        const className = [styles.roman, config.roman.className]
-        applyClassName(element, className)
+        applyClassName(element, [styles.roman])
+        applyRole(element, PlayerRole.romanization)
 
         this.content.appendChild(element)
       }

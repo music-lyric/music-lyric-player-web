@@ -19,11 +19,6 @@ export interface StateStyle extends StateStyleConfig {
  */
 export interface Base {
   /**
-   * Extra CSS class appended to this line element.
-   * @default ""
-   */
-  className?: string
-  /**
    * Font appearance.
    * Falls back to a higher‑level default if omitted.
    */

@@ -1,7 +1,7 @@
 import type { ComponentContext } from '@root/components/context'
 import type { DomLyricPlayerConfig } from '@root/config'
 
-import { applyClassName, buildLineVariableKey } from '@root/utils'
+import { applyClassName, applyRole, PlayerRole, buildLineVariableKey } from '@root/utils'
 
 import styles from './index.module.scss'
 
@@ -52,6 +52,8 @@ export abstract class BaseLineElement {
       position: '',
       style: {},
     }
+
+    applyRole(this.wrapper.dom, PlayerRole.line)
 
     this.wrapper.dom.addEventListener('click', this.handleClick)
     this.wrapper.dom.addEventListener('contextmenu', this.handleContextMenu)

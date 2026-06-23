@@ -1,6 +1,6 @@
 import type { ComponentContext } from '@root/components/context'
 
-import { applyClassName } from '@root/utils'
+import { applyClassName, applyRole, PlayerRole } from '@root/utils'
 
 import styles from './index.module.scss'
 
@@ -17,6 +17,7 @@ export class Dot {
   ) {
     this.dom = document.createElement('div')
     applyClassName(this.dom, [styles.dot])
+    applyRole(this.dom, PlayerRole.dot)
   }
 
   get element() {

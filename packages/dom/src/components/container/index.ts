@@ -1,7 +1,7 @@
 import { Event } from '@music-lyric-player/utils'
 import { ComponentContext } from '@root/components/context'
 
-import { applyClassName, buildRootVariableKey } from '@root/utils'
+import { applyClassName, applyRole, PlayerRole, buildRootVariableKey } from '@root/utils'
 
 import styles from './index.module.scss'
 
@@ -33,6 +33,7 @@ export class Container {
     this.isVisible = false
 
     this.dom = document.createElement('div')
+    applyRole(this.dom, PlayerRole.container)
 
     this.resizeObserver = new ResizeObserver(this.handleResize)
     this.intersectionObserver = new IntersectionObserver(this.handleIntersection)
