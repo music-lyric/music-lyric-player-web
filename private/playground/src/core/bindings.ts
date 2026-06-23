@@ -1,6 +1,6 @@
 import type { BaseLyricPlayerConfig, DomLyricPlayerConfig } from 'music-lyric-player'
 
-export type FieldType = 'number' | 'text' | 'select' | 'toggle' | 'padding'
+export type FieldType = 'number' | 'text' | 'select' | 'toggle' | 'padding' | 'order'
 
 export interface SelectOption {
   value: string
@@ -41,6 +41,13 @@ const SCROLL_MODES: SelectOption[] = [
 const DRIVER_MODES: SelectOption[] = [
   { value: 'animation', labelKey: 'settings.field.driverAnimation' },
   { value: 'timer', labelKey: 'settings.field.driverTimer' },
+]
+
+// The draggable slots of a normal line; the field value is a top-to-bottom permutation of these tokens.
+const LINE_SLOTS: SelectOption[] = [
+  { value: 'main', labelKey: 'settings.field.lineSlotMain' },
+  { value: 'annotation-translate', labelKey: 'settings.field.lineSlotTranslate' },
+  { value: 'annotation-roman', labelKey: 'settings.field.lineSlotRoman' },
 ]
 
 const stateFields = (prefix: string, includePlayed = false): GroupBinding[] => {
@@ -223,7 +230,14 @@ export const DOM_SECTIONS: SectionBinding[] = [
   {
     id: 'dom.line',
     titleKey: 'settings.section.line',
-    groups: [{ fields: [classNameField('dom.line')] }],
+    groups: [
+      {
+        fields: [
+          classNameField('dom.line'),
+          { path: 'dom.line.normal.sort', labelKey: 'settings.field.lineSort', type: 'order', options: LINE_SLOTS },
+        ],
+      },
+    ],
     children: [
       {
         id: 'dom.line.normal.base',

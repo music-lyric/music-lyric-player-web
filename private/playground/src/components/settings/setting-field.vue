@@ -1,8 +1,8 @@
 <template>
-  <div v-if="visible" :class="$style.row">
+  <div v-if="visible" :class="[$style.row, { [$style.rowBlock]: field.type === 'order' }]">
     <label :class="$style.rowLabel">{{ t(field.labelKey) }}</label>
 
-    <div :class="$style.rowControl">
+    <div :class="[$style.rowControl, { [$style.rowControlBlock]: field.type === 'order' }]">
       <template v-if="field.type === 'number'">
         <input
           :class="[$style.ctrl, $style.input]"
@@ -35,6 +35,15 @@
         />
       </template>
 
+      <template v-else-if="field.type === 'order'">
+        <SettingOrder
+          :options="field.options ?? []"
+          :model-value="value"
+          :default-value="resolvedDefault"
+          @update:model-value="settings.apply(field.path, $event)"
+        />
+      </template>
+
       <template v-else-if="field.type === 'toggle'">
         <button :class="[$style.toggle, { [$style.active]: !!effectiveValue }]" :aria-pressed="!!effectiveValue" @click="toggle">
           <span :class="$style.toggleThumb"></span>
@@ -54,6 +63,7 @@ import { useI18n } from '@root/composables/useI18n'
 import { resolveInheritedValue } from '@root/utils'
 
 import SettingSelect from './setting-select.vue'
+import SettingOrder from './setting-order.vue'
 
 const props = defineProps<{ field: FieldBinding }>()
 
@@ -105,6 +115,12 @@ const toggle = () => {
   padding: 4px 0;
 }
 
+.rowBlock {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
 .rowLabel {
   flex: 1;
   font-size: 13px;
@@ -125,6 +141,10 @@ const toggle = () => {
   @media (max-width: 480px) {
     width: 140px;
   }
+}
+
+.rowControlBlock {
+  width: 100%;
 }
 
 .ctrl {
