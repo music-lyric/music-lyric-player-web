@@ -429,45 +429,45 @@ export const DOM_SECTIONS: SectionBinding[] = [
         ],
       },
       {
-        id: 'dom.line.normal.extended',
-        titleKey: 'settings.section.lineNormalExtended',
+        id: 'dom.line.normal.annotation',
+        titleKey: 'settings.section.lineNormalAnnotation',
         groups: [
           {
             fields: [
-              { path: 'dom.line.normal.extended.visible', labelKey: 'settings.field.visible', type: 'toggle' },
-              classNameField('dom.line.normal.extended.base'),
+              { path: 'dom.line.normal.annotation.visible', labelKey: 'settings.field.visible', type: 'toggle' },
+              classNameField('dom.line.normal.annotation.base'),
             ],
           },
-          fontFields('dom.line.normal.extended.base'),
-          ...stateFields('dom.line.normal.extended.base', true),
+          fontFields('dom.line.normal.annotation.base'),
+          ...stateFields('dom.line.normal.annotation.base', true),
         ],
         children: [
           {
-            id: 'dom.line.normal.extended.translate',
-            titleKey: 'settings.section.lineNormalExtendedTranslate',
+            id: 'dom.line.normal.annotation.translate',
+            titleKey: 'settings.section.lineNormalAnnotationTranslate',
             groups: [
               {
                 fields: [
-                  { path: 'dom.line.normal.extended.translate.visible', labelKey: 'settings.field.visible', type: 'toggle' },
-                  classNameField('dom.line.normal.extended.translate'),
+                  { path: 'dom.line.normal.annotation.translate.visible', labelKey: 'settings.field.visible', type: 'toggle' },
+                  classNameField('dom.line.normal.annotation.translate'),
                 ],
               },
-              fontFields('dom.line.normal.extended.translate'),
-              ...stateFields('dom.line.normal.extended.translate', true),
+              fontFields('dom.line.normal.annotation.translate'),
+              ...stateFields('dom.line.normal.annotation.translate', true),
             ],
           },
           {
-            id: 'dom.line.normal.extended.roman',
-            titleKey: 'settings.section.lineNormalExtendedRoman',
+            id: 'dom.line.normal.annotation.roman',
+            titleKey: 'settings.section.lineNormalAnnotationRoman',
             groups: [
               {
                 fields: [
-                  { path: 'dom.line.normal.extended.roman.visible', labelKey: 'settings.field.visible', type: 'toggle' },
-                  classNameField('dom.line.normal.extended.roman'),
+                  { path: 'dom.line.normal.annotation.roman.visible', labelKey: 'settings.field.visible', type: 'toggle' },
+                  classNameField('dom.line.normal.annotation.roman'),
                 ],
               },
-              fontFields('dom.line.normal.extended.roman'),
-              ...stateFields('dom.line.normal.extended.roman', true),
+              fontFields('dom.line.normal.annotation.roman'),
+              ...stateFields('dom.line.normal.annotation.roman', true),
             ],
           },
         ],
