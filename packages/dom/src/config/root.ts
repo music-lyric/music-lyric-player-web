@@ -118,8 +118,22 @@ export const DEFAULT: Root = freezeObjectDeep({
     animation: {
       mode: Scroll.Animation.Mode.Smooth,
       duration: 500,
-      delay: 0,
       easing: 'ease',
+      smooth: {
+        delay: 0,
+      },
+      ripple: {
+        range: 5,
+        step: 40,
+      },
+      directional: {
+        range: 5,
+        step: 40,
+      },
+      stagger: {
+        range: 4,
+        step: 50,
+      },
     },
   },
 

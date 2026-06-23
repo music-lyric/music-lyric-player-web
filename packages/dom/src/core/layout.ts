@@ -66,25 +66,18 @@ export class LayoutManager {
   private calcTransition(offset: number, played: boolean, direction: number): TransitionResult {
     const config = this.context.config.current.scroll.animation
 
-    if (!config) {
-      return {
-        duration: 0,
-        delay: 0,
-      }
-    }
-
-    const duration = Math.max(config.duration ?? 0, 0)
+    const duration = Math.max(config.duration, 0)
 
     switch (config.mode) {
       case DomLyricPlayerConfig.Scroll.Animation.Mode.Smooth: {
         return {
           duration,
-          delay: Math.max(config.delay ?? 0, 0),
+          delay: Math.max(config.smooth.delay, 0),
         }
       }
       case DomLyricPlayerConfig.Scroll.Animation.Mode.Ripple: {
-        const step = Math.max(config.step ?? 20, 10)
-        const range = Math.max(config.range ?? 3, 1)
+        const step = Math.max(config.ripple.step, 10)
+        const range = Math.max(config.ripple.range, 1)
         const distance = Math.min(Math.abs(offset), range)
         const normalized = distance / range
         const eased = 1 - (1 - normalized) ** 2
@@ -95,8 +88,8 @@ export class LayoutManager {
         }
       }
       case DomLyricPlayerConfig.Scroll.Animation.Mode.Directional: {
-        const step = Math.max(config.step ?? 40, 10)
-        const range = Math.max(config.range ?? 5, 1)
+        const step = Math.max(config.directional.step, 10)
+        const range = Math.max(config.directional.range, 1)
         const distance = Math.min(Math.abs(offset), range)
         const normalized = distance / range
 
@@ -122,8 +115,8 @@ export class LayoutManager {
           }
         }
 
-        const range = Math.max(config.range ?? 4, 1)
-        const step = Math.max(config.step ?? 50, 1)
+        const range = Math.max(config.stagger.range, 1)
+        const step = Math.max(config.stagger.step, 1)
 
         const clamped = Math.max(-range, Math.min(range, offset))
         const result = (range + direction * clamped) * step

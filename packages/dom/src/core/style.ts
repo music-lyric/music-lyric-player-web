@@ -118,7 +118,7 @@ export class StyleManager {
       'container-fade-top': `${config.container.fade.top}`,
       'container-fade-bottom': `${config.container.fade.bottom}`,
       // scroll
-      'scroll-easing': scroll.animation?.easing,
+      'scroll-easing': scroll.animation.easing,
     }
 
     this.apply(result)

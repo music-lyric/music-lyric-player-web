@@ -17,15 +17,12 @@ export interface Root {
   /**
    * Transition animation used when the active line changes.
    *
-   * The mode controls how delays are distributed across nearby lines:
-   * - **Smooth**      — all lines move together (no cascade)
-   * - **Ripple**      — symmetric cascade outward from the active line
-   * - **Directional** — played lines move first, upcoming lines follow
-   * - **Stagger**     — legacy linear stagger; delay saturates at `range`
+   * `animation.mode` controls how delays are distributed across nearby lines;
+   * each mode reads its own parameter sub‑object. See {@link Animation.Root}.
    *
    * @default Smooth (duration 500ms, easing "ease", delay 0)
    */
-  animation?: Animation.Smooth | Animation.Ripple | Animation.Directional | Animation.Stagger
+  animation?: Animation.Root
 }
 
 export { Animation }

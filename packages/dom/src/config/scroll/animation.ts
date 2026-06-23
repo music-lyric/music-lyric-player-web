@@ -48,10 +48,9 @@ export enum Mode {
 }
 
 /**
- * Uniform (non‑cascade) scroll animation.
+ * Parameters for {@link Mode.Smooth} — a uniform, non‑cascade transition.
  */
-export interface Smooth extends Base {
-  mode: Mode.Smooth
+export interface Smooth {
   /**
    * Fixed delay before the transition starts, in `ms`.
    * @default 0
@@ -60,10 +59,10 @@ export interface Smooth extends Base {
 }
 
 /**
- * Symmetric cascade radiating outward from the active line.
+ * Parameters for {@link Mode.Ripple} — a symmetric cascade radiating outward
+ * from the active line.
  */
-export interface Ripple extends Base {
-  mode: Mode.Ripple
+export interface Ripple {
   /**
    * Offset (in line units) at which the per‑line delay saturates.
    * Lines with `|offset| ≥ range` all receive the maximum delay.
@@ -82,10 +81,10 @@ export interface Ripple extends Base {
 }
 
 /**
- * Asymmetric cascade: played lines move first, upcoming lines follow.
+ * Parameters for {@link Mode.Directional} — an asymmetric cascade where played
+ * lines move first and upcoming lines follow.
  */
-export interface Directional extends Base {
-  mode: Mode.Directional
+export interface Directional {
   /**
    * Offset (in line units) at which the per‑line delay saturates.
    *
@@ -103,7 +102,8 @@ export interface Directional extends Base {
 }
 
 /**
- * Linear, direction‑sensitive stagger cascade (legacy).
+ * Parameters for {@link Mode.Stagger} — a linear, direction‑sensitive stagger
+ * cascade (legacy).
  *
  * Delay formula:
  *   `delay = (range + sign × clampedOffset) × step`
@@ -113,8 +113,7 @@ export interface Directional extends Base {
  *
  * Output is clamped to `[0, 2 × range × step]` and is always a multiple of `step`.
  */
-export interface Stagger extends Base {
-  mode: Mode.Stagger
+export interface Stagger {
   /**
    * Offset (in line units) at which the delay saturates.
    *
@@ -129,4 +128,43 @@ export interface Stagger extends Base {
    * @minimum 1
    */
   step?: number
+}
+
+/**
+ * Viewport scroll transition animation.
+ *
+ * `mode` selects the active cascade strategy while every mode keeps its own
+ * parameters in a dedicated sub‑object. Switching modes therefore never leaks
+ * one mode's settings into another, and each mode carries its own defaults.
+ *
+ * Shared `duration` / `easing` (from {@link Base}) apply to every mode.
+ */
+export interface Root extends Base {
+  /**
+   * Active cascade mode. See {@link Mode}.
+   *
+   * - **Smooth**      — all lines move together (no cascade)
+   * - **Ripple**      — symmetric cascade outward from the active line
+   * - **Directional** — played lines move first, upcoming lines follow
+   * - **Stagger**     — legacy linear stagger; delay saturates at `range`
+   *
+   * @default Mode.Smooth
+   */
+  mode?: Mode
+  /**
+   * {@link Mode.Smooth} parameters.
+   */
+  smooth?: Smooth
+  /**
+   * {@link Mode.Ripple} parameters.
+   */
+  ripple?: Ripple
+  /**
+   * {@link Mode.Directional} parameters.
+   */
+  directional?: Directional
+  /**
+   * {@link Mode.Stagger} parameters.
+   */
+  stagger?: Stagger
 }
