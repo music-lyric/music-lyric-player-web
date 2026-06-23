@@ -126,6 +126,67 @@ base.updateLyric(result)
 base.play(0)
 ```
 
+## Custom Styling
+
+The config covers the common visual tweaks. For finer control, every internal element carries a stable `data-role` attribute and stateful nodes carry plain boolean attributes — together they are a public CSS contract you can target directly, with nothing hidden behind hashed class names.
+
+Each instance also reflects a unique `data-instance-id` on its root element, so you can scope rules to one player (via `dom.instanceId`) or match every instance with the bare `[data-instance-id]` selector.
+
+**Element roles** (nesting under a single line):
+
+```
+[data-role="root"] [data-instance-id]
+└─ [data-role="container"]
+   └─ [data-role="line"]
+      ├─ [data-role="normal"]              // a lyric line
+      │  ├─ [data-role="text"]             // main text; wraps words for syllable lyrics
+      │  │  └─ [data-role="word"]
+      │  │     └─ [data-role="char"]
+      │  └─ [data-role="annotation"]       // sub-lines beneath the main text
+      │     ├─ [data-role="translation"]
+      │     └─ [data-role="romanization"]
+      └─ [data-role="interlude"]           // interlude line (alternative to normal)
+         └─ [data-role="dot"]
+```
+
+**State attributes** (toggled at runtime — combine them in selectors):
+
+| Element | Attribute | Meaning |
+| --- | --- | --- |
+| `[data-role="line"]` | `active` | the line is currently being sung |
+| `[data-role="line"]` | `played` | the line has already been played |
+| `[data-role="line"]` | `animatable` | the line is inside the animation window |
+| `[data-role="line"]` | `position` | horizontal alignment (`left` / `center` / `right`), used in duet mode |
+| `[data-role="container"]` | `enable-fade` | container edge fade is enabled |
+| `[data-role="container"]` | `scrolling` | the user is scrolling |
+
+**Examples:**
+
+```css
+/* Glow on every character */
+[data-instance-id] [data-role="char"] {
+  text-shadow: 0 0 4px currentColor;
+}
+
+/* Emphasize the active line's text */
+[data-instance-id] [data-role="line"][active] [data-role="text"] {
+  font-weight: 700;
+}
+
+/* Dim lines that are already played */
+[data-instance-id] [data-role="line"][played] {
+  opacity: 0.5;
+}
+
+/* Tone down the translation sub-line */
+[data-instance-id] [data-role="translation"] {
+  font-size: 0.8em;
+  opacity: 0.7;
+}
+```
+
+Prefer your own class hooks? `container.className` and `line.className` remain in the config — set them to attach custom theme classes to the container and to every line.
+
 ## Packages
 
 | Package                                       | Description |

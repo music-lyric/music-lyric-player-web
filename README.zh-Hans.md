@@ -126,6 +126,67 @@ base.updateLyric(result)
 base.play(0)
 ```
 
+## 自定义样式
+
+配置项已覆盖常见的视觉调整。若需更精细的控制，每个内部元素都带有稳定的 `data-role` 属性，有状态的节点还会带上布尔属性——两者共同构成可直接编写 CSS 的公开契约，不存在隐藏在哈希类名背后的样式。
+
+每个实例还会在其根元素上反映唯一的 `data-instance-id`，因此你可以将规则限定到单个播放器（通过 `dom.instanceId`），或用裸选择器 `[data-instance-id]` 匹配所有实例。
+
+**元素角色**（单行内部的嵌套结构）：
+
+```
+[data-role="root"] [data-instance-id]
+└─ [data-role="container"]
+   └─ [data-role="line"]
+      ├─ [data-role="normal"]              // 一行歌词
+      │  ├─ [data-role="text"]             // 主文本，逐字歌词下包含 word
+      │  │  └─ [data-role="word"]
+      │  │     └─ [data-role="char"]
+      │  └─ [data-role="annotation"]       // 主文本下方的扩展行
+      │     ├─ [data-role="translation"]
+      │     └─ [data-role="romanization"]
+      └─ [data-role="interlude"]           // 间奏行（与 normal 互斥）
+         └─ [data-role="dot"]
+```
+
+**状态属性**（运行时切换，可在选择器中组合）：
+
+| 元素 | 属性 | 含义 |
+| --- | --- | --- |
+| `[data-role="line"]` | `active` | 当前正在演唱的行 |
+| `[data-role="line"]` | `played` | 已经播放过的行 |
+| `[data-role="line"]` | `animatable` | 处于动画窗口内的行 |
+| `[data-role="line"]` | `position` | 水平对齐（`left` / `center` / `right`），用于对唱模式 |
+| `[data-role="container"]` | `enable-fade` | 容器边缘羽化已开启 |
+| `[data-role="container"]` | `scrolling` | 用户正在滚动 |
+
+**示例：**
+
+```css
+/* 每个字符发光 */
+[data-instance-id] [data-role="char"] {
+  text-shadow: 0 0 4px currentColor;
+}
+
+/* 强调当前行的文本 */
+[data-instance-id] [data-role="line"][active] [data-role="text"] {
+  font-weight: 700;
+}
+
+/* 淡化已播放的行 */
+[data-instance-id] [data-role="line"][played] {
+  opacity: 0.5;
+}
+
+/* 弱化翻译扩展行 */
+[data-instance-id] [data-role="translation"] {
+  font-size: 0.8em;
+  opacity: 0.7;
+}
+```
+
+更想用自己的类名作为钩子？配置中保留了 `container.className` 与 `line.className`——设置它们即可为容器和每一行挂上自定义主题类。
+
 ## 包一览
 
 | 包名                                          | 说明       |
