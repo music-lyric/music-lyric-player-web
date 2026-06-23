@@ -27,9 +27,20 @@ export interface GroupBinding {
 export interface SectionBinding {
   id: string
   titleKey: string
+  // Lightweight sections set this false to render inline without a collapsible header.
+  collapsible?: boolean
   groups: GroupBinding[]
   children?: SectionBinding[]
 }
+
+/**
+ * Orders sections so inline (non-collapsible) ones stay on top and collapsible ones sink to the bottom.
+ * Stable within each partition, preserving the declared order.
+ */
+export const orderInlineFirst = (sections: SectionBinding[]): SectionBinding[] => [
+  ...sections.filter((s) => s.collapsible === false),
+  ...sections.filter((s) => s.collapsible !== false),
+]
 
 const SCROLL_MODES: SelectOption[] = [
   { value: 'smooth', labelKey: 'settings.field.scrollModeSmooth' },
@@ -103,6 +114,7 @@ export const BASE_SECTIONS: SectionBinding[] = [
   {
     id: 'base.player',
     titleKey: 'settings.section.basePlayer',
+    collapsible: false,
     groups: [
       {
         fields: [
@@ -128,6 +140,7 @@ export const DOM_SECTIONS: SectionBinding[] = [
   {
     id: 'dom.container',
     titleKey: 'settings.section.container',
+    collapsible: false,
     groups: [
       {
         fields: [
@@ -148,6 +161,7 @@ export const DOM_SECTIONS: SectionBinding[] = [
   {
     id: 'dom.layout',
     titleKey: 'settings.section.layout',
+    collapsible: false,
     groups: [
       {
         fields: [
@@ -169,6 +183,7 @@ export const DOM_SECTIONS: SectionBinding[] = [
   {
     id: 'dom.effect',
     titleKey: 'settings.section.effect',
+    collapsible: false,
     groups: [
       {
         titleKey: 'settings.group.scale',
@@ -191,6 +206,7 @@ export const DOM_SECTIONS: SectionBinding[] = [
   {
     id: 'dom.scroll',
     titleKey: 'settings.section.scroll',
+    collapsible: false,
     groups: [
       {
         fields: [{ path: 'dom.scroll.anchor', labelKey: 'settings.field.scrollAnchor', type: 'number', min: 0, max: 100, step: 1 }],
@@ -247,6 +263,7 @@ export const DOM_SECTIONS: SectionBinding[] = [
       {
         id: 'dom.line.normal.base',
         titleKey: 'settings.section.lineNormalBase',
+        collapsible: false,
         groups: [
           fontFields('dom.line.normal.base'),
           ...stateFields('dom.line.normal.base', true),
@@ -462,6 +479,7 @@ export const DOM_SECTIONS: SectionBinding[] = [
           {
             id: 'dom.line.normal.annotation.translate',
             titleKey: 'settings.section.lineNormalAnnotationTranslate',
+            collapsible: false,
             groups: [
               {
                 fields: [
@@ -475,6 +493,7 @@ export const DOM_SECTIONS: SectionBinding[] = [
           {
             id: 'dom.line.normal.annotation.roman',
             titleKey: 'settings.section.lineNormalAnnotationRoman',
+            collapsible: false,
             groups: [
               {
                 fields: [
@@ -490,6 +509,7 @@ export const DOM_SECTIONS: SectionBinding[] = [
       {
         id: 'dom.line.interlude',
         titleKey: 'settings.section.lineInterlude',
+        collapsible: false,
         groups: [
           {
             fields: [

@@ -1,6 +1,8 @@
 <template>
-  <div :class="[$style.section, $style[`level${level}`], { [$style.open]: open, [$style.hasChildren]: !!section.children?.length }]">
-    <button :class="$style.sectionHead" @click="toggle">
+  <div
+    :class="[$style.section, $style[`level${level}`], { [$style.open]: isOpen, [$style.hasChildren]: !!section.children?.length }]"
+  >
+    <button v-if="collapsible" :class="$style.sectionHead" type="button" @click="toggle">
       <span :class="$style.sectionChevron">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="9 18 15 12 9 6" />
@@ -8,17 +10,16 @@
       </span>
       <span :class="$style.sectionTitle">{{ t(section.titleKey) }}</span>
     </button>
+    <div v-else :class="[$style.sectionHead, $style.sectionHeadStatic]">
+      <span :class="$style.sectionMarker" aria-hidden="true"></span>
+      <span :class="$style.sectionTitle">{{ t(section.titleKey) }}</span>
+    </div>
 
-    <div v-show="open" :class="$style.sectionBody">
-      <div v-for="(group, i) in section.groups" :key="i" :class="[$style.group, { [$style.titled]: !!group.titleKey }]">
-        <div v-if="group.titleKey" :class="$style.groupTitle">{{ t(group.titleKey) }}</div>
-        <div :class="$style.groupRows">
-          <SettingField v-for="field in group.fields" :key="field.path" :field="field" />
-        </div>
-      </div>
+    <div v-show="isOpen" :class="$style.sectionBody">
+      <SettingGroup v-for="(group, i) in section.groups" :key="i" :group="group" />
 
       <div v-if="section.children?.length" :class="$style.sectionChildren">
-        <SettingSection v-for="child in section.children" :key="child.id" :section="child" :level="level + 1" />
+        <SettingSection v-for="child in orderedChildren" :key="child.id" :section="child" :level="level + 1" />
       </div>
     </div>
   </div>
@@ -27,19 +28,26 @@
 <script setup lang="ts">
 import type { SectionBinding } from '@root/core/bindings'
 
-import { ref } from 'vue'
-import { useI18n } from '@root/composables/useI18n'
+import SettingGroup from './setting-group.vue'
 
-import SettingField from './setting-field.vue'
+import { computed, ref } from 'vue'
+import { useI18n } from '@root/composables/useI18n'
+import { orderInlineFirst } from '@root/core/bindings'
 
 defineOptions({ name: 'SettingSection' })
 
-withDefaults(defineProps<{ section: SectionBinding; level?: number }>(), { level: 0 })
+const props = withDefaults(defineProps<{ section: SectionBinding; level?: number }>(), { level: 0 })
 
 const { t } = useI18n()
 
+// Lightweight sections render inline; only collapsible ones keep the click-to-open header.
+const collapsible = computed(() => props.section.collapsible !== false)
 const open = ref(false)
+const isOpen = computed(() => (collapsible.value ? open.value : true))
 const toggle = () => (open.value = !open.value)
+
+// Collapsible children sink below inline ones so folded items sit at the bottom of each level.
+const orderedChildren = computed(() => orderInlineFirst(props.section.children ?? []))
 </script>
 
 <style module lang="scss">
@@ -73,6 +81,14 @@ const toggle = () => (open.value = !open.value)
   }
 }
 
+.sectionHeadStatic {
+  cursor: default;
+
+  &:hover {
+    background: transparent;
+  }
+}
+
 .sectionChevron {
   display: inline-flex;
   align-items: center;
@@ -88,6 +104,22 @@ const toggle = () => (open.value = !open.value)
   }
 }
 
+.sectionMarker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+
+  &::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--color-primary);
+  }
+}
+
 .sectionTitle {
   font-size: 13px;
   font-weight: 600;
@@ -99,34 +131,6 @@ const toggle = () => (open.value = !open.value)
   display: flex;
   flex-direction: column;
   gap: 12px;
-}
-
-.group {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-
-  &.titled {
-    padding: 10px 12px 12px;
-    background: var(--color-bg-subtle);
-    border: 1px solid var(--color-border-soft);
-    border-radius: var(--radius-md);
-  }
-}
-
-.groupTitle {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-  margin-bottom: 4px;
-}
-
-.groupRows {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
 }
 
 .sectionChildren {
@@ -149,6 +153,10 @@ const toggle = () => (open.value = !open.value)
 
     &:hover {
       background: var(--color-bg-alt);
+    }
+
+    &.sectionHeadStatic:hover {
+      background: var(--color-bg-subtle);
     }
 
     .sectionTitle {

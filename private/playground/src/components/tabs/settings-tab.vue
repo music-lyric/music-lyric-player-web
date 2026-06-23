@@ -12,7 +12,7 @@
         </button>
       </header>
       <div :class="$style.sectionBody">
-        <SettingSection v-for="section in BASE_SECTIONS" :key="section.id" :section="section" />
+        <SettingSection v-for="section in orderedBase" :key="section.id" :section="section" />
       </div>
     </section>
 
@@ -28,7 +28,7 @@
         </button>
       </header>
       <div :class="$style.sectionBody">
-        <SettingSection v-for="section in DOM_SECTIONS" :key="section.id" :section="section" />
+        <SettingSection v-for="section in orderedDom" :key="section.id" :section="section" />
       </div>
     </section>
   </div>
@@ -41,12 +41,16 @@ import { BASE_SECTIONS, DOM_SECTIONS } from '@root/core/bindings'
 
 import { inject } from 'vue'
 import { useI18n } from '@root/composables/useI18n'
+import { orderInlineFirst } from '@root/core/bindings'
 
 import SettingSection from '@root/components/settings/setting-section.vue'
 
 const settings = inject<ReturnType<typeof useSettings>>('settings')!
 
 const { t } = useI18n()
+
+const orderedBase = orderInlineFirst(BASE_SECTIONS)
+const orderedDom = orderInlineFirst(DOM_SECTIONS)
 </script>
 
 <style module lang="scss">

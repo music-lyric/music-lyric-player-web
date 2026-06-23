@@ -31,7 +31,7 @@
           :options="field.options ?? []"
           :model-value="value"
           :default-value="resolvedDefault"
-          @update:model-value="settings.apply(field.path, $event)"
+          @update:model-value="apply"
         />
       </template>
 
@@ -40,14 +40,12 @@
           :options="field.options ?? []"
           :model-value="value"
           :default-value="resolvedDefault"
-          @update:model-value="settings.apply(field.path, $event)"
+          @update:model-value="apply"
         />
       </template>
 
       <template v-else-if="field.type === 'toggle'">
-        <button :class="[$style.toggle, { [$style.active]: !!effectiveValue }]" :aria-pressed="!!effectiveValue" @click="toggle">
-          <span :class="$style.toggleThumb"></span>
-        </button>
+        <SettingToggle :active="!!effectiveValue" @toggle="toggle" />
       </template>
     </div>
   </div>
@@ -57,13 +55,13 @@
 import type { FieldBinding } from '@root/core/bindings'
 import type { useSettings } from '@root/composables/useSettings'
 
-import { BaseLyricPlayerConfig, DomLyricPlayerConfig } from 'music-lyric-player'
-import { computed, inject } from 'vue'
-import { useI18n } from '@root/composables/useI18n'
-import { resolveInheritedValue } from '@root/utils'
-
 import SettingSelect from './setting-select.vue'
 import SettingOrder from './setting-order.vue'
+import SettingToggle from './setting-toggle.vue'
+
+import { computed, inject } from 'vue'
+import { useI18n } from '@root/composables/useI18n'
+import { useFieldValue } from '@root/composables/useFieldValue'
 
 const props = defineProps<{ field: FieldBinding }>()
 
@@ -71,15 +69,9 @@ const settings = inject<ReturnType<typeof useSettings>>('settings')!
 
 const { t } = useI18n()
 
-const value = computed(() => settings.get(props.field.path))
+const { value, resolvedDefault, effectiveValue, apply } = useFieldValue(() => props.field.path)
 
 const visible = computed(() => (props.field.showWhen ? props.field.showWhen(settings.current) : true))
-
-const DEFAULTS = { base: BaseLyricPlayerConfig.DEFAULT, dom: DomLyricPlayerConfig.DEFAULT }
-
-const resolvedDefault = computed(() => resolveInheritedValue(props.field.path, settings.current, DEFAULTS))
-
-const effectiveValue = computed(() => (value.value !== undefined ? value.value : resolvedDefault.value))
 
 const placeholder = computed(() => {
   if (props.field.placeholder !== undefined) return props.field.placeholder
@@ -90,19 +82,19 @@ const placeholder = computed(() => {
 
 const writeNumber = (raw: string) => {
   if (raw === '') {
-    settings.apply(props.field.path, undefined)
+    apply(undefined)
     return
   }
   const n = parseFloat(raw)
-  if (!Number.isNaN(n)) settings.apply(props.field.path, n)
+  if (!Number.isNaN(n)) apply(n)
 }
 
 const writeText = (raw: string) => {
-  settings.apply(props.field.path, raw === '' ? undefined : raw)
+  apply(raw === '' ? undefined : raw)
 }
 
 const toggle = () => {
-  settings.apply(props.field.path, !effectiveValue.value)
+  apply(!effectiveValue.value)
 }
 </script>
 
@@ -177,49 +169,5 @@ const toggle = () => {
 
 .input::placeholder {
   color: var(--color-text-muted);
-}
-
-.toggle {
-  position: relative;
-  width: 36px;
-  height: 20px;
-  background: var(--color-border-strong);
-  border: none;
-  border-radius: var(--radius-full);
-  padding: 0;
-  cursor: pointer;
-  transition: background var(--motion-fast);
-
-  &:hover {
-    background: var(--color-text-muted);
-  }
-
-  &.active {
-    background: var(--color-primary);
-
-    &:hover {
-      background: var(--color-primary-strong);
-    }
-
-    .toggleThumb {
-      left: 18px;
-    }
-  }
-
-  &:focus-visible {
-    box-shadow: var(--ring);
-  }
-}
-
-.toggleThumb {
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 16px;
-  height: 16px;
-  background: #fff;
-  border-radius: 50%;
-  transition: left var(--motion-fast);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
 }
 </style>
