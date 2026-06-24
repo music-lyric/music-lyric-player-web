@@ -1,3 +1,24 @@
+## v0.16.0 (2026-06-25)
+
+### Feature
+
+- bump lyric model version ([f6ad7d6](https://github.com/music-lyric/music-lyric-player-web/commit/f6ad7d6))
+- `dom`
+  - add annotation language preference ([e4a6c5f](https://github.com/music-lyric/music-lyric-player-web/commit/e4a6c5f))
+  - add per-word ruby ([ba9ab7c](https://github.com/music-lyric/music-lyric-player-web/commit/ba9ab7c))
+  - allow keyword font weight ([48b2fad](https://github.com/music-lyric/music-lyric-player-web/commit/48b2fad))
+  - change default annotation font sizes to em ([5d6071d](https://github.com/music-lyric/music-lyric-player-web/commit/5d6071d))
+  - add font size unit option ([338e59d](https://github.com/music-lyric/music-lyric-player-web/commit/338e59d))
+  - add per-word romanization ([0d68959](https://github.com/music-lyric/music-lyric-player-web/commit/0d68959))
+  - make vocal line row order configurable ([f8ca6aa](https://github.com/music-lyric/music-lyric-player-web/commit/f8ca6aa))
+
+### Refactor
+
+- `dom`
+  - regroup config ([edc3703](https://github.com/music-lyric/music-lyric-player-web/commit/edc3703))
+  - inline unit into font size ([7545739](https://github.com/music-lyric/music-lyric-player-web/commit/7545739))
+  - restructure normal line config under main ([90e3794](https://github.com/music-lyric/music-lyric-player-web/commit/90e3794))
+
 ## v0.15.0 (2026-06-23)
 
 ### Document
