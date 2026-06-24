@@ -11,6 +11,7 @@ export const PlayerRole = {
           self: 'line-normal-text-word',
           char: 'line-normal-text-word-char',
           roman: 'line-normal-text-word-roman',
+          ruby: 'line-normal-text-word-ruby',
         },
       },
       annotation: {

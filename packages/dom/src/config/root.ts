@@ -226,6 +226,12 @@ export const DEFAULT: Root = freezeObjectDeep({
                 size: '0.5em',
               },
             },
+            ruby: {
+              visible: true,
+              font: {
+                size: '0.5em',
+              },
+            },
           },
         },
       },

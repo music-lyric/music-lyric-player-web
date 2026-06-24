@@ -117,6 +117,7 @@ export class StyleManager {
       ...this.buildNormalLineConfig('normal-base', line.normal.base),
       ...this.buildNormalLineConfig('normal-main-syllable', line.normal.main.syllable, 'normal-base'),
       ...this.buildNormalLineConfig('normal-main-syllable-roman', line.normal.main.syllable.annotation.roman, 'normal-main-syllable'),
+      ...this.buildNormalLineConfig('normal-main-syllable-ruby', line.normal.main.syllable.annotation.ruby, 'normal-main-syllable'),
       ...this.buildNormalLineConfig('normal-annotation-base', line.normal.annotation.base, 'normal-base'),
       ...this.buildNormalLineConfig('normal-annotation-translate', line.normal.annotation.translate, 'normal-annotation-base'),
       ...this.buildNormalLineConfig('normal-annotation-roman', line.normal.annotation.roman, 'normal-annotation-base'),

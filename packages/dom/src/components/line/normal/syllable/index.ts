@@ -117,6 +117,7 @@ export class SyllableElement {
       keys.has('line.normal.main.syllable.word.animation.float') ||
       keys.has('line.normal.main.syllable.word.animation.emphasize') ||
       keys.has('line.normal.main.syllable.annotation.roman') ||
+      keys.has('line.normal.main.syllable.annotation.ruby') ||
       keys.has('line.normal.main.syllable.sort') ||
       keys.has('line.normal.main.syllable.annotation.gap')
     ) {
@@ -127,8 +128,17 @@ export class SyllableElement {
   }
 
   updateSize() {
+    // Measure all words, then pad each by the line's tallest upper rows so they share one baseline.
+    let maxUpperHeight = 0
     for (const word of this.words) {
       word.updateSize()
+      if (word.upperHeight > maxUpperHeight) {
+        maxUpperHeight = word.upperHeight
+      }
+    }
+
+    for (const word of this.words) {
+      word.applyAlignment(maxUpperHeight)
     }
     this.updateMaskInfo()
   }

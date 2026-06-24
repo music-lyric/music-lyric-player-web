@@ -17,11 +17,17 @@
   // Per-word horizontal gap (per side); 0 by default, set inline by WordElement from config when the word carries annotation rows.
   --word-gap: 0px;
 
-  // Stack the word and its per-word annotation rows in one column so the cell-level mask wipes them together.
+  // Top pad that lifts a word with shorter upper rows onto the shared baseline; set inline by WordElement.
+  --word-align-top: 0px;
+
+  // Stack the upper annotation rows, the word, then the lower rows in one column so the cell mask wipes them together.
   display: inline-flex;
   flex-direction: column;
-  // Align the word (and its rows) to the line's edge so the main text follows the configured alignment.
+  // Align the word and its rows to the line's edge so the main text follows the configured alignment.
   align-items: center;
+  // Top-align the cells and reserve each word's upper-rows shortfall so every word shares one baseline.
+  vertical-align: top;
+  padding-top: var(--word-align-top);
 
   // Cancel the inner word's emphasize padding (keeps layout put), then add the per-word gap when annotation rows are present.
   margin: calc(-1 * var(--emphasize-padding-vertical)) calc(var(--word-gap) - var(--emphasize-padding-horizontal));

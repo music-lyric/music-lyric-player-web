@@ -1,6 +1,8 @@
 import type { Roman } from './roman'
+import type { Ruby } from './ruby'
 
 export * from './roman'
+export * from './ruby'
 
 export interface Annotation {
   /**
@@ -13,4 +15,8 @@ export interface Annotation {
    * Per‑word romanization following each syllable.
    */
   roman?: Roman
+  /**
+   * Per‑word ruby (furigana) riding above each syllable.
+   */
+  ruby?: Ruby
 }

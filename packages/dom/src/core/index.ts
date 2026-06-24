@@ -118,11 +118,13 @@ export class DomLyricPlayer {
     this.styleManager.updateConfig(keys)
     this.lineManager.updateConfig(keys)
 
-    // Toggling the main render mode swaps the line body, and per-word romanization resizes each word cell, so both need a re-measure plus a forced play/pause pass to drive the updated elements.
+    // A render-mode swap, the per-word roman / ruby rows, or their order resizes the cells and shifts the baseline, so re-measure and force a play / pause pass.
     const updateSize =
       hasKeyContaining(keys, 'font') ||
       hasKeyContaining(keys, 'line.normal.main.use') ||
-      hasKeyContaining(keys, 'line.normal.main.syllable.annotation.roman')
+      hasKeyContaining(keys, 'line.normal.main.syllable.annotation.roman') ||
+      hasKeyContaining(keys, 'line.normal.main.syllable.annotation.ruby') ||
+      hasKeyContaining(keys, 'line.normal.main.syllable.sort')
     this.scheduleLayoutUpdate({ updateSize })
   }
 

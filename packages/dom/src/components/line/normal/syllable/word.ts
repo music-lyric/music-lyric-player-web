@@ -18,11 +18,17 @@ export class WordElement {
   // Outer cell hosts the mask + float and stacks the word with its annotation rows; the inner word holds the text / emphasize.
   private readonly cell: HTMLDivElement
   private readonly word: HTMLDivElement
+  private readonly size: {
+    width: number
+    height: number
+    // Cached height of the upper rows from the last layout pass.
+    upper: number
+  }
+
   private annotations: Map<WordSlot, WordAnnotationBaseElement> = new Map()
-
-  private readonly size: { width: number; height: number }
-
   private chars: HTMLSpanElement[] = []
+  // Annotation rows above the word; only these drive the baseline padding, so rows below the word keep no separate reference.
+  private upperRows: HTMLElement[] = []
 
   public readonly animation: {
     float: FloatAnimation
@@ -36,9 +42,11 @@ export class WordElement {
     private readonly lineInfo: Lyric.LineNormal,
     private readonly isBackground: boolean,
   ) {
-    this.cell = document.createElement('div')
     this.word = document.createElement('div')
-    this.size = { width: 0, height: 0 }
+    this.size = { width: 0, height: 0, upper: 0 }
+
+    this.cell = document.createElement('div')
+
     this.animation = {
       // Float hosts on the word so it lifts alone; the per-word annotation rows stay put. Mask hosts on the cell so the wipe covers word + annotations together.
       float: new FloatAnimation(this.word, this.context, this.wordInfo, this.lineInfo),
@@ -87,9 +95,6 @@ export class WordElement {
     }
   }
 
-  /**
-   * (Re)build the per-word annotation rows from the descriptors, dropping any the word does not carry.
-   */
   private buildAnnotations() {
     this.disposeAnnotations()
 
@@ -115,9 +120,6 @@ export class WordElement {
     this.annotations.clear()
   }
 
-  /**
-   * Reserve the configured horizontal gap from neighbouring words when this word carries annotation rows; flush otherwise.
-   */
   private applyGap() {
     if (this.annotations.size > 0) {
       // Split across both sides so two adjacent spaced words sit the configured distance apart.
@@ -128,26 +130,40 @@ export class WordElement {
     }
   }
 
-  /**
-   * Order the cell's children — the word text and its present annotation rows — by the configured word sort.
-   */
   private applyOrder() {
     const order = resolveWordSort(this.context.config.line.normal.main.syllable.sort)
+
     const nodes: HTMLElement[] = []
+    const upper: HTMLElement[] = []
+
+    let passedWord = false
     for (const slot of order) {
       if (slot === WordSlot.Word) {
+        passedWord = true
         nodes.push(this.word)
-      } else {
-        const element = this.annotations.get(slot)
-        if (element) {
-          nodes.push(element.element)
-        }
+        continue
+      }
+      const element = this.annotations.get(slot)
+      if (!element) {
+        continue
+      }
+      nodes.push(element.element)
+      if (!passedWord) {
+        upper.push(element.element)
       }
     }
-    this.cell.replaceChildren(...nodes)
 
-    // Align cells across the line by the word: an annotation row on top pins the word to the bottom, below pins it to the top.
-    this.cell.style.verticalAlign = order[0] === WordSlot.Word ? 'top' : 'bottom'
+    this.cell.replaceChildren(...nodes)
+    this.upperRows = upper
+  }
+
+  applyAlignment(maxUpperHeight: number) {
+    const pad = maxUpperHeight - this.size.upper
+    if (pad > 0) {
+      this.cell.style.setProperty('--word-align-top', `${pad}px`)
+    } else {
+      this.cell.style.removeProperty('--word-align-top')
+    }
   }
 
   updateStyle(isPlay: boolean, isActive: boolean, currentTime: number, relativeTime: number) {
@@ -157,9 +173,15 @@ export class WordElement {
   }
 
   updateSize() {
-    // Cell width feeds the wipe prefix sum; the word's own height feeds the mask feather.
+    // Cell width feeds the wipe prefix sum; the word height feeds the mask feather; the upper rows feed the baseline alignment.
     this.size.width = this.cell.clientWidth
     this.size.height = this.word.clientHeight
+
+    let height = 0
+    for (const row of this.upperRows) {
+      height += row.offsetHeight
+    }
+    this.size.upper = height
   }
 
   updateConfig(keys?: DomLyricPlayerConfig.RootKeySet) {
@@ -173,7 +195,8 @@ export class WordElement {
     this.animation.mask.updateConfig(keys)
 
     // Roman visibility / font / style rebuilds the rows; the sort only reorders them; the gap only re-spaces them.
-    const annotationsChanged = !keys || keys.has('line.normal.main.syllable.annotation.roman')
+    const annotationsChanged =
+      !keys || keys.has('line.normal.main.syllable.annotation.roman') || keys.has('line.normal.main.syllable.annotation.ruby')
     if (annotationsChanged) {
       this.buildAnnotations()
     } else if (keys.has('line.normal.main.syllable.annotation.gap')) {
@@ -216,6 +239,9 @@ export class WordElement {
   }
   get width() {
     return this.size.width
+  }
+  get upperHeight() {
+    return this.size.upper
   }
 
   get info() {

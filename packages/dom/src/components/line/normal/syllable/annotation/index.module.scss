@@ -11,3 +11,15 @@
     transition-duration: 0s;
   }
 }
+
+.word-ruby {
+  display: inline-block;
+  transition: opacity 0.8s ease;
+
+  @include apply-line-font('main-syllable-ruby');
+  @include apply-line-style('main-syllable-ruby');
+
+  [active] & {
+    transition-duration: 0s;
+  }
+}
