@@ -106,7 +106,7 @@ const fontFields = (prefix: string): GroupBinding => ({
   titleKey: 'settings.group.font',
   fields: [
     { path: `${prefix}.font.size`, labelKey: 'settings.field.fontSize', type: 'text', placeholder: '30px' },
-    { path: `${prefix}.font.weight`, labelKey: 'settings.field.fontWeight', type: 'number', min: 100, max: 900, step: 100 },
+    { path: `${prefix}.font.weight`, labelKey: 'settings.field.fontWeight', type: 'text', placeholder: '500' },
     { path: `${prefix}.font.family`, labelKey: 'settings.field.fontFamily', type: 'text' },
   ],
 })
