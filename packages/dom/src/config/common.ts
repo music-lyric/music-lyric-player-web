@@ -19,19 +19,23 @@ export type Padding =
   | `${PaddingValue} ${PaddingValue} ${PaddingValue} ${PaddingValue}`
 
 /**
+ * Font size: a bare number is treated as `px`, or an explicit CSS length string in `px`, `em` or `%`.
+ *
+ * @example 30
+ * @example "1.2em"
+ * @example "120%"
+ */
+export type FontSize = number | `${number}px` | `${number}em` | `${number}%`
+
+/**
  * Font appearance shared by lyric lines and their annotation sub‑lines.
  */
 export interface FontConfig {
   /**
-   * Font size, expressed in the unit given by {@link FontConfig.unit}.
+   * Font size; a bare number is treated as `px`.
    * @default 30
    */
-  size?: number
-  /**
-   * Unit applied to {@link FontConfig.size}.
-   * @default "px"
-   */
-  unit?: 'px' | 'em'
+  size?: FontSize
   /**
    * Font weight (`100`–`900`).
    * @default 500

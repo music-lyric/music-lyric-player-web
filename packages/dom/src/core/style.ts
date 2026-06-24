@@ -60,6 +60,14 @@ export class StyleManager {
     }
     return `${value}${unit}`
   }
+
+  /**
+   * Normalizes a font size into a CSS length, treating a bare number as `px` and passing length strings through unchanged.
+   */
+  private resolveFontSize(size: string | number | undefined) {
+    return typeof size === 'number' ? `${size}px` : size
+  }
+
   private buildNormalLineConfig(type: string, config: DomLyricPlayerConfig.Line.Normal.Base | undefined, fallbackType?: string) {
     if (!config) {
       return {}
@@ -71,7 +79,7 @@ export class StyleManager {
       [`line-${type}-active-opacity`]: this.buildNormalLineValue(fallbackType, config.style?.active?.opacity, 'active-opacity'),
       [`line-${type}-played-color`]: this.buildNormalLineValue(fallbackType, config.style?.played?.color, 'played-color'),
       [`line-${type}-played-opacity`]: this.buildNormalLineValue(fallbackType, config.style?.played?.opacity, 'played-opacity'),
-      [`line-${type}-font-size`]: this.buildNormalLineValue(fallbackType, config.font?.size, 'font-size', config.font?.unit ?? 'px'),
+      [`line-${type}-font-size`]: this.buildNormalLineValue(fallbackType, this.resolveFontSize(config.font?.size), 'font-size'),
       [`line-${type}-font-family`]: this.buildNormalLineValue(fallbackType, config.font?.family, 'font-family'),
       [`line-${type}-font-weight`]: this.buildNormalLineValue(fallbackType, config.font?.weight, 'font-weight'),
     }

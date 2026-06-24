@@ -69,14 +69,15 @@ export { Line, Effect, Scroll, Layout, Container }
 
 const DEFAULT_COLOR = '#000000' as const
 
+const DEFAULT_FONT_SIZE = 30
+
 const DEFAULT_FONT_CONFIG: FontConfig = {
-  size: 30,
-  unit: 'px',
+  size: DEFAULT_FONT_SIZE,
   weight: 500,
   family: 'sans-serif',
 } as const
 
-const DEFAULT_ANNOTATION_FONT_SIZE = Math.round(DEFAULT_FONT_CONFIG.size! * 0.6)
+const DEFAULT_ANNOTATION_FONT_SIZE = Math.round(DEFAULT_FONT_SIZE * 0.6)
 
 /**
  * Built‑in default configuration.
