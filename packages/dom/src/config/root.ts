@@ -71,6 +71,7 @@ const DEFAULT_COLOR = '#000000' as const
 
 const DEFAULT_FONT_CONFIG: FontConfig = {
   size: 30,
+  unit: 'px',
   weight: 500,
   family: 'sans-serif',
 } as const

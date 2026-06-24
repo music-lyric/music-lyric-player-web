@@ -23,10 +23,15 @@ export type Padding =
  */
 export interface FontConfig {
   /**
-   * Font size in `px`.
+   * Font size, expressed in the unit given by {@link FontConfig.unit}.
    * @default 30
    */
   size?: number
+  /**
+   * Unit applied to {@link FontConfig.size}.
+   * @default "px"
+   */
+  unit?: 'px' | 'em'
   /**
    * Font weight (`100`–`900`).
    * @default 500

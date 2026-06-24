@@ -71,7 +71,7 @@ export class StyleManager {
       [`line-${type}-active-opacity`]: this.buildNormalLineValue(fallbackType, config.style?.active?.opacity, 'active-opacity'),
       [`line-${type}-played-color`]: this.buildNormalLineValue(fallbackType, config.style?.played?.color, 'played-color'),
       [`line-${type}-played-opacity`]: this.buildNormalLineValue(fallbackType, config.style?.played?.opacity, 'played-opacity'),
-      [`line-${type}-font-size`]: this.buildNormalLineValue(fallbackType, config.font?.size, 'font-size', 'px'),
+      [`line-${type}-font-size`]: this.buildNormalLineValue(fallbackType, config.font?.size, 'font-size', config.font?.unit ?? 'px'),
       [`line-${type}-font-family`]: this.buildNormalLineValue(fallbackType, config.font?.family, 'font-family'),
       [`line-${type}-font-weight`]: this.buildNormalLineValue(fallbackType, config.font?.weight, 'font-weight'),
     }
