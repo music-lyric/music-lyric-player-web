@@ -84,6 +84,7 @@
   "settings.section.lineNormalBase": "常规行",
   "settings.section.lineNormalMain": "主行",
   "settings.section.lineNormalMainSyllableRoman": "逐字罗马音",
+  "settings.section.lineNormalMainSyllableRuby": "逐字假名",
   "settings.section.lineNormalAnnotation": "注解行",
   "settings.section.lineNormalAnnotationTranslate": "翻译",
   "settings.section.lineNormalAnnotationRoman": "注音/罗马音",

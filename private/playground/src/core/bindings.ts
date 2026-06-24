@@ -484,6 +484,18 @@ export const DOM_SECTIONS: SectionBinding[] = [
               ...stateFields('dom.line.normal.main.syllable.annotation.roman', true),
             ],
           },
+          {
+            id: 'dom.line.normal.main.syllable.annotation.ruby',
+            titleKey: 'settings.section.lineNormalMainSyllableRuby',
+            collapsible: false,
+            groups: [
+              {
+                fields: [{ path: 'dom.line.normal.main.syllable.annotation.ruby.visible', labelKey: 'settings.field.visible', type: 'toggle' }],
+              },
+              fontFields('dom.line.normal.main.syllable.annotation.ruby'),
+              ...stateFields('dom.line.normal.main.syllable.annotation.ruby', true),
+            ],
+          },
         ],
       },
       {

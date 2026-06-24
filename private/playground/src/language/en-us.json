@@ -84,6 +84,7 @@
   "settings.section.lineNormalBase": "Normal Line",
   "settings.section.lineNormalMain": "Main",
   "settings.section.lineNormalMainSyllableRoman": "Per-word Romanization",
+  "settings.section.lineNormalMainSyllableRuby": "Per-word Ruby",
   "settings.section.lineNormalAnnotation": "Annotation",
   "settings.section.lineNormalAnnotationTranslate": "Translation",
   "settings.section.lineNormalAnnotationRoman": "Romanization",
