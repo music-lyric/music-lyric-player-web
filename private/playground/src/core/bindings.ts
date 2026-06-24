@@ -284,7 +284,7 @@ export const DOM_SECTIONS: SectionBinding[] = [
             fields: [
               { path: 'dom.line.normal.main.use', labelKey: 'settings.field.mainUse', type: 'select', options: MAIN_USE_MODES },
               { path: 'dom.line.normal.main.syllable.sort', labelKey: 'settings.field.syllableSort', type: 'order', options: WORD_SLOTS },
-              { path: 'dom.line.normal.main.syllable.gap', labelKey: 'settings.field.syllableGap', type: 'number', min: 0, max: 50, step: 0.5 },
+              { path: 'dom.line.normal.main.syllable.annotation.gap', labelKey: 'settings.field.syllableGap', type: 'number', min: 0, max: 50, step: 0.5 },
             ],
           },
           fontFields('dom.line.normal.main.syllable'),
@@ -473,15 +473,15 @@ export const DOM_SECTIONS: SectionBinding[] = [
         ],
         children: [
           {
-            id: 'dom.line.normal.main.syllable.roman',
+            id: 'dom.line.normal.main.syllable.annotation.roman',
             titleKey: 'settings.section.lineNormalMainSyllableRoman',
             collapsible: false,
             groups: [
               {
-                fields: [{ path: 'dom.line.normal.main.syllable.roman.visible', labelKey: 'settings.field.visible', type: 'toggle' }],
+                fields: [{ path: 'dom.line.normal.main.syllable.annotation.roman.visible', labelKey: 'settings.field.visible', type: 'toggle' }],
               },
-              fontFields('dom.line.normal.main.syllable.roman'),
-              ...stateFields('dom.line.normal.main.syllable.roman', true),
+              fontFields('dom.line.normal.main.syllable.annotation.roman'),
+              ...stateFields('dom.line.normal.main.syllable.annotation.roman', true),
             ],
           },
         ],
