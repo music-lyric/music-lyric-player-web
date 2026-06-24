@@ -28,6 +28,14 @@ export type Padding =
 export type FontSize = number | `${number}px` | `${number}em` | `${number}%`
 
 /**
+ * Font weight: a numeric weight (`100`–`900`), or a CSS keyword.
+ *
+ * @example 500
+ * @example "bold"
+ */
+export type FontWeight = number | 'normal' | 'bold' | 'bolder' | 'lighter'
+
+/**
  * Font appearance shared by lyric lines and their annotation sub‑lines.
  */
 export interface FontConfig {
@@ -37,10 +45,10 @@ export interface FontConfig {
    */
   size?: FontSize
   /**
-   * Font weight (`100`–`900`).
+   * Font weight; a number in the `100`–`900` range, or a CSS keyword such as `"bold"`.
    * @default 500
    */
-  weight?: number
+  weight?: FontWeight
   /**
    * CSS `font-family` value.
    * @default "sans-serif"
