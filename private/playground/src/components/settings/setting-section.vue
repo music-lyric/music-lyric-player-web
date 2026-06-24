@@ -1,7 +1,5 @@
 <template>
-  <div
-    :class="[$style.section, $style[`level${level}`], { [$style.open]: isOpen, [$style.hasChildren]: !!section.children?.length }]"
-  >
+  <div :class="[$style.section, $style[`level${level}`], { [$style.open]: isOpen, [$style.hasChildren]: !!section.children?.length }]">
     <button v-if="collapsible" :class="$style.sectionHead" type="button" @click="toggle">
       <span :class="$style.sectionChevron">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -148,7 +146,7 @@ const orderedChildren = computed(() => orderInlineFirst(props.section.children ?
 
 .level1 {
   > .sectionHead {
-    padding-left: 28px;
+    padding-left: 22px;
     background: var(--color-bg-subtle);
 
     &:hover {
@@ -167,7 +165,7 @@ const orderedChildren = computed(() => orderInlineFirst(props.section.children ?
   }
 
   > .sectionBody {
-    padding-left: 28px;
+    padding-left: 22px;
   }
 
   &.open > .sectionHead .sectionTitle {
@@ -177,7 +175,7 @@ const orderedChildren = computed(() => orderInlineFirst(props.section.children ?
 
 .level2 {
   > .sectionHead {
-    padding-left: 44px;
+    padding-left: 26px;
 
     .sectionTitle {
       font-size: 12px;
@@ -187,7 +185,7 @@ const orderedChildren = computed(() => orderInlineFirst(props.section.children ?
   }
 
   > .sectionBody {
-    padding-left: 44px;
+    padding-left: 26px;
   }
 
   &.open > .sectionHead .sectionTitle {

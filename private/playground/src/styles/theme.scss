@@ -51,6 +51,13 @@
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
 }
 
+/* Wide screens give the sidebar more room so the settings panel can lay out as a master-detail view. */
+@media (min-width: 1024px) {
+  :root {
+    --sidebar-width: 600px;
+  }
+}
+
 *,
 *::before,
 *::after {
