@@ -69,15 +69,11 @@ export { Line, Effect, Scroll, Layout, Container }
 
 const DEFAULT_COLOR = '#000000' as const
 
-const DEFAULT_FONT_SIZE = 30
-
 const DEFAULT_FONT_CONFIG: FontConfig = {
-  size: DEFAULT_FONT_SIZE,
+  size: 30,
   weight: 500,
   family: 'sans-serif',
 } as const
-
-const DEFAULT_ANNOTATION_FONT_SIZE = Math.round(DEFAULT_FONT_SIZE * 0.6)
 
 /**
  * Built‑in default configuration.
@@ -226,6 +222,9 @@ export const DEFAULT: Root = freezeObjectDeep({
             gap: 3,
             roman: {
               visible: true,
+              font: {
+                size: '0.5em',
+              },
             },
           },
         },
@@ -234,7 +233,7 @@ export const DEFAULT: Root = freezeObjectDeep({
         visible: true,
         base: {
           font: {
-            size: DEFAULT_ANNOTATION_FONT_SIZE,
+            size: '0.6em',
           },
           style: {
             normal: {
