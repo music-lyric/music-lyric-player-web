@@ -1,4 +1,4 @@
-import type { Lyric } from '@music-lyric-kit/lyric'
+import { Lyric } from '@music-lyric-kit/lyric'
 
 export class Offset {
   private temp = 0
@@ -18,7 +18,7 @@ export class Offset {
       return
     }
 
-    const value = info.meta.offsets[0]?.value
+    const value = info.meta.first(Lyric.MetaType.Offset)?.value
     this.meta = typeof value === 'number' && Number.isFinite(value) ? value : 0
   }
 

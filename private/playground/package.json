@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "music-lyric-player": "workspace:*",
-    "music-lyric-kit": "^0.13.0",
+    "music-lyric-kit": "^0.14.0",
     "vue": "^3.5.34"
   },
   "devDependencies": {

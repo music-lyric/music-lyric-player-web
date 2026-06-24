@@ -48,8 +48,8 @@ importers:
   packages/base:
     dependencies:
       '@music-lyric-kit/lyric':
-        specifier: ^0.13.0
-        version: 0.13.0
+        specifier: ^0.14.0
+        version: 0.14.0
       '@music-lyric-player/utils':
         specifier: workspace:^
         version: link:../utils
@@ -64,8 +64,8 @@ importers:
   packages/dom:
     dependencies:
       '@music-lyric-kit/lyric':
-        specifier: ^0.13.0
-        version: 0.13.0
+        specifier: ^0.14.0
+        version: 0.14.0
       '@music-lyric-player/base':
         specifier: workspace:^
         version: link:../base
@@ -90,8 +90,8 @@ importers:
   private/playground:
     dependencies:
       music-lyric-kit:
-        specifier: ^0.13.0
-        version: 0.13.0
+        specifier: ^0.14.0
+        version: 0.14.0
       music-lyric-player:
         specifier: workspace:*
         version: link:../../main
@@ -305,41 +305,41 @@ packages:
   '@microsoft/tsdoc@0.16.0':
     resolution: {integrity: sha512-xgAyonlVVS+q7Vc7qLW0UrJU7rSFcETRWsqdXZtjzRU8dF+6CkozTK4V4y1LwOX7j8r/vHphjDeMeGI4tNGeGA==}
 
-  '@music-lyric-kit/core@0.13.0':
-    resolution: {integrity: sha512-oPqMrKHNGXvjE3VQorrqZmWLLKIyEZlCqLomxJCtU/X92paNy4XPVnZetZ9m8L9WAnNRAj0ZJtyyJ9qgqD8N7A==}
+  '@music-lyric-kit/core@0.14.0':
+    resolution: {integrity: sha512-Hv2UjJgLyEtTlGOgBlq6JiciOo38j7A7qgbw6S7qlUaEX/MHLeefeDJn5pPgce+hBBd1WK5pWi/8WWol+z04iA==}
 
-  '@music-lyric-kit/lyric@0.13.0':
-    resolution: {integrity: sha512-ndSGxvE3lvdKHWaBAWSj7sN8JSsDfbhLWUAu1NhvOzu91jE2u0XWE+MQnK/NH3LicP6vM6Kglxaq+cidhYYn7w==}
+  '@music-lyric-kit/lyric@0.14.0':
+    resolution: {integrity: sha512-KPd4VpTHqhjdzJYi5T0dS6ZDlTPAEmv13ds0flfkdpyD1MrVZyT8QLVAJ780ePYT8EjUFj0AIkJdQRdVQLRu0A==}
 
-  '@music-lyric-kit/plugin-format-lrc@0.13.0':
-    resolution: {integrity: sha512-1yHDWhKIbcxP7Kpt0VTxcnQmj4VhVpeaw5PLAMpg5auG7IjiUAUjyxbfXwosquPwqGib7l26clSizqj04wl0/Q==}
+  '@music-lyric-kit/plugin-format-lrc@0.14.0':
+    resolution: {integrity: sha512-6C9SqioioVUhIUh0rY2F6j4ygK6Q4P18r8npoYDtfWJEAdXe9dQtFX1M/paBoqRwiRmqqceQhOBNa5ChLSetCA==}
 
-  '@music-lyric-kit/plugin-format-ttml@0.13.0':
-    resolution: {integrity: sha512-yZmDr39mXoipd/dxIQVZKbfxnp2nDm+EfiCeiv1cwWoy30/gZxVX0a047ByLYldkavtsEIg1Rf7mMuJSsLfw+w==}
+  '@music-lyric-kit/plugin-format-ttml@0.14.0':
+    resolution: {integrity: sha512-JvFW0nuBcKiMTuLGOgaGU/UxsVY9VwEcgxXNrJmyIOrxneKYq3FrgVC66c+4HNfDaUbOjsGM8n7lZx06cow+BQ==}
 
-  '@music-lyric-kit/plugin-transform-agent@0.13.0':
-    resolution: {integrity: sha512-Ol2hHrXUe2E37/DiGFjK13zGggfGgrKPVtj/aA5yGCe/trEAnthr6Gsn/c+9x+mps0pITT9XUhbM+tnvdSeOEg==}
+  '@music-lyric-kit/plugin-transform-agent@0.14.0':
+    resolution: {integrity: sha512-DrNSZ9Jszahtd4PLLw5fYJk+hbKk0DvB/pQIPW+HVuHqAnZM2mNRs4O4IsHWdoClskF0Lc5qAoYvw7yHGf/lHQ==}
 
-  '@music-lyric-kit/plugin-transform-background@0.13.0':
-    resolution: {integrity: sha512-g5dYDKlK9ivT7VFWzI2Wc2fJSnWFfUyATayHbInk54cJbsoWlNKeqEc9SNL83O1Gwxvlj8Oxo4vQfZTa4aAg1Q==}
+  '@music-lyric-kit/plugin-transform-background@0.14.0':
+    resolution: {integrity: sha512-JFXcr9D+HAXolpFaWeVMgcIRWZqimdXV6heYSDO674DPQP7gaS1Xwn1HOEAHKKv2bwfEgzLgc/Z2IH5CF87pEQ==}
 
-  '@music-lyric-kit/plugin-transform-interlude@0.13.0':
-    resolution: {integrity: sha512-vknTXM6XoxwGDJfkzxfGjHW6R9/cZSMEDgV0M/juhpZ/SjSusvdD22F9GyB3NL/4+JC5BH3hQfpmVpi/Yg3DMQ==}
+  '@music-lyric-kit/plugin-transform-interlude@0.14.0':
+    resolution: {integrity: sha512-mDRBVLHq2pSX8AsHS2gwA6F6dFGxOiCzOoKgTUY5px5FW8EmnZxlMcfVcMVlRPYfsTP4kszQo0PcdV2bUP9BGQ==}
 
-  '@music-lyric-kit/plugin-transform-language@0.13.0':
-    resolution: {integrity: sha512-FPyW0r/OZ/1WTvb/m1f8J2rS1JjBIJ3T2Xknjoyv14hggVAGs+ung+5d/w30wKxZLzJjkX5hnZnjI1MCx6e/Rw==}
+  '@music-lyric-kit/plugin-transform-language@0.14.0':
+    resolution: {integrity: sha512-1Z+jhqQWkxp3Jb3l2eliQ8fE6lE55CZcXaB+Jmt/+xCFlThQ5ChjDV4WYG201euBpxMJgTLHSCT0sD7hjLBg+Q==}
 
-  '@music-lyric-kit/plugin-transform-pure@0.13.0':
-    resolution: {integrity: sha512-nzlf1au0Mp9erjQ/zWeZWckk0/GzuUDz0dGSQVEaVdLMX99L3jqcmVj0AM83lTNnxcW5/yuR9s/XgX/RHjWqzA==}
+  '@music-lyric-kit/plugin-transform-pure@0.14.0':
+    resolution: {integrity: sha512-9NKOWYzrSOeA3Mr/hwEKXVJSjis9+kG6Klir8l8nUAgqLculfPRtti/pbOX2UOahSvCPOYbgUqjmdls6W1j1Ag==}
 
-  '@music-lyric-kit/plugin-transform-space@0.13.0':
-    resolution: {integrity: sha512-+K0f42eMrfdw+O4wy5YZSa8m/C4kde82vcFI+0qm9cs1ffNfBzeSLt/y2aOF0qWMQhoAw6kIahcxousiqK4Duw==}
+  '@music-lyric-kit/plugin-transform-space@0.14.0':
+    resolution: {integrity: sha512-CPGd+Xjms/M5hisWhRPwp/MJ3DjUi5qCCRC+xCRoNDMYbjTIz0If+z6P003M62jVyRTNIdyXxFd627wj+m8IKg==}
 
-  '@music-lyric-kit/plugin-transform-stress@0.13.0':
-    resolution: {integrity: sha512-hqquzp31Mczq3Cb+wNEE9D2WMLT77KBEf7YQ3kDsoccQqev2XGdlMs1CEBtFpZunFJnARq9dzvUug9A0qVikVw==}
+  '@music-lyric-kit/plugin-transform-stress@0.14.0':
+    resolution: {integrity: sha512-K5yULhWs2FpNc41xpYGnlI96U6r4TW4Amcj5sotj4mR32TVBRBvwx4CRDGy3rd1b2aA1/kx/s0+XpISSh4f+BQ==}
 
-  '@music-lyric-kit/utils@0.13.0':
-    resolution: {integrity: sha512-JwCcBVQonnkHtUixmUPwMaV0rIqige5zv6sZAEEOZDIMddAnB2CVVRdkDJpgAAWGsGAe21fwG/kRsvcXPZdK7A==}
+  '@music-lyric-kit/utils@0.14.0':
+    resolution: {integrity: sha512-bFetWBr0ro4bWC32zi8gZ03Ig3heCugBk8lCxQIDj4OPkjYYxkkJaWzvK4u6hj+rcvzuuyMLdW6oOUsMu02vwg==}
 
   '@parcel/watcher-android-arm64@2.5.6':
     resolution: {integrity: sha512-YQxSS34tPF/6ZG7r/Ih9xy+kP/WwediEUsqmtf0cuCV5TPPKw/PQHRhueUo6JdeFJaqV3pyjm0GdYjZotbRt/A==}
@@ -917,8 +917,8 @@ packages:
   muggle-string@0.4.1:
     resolution: {integrity: sha512-VNTrAak/KhO2i8dqqnqnAHOa3cYBwXEZe9h+D5h/1ZqFSTEFHdM65lR7RoIqq3tBBYavsOXV84NoHXZ0AkPyqQ==}
 
-  music-lyric-kit@0.13.0:
-    resolution: {integrity: sha512-C8RDc3HMVEb0ta/8NVurkGlSeKSo6dqvPEQadpu8gps+YbXshpPp/obCvRYaIZvm2BbtXjKmMGICaIEcL2hqxg==}
+  music-lyric-kit@0.14.0:
+    resolution: {integrity: sha512-3CjNoygL9ANoRenwftOPRomeuIm9xQ9qBTQXYnMTcllhAUBIbJfwfns7aehiRLIQS682/iebWUwjwXyd9NCuwA==}
 
   nanoid@3.3.11:
     resolution: {integrity: sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==}
@@ -1276,70 +1276,70 @@ snapshots:
 
   '@microsoft/tsdoc@0.16.0': {}
 
-  '@music-lyric-kit/core@0.13.0':
+  '@music-lyric-kit/core@0.14.0':
     dependencies:
-      '@music-lyric-kit/lyric': 0.13.0
-      '@music-lyric-kit/utils': 0.13.0
+      '@music-lyric-kit/lyric': 0.14.0
+      '@music-lyric-kit/utils': 0.14.0
 
-  '@music-lyric-kit/lyric@0.13.0':
+  '@music-lyric-kit/lyric@0.14.0':
     dependencies:
-      '@music-lyric-kit/utils': 0.13.0
+      '@music-lyric-kit/utils': 0.14.0
 
-  '@music-lyric-kit/plugin-format-lrc@0.13.0':
+  '@music-lyric-kit/plugin-format-lrc@0.14.0':
     dependencies:
-      '@music-lyric-kit/core': 0.13.0
-      '@music-lyric-kit/lyric': 0.13.0
-      '@music-lyric-kit/utils': 0.13.0
+      '@music-lyric-kit/core': 0.14.0
+      '@music-lyric-kit/lyric': 0.14.0
+      '@music-lyric-kit/utils': 0.14.0
 
-  '@music-lyric-kit/plugin-format-ttml@0.13.0':
+  '@music-lyric-kit/plugin-format-ttml@0.14.0':
     dependencies:
-      '@music-lyric-kit/core': 0.13.0
-      '@music-lyric-kit/lyric': 0.13.0
-      '@music-lyric-kit/utils': 0.13.0
+      '@music-lyric-kit/core': 0.14.0
+      '@music-lyric-kit/lyric': 0.14.0
+      '@music-lyric-kit/utils': 0.14.0
 
-  '@music-lyric-kit/plugin-transform-agent@0.13.0':
+  '@music-lyric-kit/plugin-transform-agent@0.14.0':
     dependencies:
-      '@music-lyric-kit/core': 0.13.0
-      '@music-lyric-kit/lyric': 0.13.0
-      '@music-lyric-kit/utils': 0.13.0
+      '@music-lyric-kit/core': 0.14.0
+      '@music-lyric-kit/lyric': 0.14.0
+      '@music-lyric-kit/utils': 0.14.0
 
-  '@music-lyric-kit/plugin-transform-background@0.13.0':
+  '@music-lyric-kit/plugin-transform-background@0.14.0':
     dependencies:
-      '@music-lyric-kit/core': 0.13.0
-      '@music-lyric-kit/lyric': 0.13.0
-      '@music-lyric-kit/utils': 0.13.0
+      '@music-lyric-kit/core': 0.14.0
+      '@music-lyric-kit/lyric': 0.14.0
+      '@music-lyric-kit/utils': 0.14.0
 
-  '@music-lyric-kit/plugin-transform-interlude@0.13.0':
+  '@music-lyric-kit/plugin-transform-interlude@0.14.0':
     dependencies:
-      '@music-lyric-kit/core': 0.13.0
-      '@music-lyric-kit/lyric': 0.13.0
-      '@music-lyric-kit/utils': 0.13.0
+      '@music-lyric-kit/core': 0.14.0
+      '@music-lyric-kit/lyric': 0.14.0
+      '@music-lyric-kit/utils': 0.14.0
 
-  '@music-lyric-kit/plugin-transform-language@0.13.0':
+  '@music-lyric-kit/plugin-transform-language@0.14.0':
     dependencies:
-      '@music-lyric-kit/core': 0.13.0
-      '@music-lyric-kit/lyric': 0.13.0
-      '@music-lyric-kit/utils': 0.13.0
+      '@music-lyric-kit/core': 0.14.0
+      '@music-lyric-kit/lyric': 0.14.0
+      '@music-lyric-kit/utils': 0.14.0
 
-  '@music-lyric-kit/plugin-transform-pure@0.13.0':
+  '@music-lyric-kit/plugin-transform-pure@0.14.0':
     dependencies:
-      '@music-lyric-kit/core': 0.13.0
-      '@music-lyric-kit/lyric': 0.13.0
-      '@music-lyric-kit/utils': 0.13.0
+      '@music-lyric-kit/core': 0.14.0
+      '@music-lyric-kit/lyric': 0.14.0
+      '@music-lyric-kit/utils': 0.14.0
 
-  '@music-lyric-kit/plugin-transform-space@0.13.0':
+  '@music-lyric-kit/plugin-transform-space@0.14.0':
     dependencies:
-      '@music-lyric-kit/core': 0.13.0
-      '@music-lyric-kit/lyric': 0.13.0
-      '@music-lyric-kit/utils': 0.13.0
+      '@music-lyric-kit/core': 0.14.0
+      '@music-lyric-kit/lyric': 0.14.0
+      '@music-lyric-kit/utils': 0.14.0
 
-  '@music-lyric-kit/plugin-transform-stress@0.13.0':
+  '@music-lyric-kit/plugin-transform-stress@0.14.0':
     dependencies:
-      '@music-lyric-kit/core': 0.13.0
-      '@music-lyric-kit/lyric': 0.13.0
-      '@music-lyric-kit/utils': 0.13.0
+      '@music-lyric-kit/core': 0.14.0
+      '@music-lyric-kit/lyric': 0.14.0
+      '@music-lyric-kit/utils': 0.14.0
 
-  '@music-lyric-kit/utils@0.13.0':
+  '@music-lyric-kit/utils@0.14.0':
     dependencies:
       lodash-es: 4.18.1
 
@@ -1872,20 +1872,20 @@ snapshots:
 
   muggle-string@0.4.1: {}
 
-  music-lyric-kit@0.13.0:
+  music-lyric-kit@0.14.0:
     dependencies:
-      '@music-lyric-kit/core': 0.13.0
-      '@music-lyric-kit/lyric': 0.13.0
-      '@music-lyric-kit/plugin-format-lrc': 0.13.0
-      '@music-lyric-kit/plugin-format-ttml': 0.13.0
-      '@music-lyric-kit/plugin-transform-agent': 0.13.0
-      '@music-lyric-kit/plugin-transform-background': 0.13.0
-      '@music-lyric-kit/plugin-transform-interlude': 0.13.0
-      '@music-lyric-kit/plugin-transform-language': 0.13.0
-      '@music-lyric-kit/plugin-transform-pure': 0.13.0
-      '@music-lyric-kit/plugin-transform-space': 0.13.0
-      '@music-lyric-kit/plugin-transform-stress': 0.13.0
-      '@music-lyric-kit/utils': 0.13.0
+      '@music-lyric-kit/core': 0.14.0
+      '@music-lyric-kit/lyric': 0.14.0
+      '@music-lyric-kit/plugin-format-lrc': 0.14.0
+      '@music-lyric-kit/plugin-format-ttml': 0.14.0
+      '@music-lyric-kit/plugin-transform-agent': 0.14.0
+      '@music-lyric-kit/plugin-transform-background': 0.14.0
+      '@music-lyric-kit/plugin-transform-interlude': 0.14.0
+      '@music-lyric-kit/plugin-transform-language': 0.14.0
+      '@music-lyric-kit/plugin-transform-pure': 0.14.0
+      '@music-lyric-kit/plugin-transform-space': 0.14.0
+      '@music-lyric-kit/plugin-transform-stress': 0.14.0
+      '@music-lyric-kit/utils': 0.14.0
 
   nanoid@3.3.11: {}
 

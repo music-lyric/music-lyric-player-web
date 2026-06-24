@@ -1,4 +1,4 @@
-import type { Lyric } from '@music-lyric-kit/lyric'
+import { Lyric } from '@music-lyric-kit/lyric'
 
 import { PlayerRole } from '@root/constants'
 
@@ -12,6 +12,6 @@ export class AnnotationRomanElement extends AnnotationBaseElement {
   }
 
   protected override resolve(info: Lyric.LineNormal) {
-    return info.annotation.romans?.[0]?.content
+    return info.annotation.first(Lyric.LineAnnotationKind.Roman)?.content
   }
 }
