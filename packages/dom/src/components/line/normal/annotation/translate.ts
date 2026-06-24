@@ -7,11 +7,11 @@ import { AnnotationBaseElement } from './base'
 import styles from './index.module.scss'
 
 export class AnnotationTranslateElement extends AnnotationBaseElement {
-  constructor(info: Lyric.LineNormal) {
-    super(info, PlayerRole.line.normal.annotation.translation, styles.translate)
+  constructor(info: Lyric.LineNormal, language: Lyric.LanguageTag | undefined) {
+    super(info, language, PlayerRole.line.normal.annotation.translation, styles.translate)
   }
 
-  protected override resolve(info: Lyric.LineNormal) {
-    return info.annotation.first(Lyric.LineAnnotationKind.Translate)?.content
+  protected override resolve(info: Lyric.LineNormal, language: Lyric.LanguageTag | undefined) {
+    return info.annotation.first(Lyric.LineAnnotationKind.Translate, language)?.content
   }
 }

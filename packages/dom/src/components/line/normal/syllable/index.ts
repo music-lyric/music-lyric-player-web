@@ -113,13 +113,16 @@ export class SyllableElement {
     }
 
     // Per-word changes go to each word; a roman toggle resizes cells, so the mask regenerates on the next scheduled measure.
+    // Line-roman and base language changes reach here too, since per-word roman inherits them.
     if (
       keys.has('line.normal.main.syllable.word.animation.float') ||
       keys.has('line.normal.main.syllable.word.animation.emphasize') ||
       keys.has('line.normal.main.syllable.annotation.roman') ||
       keys.has('line.normal.main.syllable.annotation.ruby') ||
       keys.has('line.normal.main.syllable.sort') ||
-      keys.has('line.normal.main.syllable.annotation.gap')
+      keys.has('line.normal.main.syllable.annotation.gap') ||
+      keys.has('line.normal.annotation.roman.language') ||
+      keys.has('line.normal.base.language')
     ) {
       for (const word of this.words) {
         word.updateConfig(keys)

@@ -6,16 +6,17 @@ export abstract class WordAnnotationBaseElement {
   protected readonly content: HTMLDivElement
   private readonly text: string
 
-  constructor(info: Lyric.WordNormal, role: string, style: string) {
-    this.text = this.resolve(info) ?? ''
+  constructor(info: Lyric.WordNormal, language: Lyric.LanguageTag | undefined, role: string, style: string) {
+    this.text = this.resolve(info, language) ?? ''
 
     this.content = document.createElement('div')
     this.content.innerText = this.text
+
     applyClassName(this.content, [style])
     applyRole(this.content, role)
   }
 
-  protected abstract resolve(info: Lyric.WordNormal): string | undefined
+  protected abstract resolve(info: Lyric.WordNormal, language: Lyric.LanguageTag | undefined): string | undefined
 
   dispose() {
     this.content.remove()

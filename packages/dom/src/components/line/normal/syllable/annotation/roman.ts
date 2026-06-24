@@ -7,11 +7,17 @@ import { WordAnnotationBaseElement } from './base'
 import styles from './index.module.scss'
 
 export class WordRomanElement extends WordAnnotationBaseElement {
-  constructor(info: Lyric.WordNormal) {
-    super(info, PlayerRole.line.normal.text.word.roman, styles.wordRoman)
+  constructor(info: Lyric.WordNormal, language: Lyric.LanguageTag | undefined) {
+    super(info, language, PlayerRole.line.normal.text.word.roman, styles.wordRoman)
   }
 
-  protected override resolve(info: Lyric.WordNormal) {
-    return info.annotation?.romans?.[0]?.content
+  protected override resolve(info: Lyric.WordNormal, language: Lyric.LanguageTag | undefined) {
+    const romans = info.annotation?.romans
+    if (!romans || romans.length === 0) {
+      return undefined
+    }
+    // Prefer the item matching the resolved language, mirroring the line-level `first(kind, language)` fallback to the first.
+    const matched = language ? romans.find((item) => item.language === language) : undefined
+    return (matched ?? romans[0]).content
   }
 }

@@ -120,16 +120,16 @@ export class NormalLineElement extends BaseLineElement {
       return
     }
     const usePerWordRoman = this.usePerWordRoman
-    const config = this.context.config.line.normal.annotation
+    const normal = this.context.config.line.normal
     for (const descriptor of ANNOTATION_DESCRIPTORS) {
       // The line-level roman row yields its slot to per-word romanization when that is active.
       if (descriptor.slot === DomLyricPlayerConfig.Line.Normal.LineSlot.AnnotationRoman && usePerWordRoman) {
         continue
       }
-      if (!descriptor.isEnabled(config)) {
+      if (!descriptor.isEnabled(normal.annotation)) {
         continue
       }
-      const element = descriptor.create(this.content)
+      const element = descriptor.create(this.content, descriptor.language(normal))
       // A line that simply has no such annotation contributes no row at all.
       if (!element.hasContent) {
         element.dispose()
@@ -151,6 +151,7 @@ export class NormalLineElement extends BaseLineElement {
     }
     return this.annotations.get(slot)?.element ?? null
   }
+
   // Re-append every present row in the configured order; `appendChild` moves existing nodes, so reordering never rebuilds them.
   private applyOrder() {
     for (const slot of resolveSort(this.context.config.line.normal.sort)) {
@@ -173,19 +174,24 @@ export class NormalLineElement extends BaseLineElement {
     }
 
     const syllableToggled = keys.has('line.normal.main.use')
-    const perWordRomanChanged = keys.has('line.normal.main.syllable.annotation.roman')
-    const annotationChanged =
-      keys.has('line.normal.annotation.visible') || keys.has('line.normal.annotation.translate') || keys.has('line.normal.annotation.roman')
-
     if (syllableToggled) {
       this.buildMain()
     }
+
+    const romanChanged = keys.has('line.normal.main.syllable.annotation.roman')
+    const annotationChanged =
+      keys.has('line.normal.annotation.visible') ||
+      keys.has('line.normal.annotation.translate') ||
+      keys.has('line.normal.annotation.roman') ||
+      keys.has('line.normal.base.language')
+
     // The line-level roman slot tracks the per-word-roman verdict, which shifts with the main mode and the per-word roman config.
-    if (annotationChanged || syllableToggled || perWordRomanChanged) {
+    if (annotationChanged || syllableToggled || romanChanged) {
       this.buildAnnotations()
     }
+
     // Reorder whenever a slot was rebuilt or the sort itself changed.
-    if (syllableToggled || annotationChanged || perWordRomanChanged || keys.has('line.normal.sort')) {
+    if (syllableToggled || annotationChanged || romanChanged || keys.has('line.normal.sort')) {
       this.applyOrder()
     }
 

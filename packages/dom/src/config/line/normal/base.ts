@@ -1,3 +1,4 @@
+import type { Lyric } from '@music-lyric-kit/lyric'
 import type { FontConfig, StateStyleConfig, StyleConfig } from '../../common'
 
 /**
@@ -18,6 +19,11 @@ export interface StateStyle extends StateStyleConfig {
  * Common appearance shared by the main vocal line and its annotation sub‑lines.
  */
 export interface Base {
+  /**
+   * Preferred language tag for choosing among coexisting annotation contents (translation, romanization).
+   * Resolved most‑specific‑first down to this base, defaulting to the player's built‑in language.
+   */
+  language?: Lyric.LanguageTag
   /**
    * Font appearance.
    * Falls back to a higher‑level default if omitted.

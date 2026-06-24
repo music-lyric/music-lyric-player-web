@@ -98,12 +98,12 @@ export class WordElement {
   private buildAnnotations() {
     this.disposeAnnotations()
 
-    const syllable = this.context.config.line.normal.main.syllable
+    const normal = this.context.config.line.normal
     for (const descriptor of WORD_ANNOTATION_DESCRIPTORS) {
-      if (!descriptor.isEnabled(syllable)) {
+      if (!descriptor.isEnabled(normal.main.syllable)) {
         continue
       }
-      const element = descriptor.create(this.wordInfo)
+      const element = descriptor.create(this.wordInfo, descriptor.language(normal))
       if (!element.hasContent) {
         element.dispose()
         continue
@@ -194,14 +194,19 @@ export class WordElement {
     this.animation.float.updateConfig(keys)
     this.animation.mask.updateConfig(keys)
 
-    // Roman visibility / font / style rebuilds the rows; the sort only reorders them; the gap only re-spaces them.
     const annotationsChanged =
-      !keys || keys.has('line.normal.main.syllable.annotation.roman') || keys.has('line.normal.main.syllable.annotation.ruby')
+      !keys ||
+      keys.has('line.normal.main.syllable.annotation.roman') ||
+      keys.has('line.normal.main.syllable.annotation.ruby') ||
+      keys.has('line.normal.annotation.roman.language') ||
+      keys.has('line.normal.base.language')
+
     if (annotationsChanged) {
       this.buildAnnotations()
     } else if (keys.has('line.normal.main.syllable.annotation.gap')) {
       this.applyGap()
     }
+
     if (annotationsChanged || keys.has('line.normal.main.syllable.sort')) {
       this.applyOrder()
     }

@@ -8,7 +8,7 @@ import * as Layout from './layout'
 import * as Container from './container'
 
 import { freezeObjectDeep } from '@music-lyric-player/utils'
-import { DEFAULT_SORT, DEFAULT_WORD_SORT } from '@root/utils'
+import { DEFAULT_LANGUAGE, DEFAULT_SORT, DEFAULT_WORD_SORT } from '@root/utils'
 
 /**
  * Top‑level configuration of the lyric player.
@@ -145,6 +145,7 @@ export const DEFAULT: Root = freezeObjectDeep({
     normal: {
       sort: [...DEFAULT_SORT],
       base: {
+        language: DEFAULT_LANGUAGE,
         font: DEFAULT_FONT_CONFIG,
         style: {
           normal: {
