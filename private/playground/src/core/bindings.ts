@@ -73,6 +73,11 @@ const MAIN_USE_MODES: SelectOption[] = [
   { value: 'plain', labelKey: 'settings.field.mainUsePlain' },
 ]
 
+const FONT_UNITS: SelectOption[] = [
+  { value: 'px', labelKey: 'settings.field.fontUnitPx' },
+  { value: 'em', labelKey: 'settings.field.fontUnitEm' },
+]
+
 const stateFields = (prefix: string, includePlayed = false): GroupBinding[] => {
   const groups: GroupBinding[] = [
     {
@@ -106,6 +111,7 @@ const fontFields = (prefix: string): GroupBinding => ({
   titleKey: 'settings.group.font',
   fields: [
     { path: `${prefix}.font.size`, labelKey: 'settings.field.fontSize', type: 'number', min: 8, max: 200, step: 1 },
+    { path: `${prefix}.font.unit`, labelKey: 'settings.field.fontUnit', type: 'select', options: FONT_UNITS },
     { path: `${prefix}.font.weight`, labelKey: 'settings.field.fontWeight', type: 'number', min: 100, max: 900, step: 100 },
     { path: `${prefix}.font.family`, labelKey: 'settings.field.fontFamily', type: 'text' },
   ],
