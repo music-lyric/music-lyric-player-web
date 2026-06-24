@@ -73,6 +73,32 @@ const MAIN_USE_MODES: SelectOption[] = [
   { value: 'plain', labelKey: 'settings.field.mainUsePlain' },
 ]
 
+// Known language tags from the lyric model; each value matches a `Lyric.LanguageType` member.
+const LANGUAGES: SelectOption[] = [
+  { value: 'zh-hans', labelKey: 'settings.field.languageZhHans' },
+  { value: 'zh-hant', labelKey: 'settings.field.languageZhHant' },
+  { value: 'en', labelKey: 'settings.field.languageEn' },
+  { value: 'ja', labelKey: 'settings.field.languageJa' },
+  { value: 'ko', labelKey: 'settings.field.languageKo' },
+  { value: 'ru', labelKey: 'settings.field.languageRu' },
+  { value: 'fr', labelKey: 'settings.field.languageFr' },
+  { value: 'de', labelKey: 'settings.field.languageDe' },
+  { value: 'es', labelKey: 'settings.field.languageEs' },
+  { value: 'it', labelKey: 'settings.field.languageIt' },
+  { value: 'pt', labelKey: 'settings.field.languagePt' },
+]
+
+// Annotation rows can defer to the inherited language, so they prepend an explicit inherit option (empty value).
+const INHERIT_LANGUAGES: SelectOption[] = [{ value: '', labelKey: 'settings.field.languageInherit' }, ...LANGUAGES]
+
+// A language select bound to the given path; override rows allow inheriting, the base does not.
+const languageField = (path: string, inherit: boolean): FieldBinding => ({
+  path,
+  labelKey: 'settings.field.language',
+  type: 'select',
+  options: inherit ? INHERIT_LANGUAGES : LANGUAGES,
+})
+
 const stateFields = (prefix: string, includePlayed = false): GroupBinding[] => {
   const groups: GroupBinding[] = [
     {
@@ -272,6 +298,7 @@ export const DOM_SECTIONS: SectionBinding[] = [
         titleKey: 'settings.section.lineNormalBase',
         collapsible: false,
         groups: [
+          { fields: [languageField('dom.line.normal.base.language', false)] },
           fontFields('dom.line.normal.base'),
           ...stateFields('dom.line.normal.base', true),
         ],
@@ -284,7 +311,14 @@ export const DOM_SECTIONS: SectionBinding[] = [
             fields: [
               { path: 'dom.line.normal.main.use', labelKey: 'settings.field.mainUse', type: 'select', options: MAIN_USE_MODES },
               { path: 'dom.line.normal.main.syllable.sort', labelKey: 'settings.field.syllableSort', type: 'order', options: WORD_SLOTS },
-              { path: 'dom.line.normal.main.syllable.annotation.gap', labelKey: 'settings.field.syllableGap', type: 'number', min: 0, max: 50, step: 0.5 },
+              {
+                path: 'dom.line.normal.main.syllable.annotation.gap',
+                labelKey: 'settings.field.syllableGap',
+                type: 'number',
+                min: 0,
+                max: 50,
+                step: 0.5,
+              },
             ],
           },
           fontFields('dom.line.normal.main.syllable'),
@@ -366,7 +400,11 @@ export const DOM_SECTIONS: SectionBinding[] = [
           {
             titleKey: 'settings.group.emphasizeMain',
             fields: [
-              { path: 'dom.line.normal.main.syllable.word.animation.emphasize.effects.main.enabled', labelKey: 'settings.field.enabled', type: 'toggle' },
+              {
+                path: 'dom.line.normal.main.syllable.word.animation.emphasize.effects.main.enabled',
+                labelKey: 'settings.field.enabled',
+                type: 'toggle',
+              },
               {
                 path: 'dom.line.normal.main.syllable.word.animation.emphasize.effects.main.scale',
                 labelKey: 'settings.field.emphasizeMainScale',
@@ -406,7 +444,11 @@ export const DOM_SECTIONS: SectionBinding[] = [
           {
             titleKey: 'settings.group.emphasizeGlow',
             fields: [
-              { path: 'dom.line.normal.main.syllable.word.animation.emphasize.effects.glow.enabled', labelKey: 'settings.field.enabled', type: 'toggle' },
+              {
+                path: 'dom.line.normal.main.syllable.word.animation.emphasize.effects.glow.enabled',
+                labelKey: 'settings.field.enabled',
+                type: 'toggle',
+              },
               {
                 path: 'dom.line.normal.main.syllable.word.animation.emphasize.effects.glow.color',
                 labelKey: 'settings.field.emphasizeGlowColor',
@@ -438,7 +480,11 @@ export const DOM_SECTIONS: SectionBinding[] = [
           {
             titleKey: 'settings.group.emphasizeFloat',
             fields: [
-              { path: 'dom.line.normal.main.syllable.word.animation.emphasize.effects.float.enabled', labelKey: 'settings.field.enabled', type: 'toggle' },
+              {
+                path: 'dom.line.normal.main.syllable.word.animation.emphasize.effects.float.enabled',
+                labelKey: 'settings.field.enabled',
+                type: 'toggle',
+              },
               {
                 path: 'dom.line.normal.main.syllable.word.animation.emphasize.effects.float.amplitude',
                 labelKey: 'settings.field.emphasizeFloatAmplitude',
@@ -478,7 +524,10 @@ export const DOM_SECTIONS: SectionBinding[] = [
             collapsible: false,
             groups: [
               {
-                fields: [{ path: 'dom.line.normal.main.syllable.annotation.roman.visible', labelKey: 'settings.field.visible', type: 'toggle' }],
+                fields: [
+                  { path: 'dom.line.normal.main.syllable.annotation.roman.visible', labelKey: 'settings.field.visible', type: 'toggle' },
+                  languageField('dom.line.normal.main.syllable.annotation.roman.language', true),
+                ],
               },
               fontFields('dom.line.normal.main.syllable.annotation.roman'),
               ...stateFields('dom.line.normal.main.syllable.annotation.roman', true),
@@ -503,9 +552,7 @@ export const DOM_SECTIONS: SectionBinding[] = [
         titleKey: 'settings.section.lineNormalAnnotation',
         groups: [
           {
-            fields: [
-              { path: 'dom.line.normal.annotation.visible', labelKey: 'settings.field.visible', type: 'toggle' },
-            ],
+            fields: [{ path: 'dom.line.normal.annotation.visible', labelKey: 'settings.field.visible', type: 'toggle' }],
           },
           fontFields('dom.line.normal.annotation.base'),
           ...stateFields('dom.line.normal.annotation.base', true),
@@ -519,6 +566,7 @@ export const DOM_SECTIONS: SectionBinding[] = [
               {
                 fields: [
                   { path: 'dom.line.normal.annotation.translate.visible', labelKey: 'settings.field.visible', type: 'toggle' },
+                  languageField('dom.line.normal.annotation.translate.language', true),
                 ],
               },
               fontFields('dom.line.normal.annotation.translate'),
@@ -533,6 +581,7 @@ export const DOM_SECTIONS: SectionBinding[] = [
               {
                 fields: [
                   { path: 'dom.line.normal.annotation.roman.visible', labelKey: 'settings.field.visible', type: 'toggle' },
+                  languageField('dom.line.normal.annotation.roman.language', true),
                 ],
               },
               fontFields('dom.line.normal.annotation.roman'),
@@ -547,9 +596,7 @@ export const DOM_SECTIONS: SectionBinding[] = [
         collapsible: false,
         groups: [
           {
-            fields: [
-              { path: 'dom.line.interlude.size', labelKey: 'settings.field.interludeSize', type: 'number', min: 4, max: 64, step: 1 },
-            ],
+            fields: [{ path: 'dom.line.interlude.size', labelKey: 'settings.field.interludeSize', type: 'number', min: 4, max: 64, step: 1 }],
           },
           {
             titleKey: 'settings.group.normalState',
