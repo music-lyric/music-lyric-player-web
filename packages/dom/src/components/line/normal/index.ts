@@ -85,7 +85,7 @@ export class NormalLineElement extends BaseLineElement {
   }
 
   private get usePerWordRoman() {
-    if (!this.useSyllable || !this.context.config.line.normal.main.syllable.roman.visible) {
+    if (!this.useSyllable || !this.context.config.line.normal.main.syllable.annotation.roman.visible) {
       return false
     }
     for (const word of this.content.words) {
@@ -173,7 +173,7 @@ export class NormalLineElement extends BaseLineElement {
     }
 
     const syllableToggled = keys.has('line.normal.main.use')
-    const perWordRomanChanged = keys.has('line.normal.main.syllable.roman')
+    const perWordRomanChanged = keys.has('line.normal.main.syllable.annotation.roman')
     const annotationChanged =
       keys.has('line.normal.annotation.visible') || keys.has('line.normal.annotation.translate') || keys.has('line.normal.annotation.roman')
 

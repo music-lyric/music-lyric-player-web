@@ -169,7 +169,6 @@ export const DEFAULT: Root = freezeObjectDeep({
         use: 'syllable',
         syllable: {
           sort: [...DEFAULT_WORD_SORT],
-          gap: 3,
           word: {
             animation: {
               float: {
@@ -223,8 +222,11 @@ export const DEFAULT: Root = freezeObjectDeep({
               },
             },
           },
-          roman: {
-            visible: true,
+          annotation: {
+            gap: 3,
+            roman: {
+              visible: true,
+            },
           },
         },
       },

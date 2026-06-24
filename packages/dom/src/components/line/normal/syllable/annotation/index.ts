@@ -28,8 +28,8 @@ export interface WordAnnotationDescriptor {
 
 export const WORD_ANNOTATION_DESCRIPTORS: readonly WordAnnotationDescriptor[] = [
   {
-    slot: WordSlot.Roman,
-    isEnabled: (syllable) => syllable.roman.visible,
+    slot: WordSlot.AnnotationRoman,
+    isEnabled: (syllable) => syllable.annotation.roman.visible,
     create: (info) => new WordRomanElement(info),
   },
   // Ruby (furigana) row: reserved slot — wire a WordRubyElement here once word ruby rendering lands.

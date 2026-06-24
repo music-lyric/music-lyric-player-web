@@ -116,9 +116,9 @@ export class SyllableElement {
     if (
       keys.has('line.normal.main.syllable.word.animation.float') ||
       keys.has('line.normal.main.syllable.word.animation.emphasize') ||
-      keys.has('line.normal.main.syllable.roman') ||
+      keys.has('line.normal.main.syllable.annotation.roman') ||
       keys.has('line.normal.main.syllable.sort') ||
-      keys.has('line.normal.main.syllable.gap')
+      keys.has('line.normal.main.syllable.annotation.gap')
     ) {
       for (const word of this.words) {
         word.updateConfig(keys)

@@ -121,7 +121,7 @@ export class WordElement {
   private applyGap() {
     if (this.annotations.size > 0) {
       // Split across both sides so two adjacent spaced words sit the configured distance apart.
-      const half = this.context.config.line.normal.main.syllable.gap / 2
+      const half = this.context.config.line.normal.main.syllable.annotation.gap / 2
       this.cell.style.setProperty('--word-gap', `${half}px`)
     } else {
       this.cell.style.removeProperty('--word-gap')
@@ -173,10 +173,10 @@ export class WordElement {
     this.animation.mask.updateConfig(keys)
 
     // Roman visibility / font / style rebuilds the rows; the sort only reorders them; the gap only re-spaces them.
-    const annotationsChanged = !keys || keys.has('line.normal.main.syllable.roman')
+    const annotationsChanged = !keys || keys.has('line.normal.main.syllable.annotation.roman')
     if (annotationsChanged) {
       this.buildAnnotations()
-    } else if (keys.has('line.normal.main.syllable.gap')) {
+    } else if (keys.has('line.normal.main.syllable.annotation.gap')) {
       this.applyGap()
     }
     if (annotationsChanged || keys.has('line.normal.main.syllable.sort')) {

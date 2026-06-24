@@ -3,7 +3,7 @@ import { WordSlot } from '@root/config/line/normal/syllable'
 
 export const DEFAULT_SORT: LineSlot[] = [LineSlot.AnnotationRoman, LineSlot.Main, LineSlot.AnnotationTranslate]
 
-export const DEFAULT_WORD_SORT: WordSlot[] = [WordSlot.Roman, WordSlot.Word, WordSlot.Ruby]
+export const DEFAULT_WORD_SORT: WordSlot[] = [WordSlot.AnnotationRoman, WordSlot.Word, WordSlot.AnnotationRuby]
 
 /**
  * Normalize a partial order into a full permutation of `canonical`.

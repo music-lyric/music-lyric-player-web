@@ -122,7 +122,7 @@ export class DomLyricPlayer {
     const updateSize =
       hasKeyContaining(keys, 'font') ||
       hasKeyContaining(keys, 'line.normal.main.use') ||
-      hasKeyContaining(keys, 'line.normal.main.syllable.roman')
+      hasKeyContaining(keys, 'line.normal.main.syllable.annotation.roman')
     this.scheduleLayoutUpdate({ updateSize })
   }
 
