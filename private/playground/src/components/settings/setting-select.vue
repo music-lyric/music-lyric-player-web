@@ -75,11 +75,16 @@ const onOutside = (e: MouseEvent) => {
   close()
 }
 
-// The menu is fixed-positioned off the trigger rect, so any scroll/resize would desync it: just close.
-const onReposition = () => {
-  if (open.value) {
-    close()
+// The menu is fixed-positioned off the trigger rect, so an outside scroll or a resize desyncs it: close.
+// Scrolling the menu's own option list must not, so ignore events originating inside it.
+const onReposition = (e: Event) => {
+  if (!open.value) {
+    return
   }
+  if (e.target instanceof Node && menuEl.value?.contains(e.target)) {
+    return
+  }
+  close()
 }
 
 const bind = () => {
