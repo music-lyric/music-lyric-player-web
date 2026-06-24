@@ -1,8 +1,8 @@
-import type { Lyric } from '@music-lyric-kit/lyric'
 import type { ComponentContext } from '@root/components/context'
 import type { LineElementStyle } from '../base'
 import type { AnnotationBaseElement } from './annotation'
 
+import { Lyric } from '@music-lyric-kit/lyric'
 import { PlayerRole } from '@root/constants'
 import { DomLyricPlayerConfig } from '@root/config'
 
@@ -27,7 +27,7 @@ export class NormalLineElement extends BaseLineElement {
 
   private container: HTMLDivElement
   private main: SyllableElement | PlainElement | null = null
-  private annotations: Map<DomLyricPlayerConfig.Line.Normal.Slot, AnnotationBaseElement> = new Map()
+  private annotations: Map<DomLyricPlayerConfig.Line.Normal.LineSlot, AnnotationBaseElement> = new Map()
 
   private readonly backgroundEnable: boolean
   private readonly syllableEnable: boolean
@@ -84,6 +84,18 @@ export class NormalLineElement extends BaseLineElement {
     return this.syllableEnable && this.context.config.line.normal.main.use === 'syllable'
   }
 
+  private get usePerWordRoman() {
+    if (!this.useSyllable || !this.context.config.line.normal.main.syllable.roman.visible) {
+      return false
+    }
+    for (const word of this.content.words) {
+      if (word.type === Lyric.WordType.Normal && (word.annotation?.romans?.[0]?.content?.length ?? 0) > 0) {
+        return true
+      }
+    }
+    return false
+  }
+
   private createMain() {
     return this.useSyllable ? new SyllableElement(this.context, this.content, this.backgroundEnable) : new PlainElement(this.content)
   }
@@ -107,8 +119,13 @@ export class NormalLineElement extends BaseLineElement {
     if (!this.needShowAnnotation) {
       return
     }
+    const usePerWordRoman = this.usePerWordRoman
     const config = this.context.config.line.normal.annotation
     for (const descriptor of ANNOTATION_DESCRIPTORS) {
+      // The line-level roman row yields its slot to per-word romanization when that is active.
+      if (descriptor.slot === DomLyricPlayerConfig.Line.Normal.LineSlot.AnnotationRoman && usePerWordRoman) {
+        continue
+      }
       if (!descriptor.isEnabled(config)) {
         continue
       }
@@ -128,8 +145,8 @@ export class NormalLineElement extends BaseLineElement {
     this.annotations.clear()
   }
 
-  private resolveSlotElement(slot: DomLyricPlayerConfig.Line.Normal.Slot): HTMLElement | null {
-    if (slot === DomLyricPlayerConfig.Line.Normal.Slot.Main) {
+  private resolveSlotElement(slot: DomLyricPlayerConfig.Line.Normal.LineSlot): HTMLElement | null {
+    if (slot === DomLyricPlayerConfig.Line.Normal.LineSlot.Main) {
       return this.main?.element ?? null
     }
     return this.annotations.get(slot)?.element ?? null
@@ -156,17 +173,19 @@ export class NormalLineElement extends BaseLineElement {
     }
 
     const syllableToggled = keys.has('line.normal.main.use')
+    const perWordRomanChanged = keys.has('line.normal.main.syllable.roman')
     const annotationChanged =
       keys.has('line.normal.annotation.visible') || keys.has('line.normal.annotation.translate') || keys.has('line.normal.annotation.roman')
 
     if (syllableToggled) {
       this.buildMain()
     }
-    if (annotationChanged) {
+    // The line-level roman slot tracks the per-word-roman verdict, which shifts with the main mode and the per-word roman config.
+    if (annotationChanged || syllableToggled || perWordRomanChanged) {
       this.buildAnnotations()
     }
     // Reorder whenever a slot was rebuilt or the sort itself changed.
-    if (syllableToggled || annotationChanged || keys.has('line.normal.sort')) {
+    if (syllableToggled || annotationChanged || perWordRomanChanged || keys.has('line.normal.sort')) {
       this.applyOrder()
     }
 

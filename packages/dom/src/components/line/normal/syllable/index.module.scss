@@ -4,7 +4,7 @@
   @include apply-line-font('main-syllable');
 }
 
-.word {
+.word-cell {
   // The two mask stops multiply the word's own opacity, resolved from the configured syllable opacities:
   // - unsung side defaults to 1 and is pulled down to normal/active on the active line below.
   // - sung side carries the active opacity.
@@ -14,24 +14,47 @@
   --emphasize-padding-horizontal: 0px;
   --emphasize-padding-vertical: 0px;
 
-  display: inline-block;
-  transition: opacity 0.8s ease;
+  // Per-word horizontal gap (per side); 0 by default, set inline by WordElement from config when the word carries annotation rows.
+  --word-gap: 0px;
 
-  padding: var(--emphasize-padding-vertical) var(--emphasize-padding-horizontal);
-  margin: calc(-1 * var(--emphasize-padding-vertical)) calc(-1 * var(--emphasize-padding-horizontal));
+  // Stack the word and its per-word annotation rows in one column so the cell-level mask wipes them together.
+  display: inline-flex;
+  flex-direction: column;
+  // Align the word (and its rows) to the line's edge so the main text follows the configured alignment.
+  align-items: center;
+
+  // Cancel the inner word's emphasize padding (keeps layout put), then add the per-word gap when annotation rows are present.
+  margin: calc(-1 * var(--emphasize-padding-vertical)) calc(var(--word-gap) - var(--emphasize-padding-horizontal));
 
   mask-mode: alpha;
   mask-repeat: no-repeat;
 
-  @include apply-line-style('main-syllable');
+  :is([position='left']) & {
+    align-items: flex-start;
+  }
+  :is([position='right']) & {
+    align-items: flex-end;
+  }
 
   // On the singing line the base opacity is the active opacity, so pull the unsung side back down to normal brightness.
-  // Switch opacity instantly here (no fade) so unsung syllables hold normal brightness while the wipe reveals them
-  // word by word, instead of the whole line fading up and fighting the wipe. The fade-out on leaving active is kept above.
   [active] & {
     --mask-normal-opacity: calc(
       #{build-line-variable('normal', 'main-syllable', 'opacity')} / #{build-line-variable('normal', 'main-syllable-active', 'opacity')}
     );
+  }
+}
+
+.word {
+  display: inline-block;
+  transition: opacity 0.8s ease;
+
+  // Padded room for the emphasize scale / glow; the emphasize padding vars are inherited from `.word-cell`, whose negative margin keeps the layout box unchanged.
+  padding: var(--emphasize-padding-vertical) var(--emphasize-padding-horizontal);
+
+  @include apply-line-style('main-syllable');
+
+  // Switch opacity instantly on the active line (no fade) so unsung syllables hold normal brightness while the wipe reveals them word by word.
+  [active] & {
     transition-duration: 0s;
   }
 }

@@ -118,8 +118,11 @@ export class DomLyricPlayer {
     this.styleManager.updateConfig(keys)
     this.lineManager.updateConfig(keys)
 
-    // Toggling the main render mode swaps the line body, so re-measure and force a play/pause pass to drive the new element.
-    const updateSize = hasKeyContaining(keys, 'font') || hasKeyContaining(keys, 'line.normal.main.use')
+    // Toggling the main render mode swaps the line body, and per-word romanization resizes each word cell, so both need a re-measure plus a forced play/pause pass to drive the updated elements.
+    const updateSize =
+      hasKeyContaining(keys, 'font') ||
+      hasKeyContaining(keys, 'line.normal.main.use') ||
+      hasKeyContaining(keys, 'line.normal.main.syllable.roman')
     this.scheduleLayoutUpdate({ updateSize })
   }
 

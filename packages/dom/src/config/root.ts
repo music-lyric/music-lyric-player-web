@@ -8,7 +8,7 @@ import * as Layout from './layout'
 import * as Container from './container'
 
 import { freezeObjectDeep } from '@music-lyric-player/utils'
-import { DEFAULT_SORT } from '@root/utils'
+import { DEFAULT_SORT, DEFAULT_WORD_SORT } from '@root/utils'
 
 /**
  * Top‑level configuration of the lyric player.
@@ -166,56 +166,63 @@ export const DEFAULT: Root = freezeObjectDeep({
       main: {
         use: 'syllable',
         syllable: {
-          animation: {
-            float: {
-              enabled: true,
-              from: 0,
-              to: -2,
-            },
-            mask: {
-              enabled: true,
-              feather: {
-                normal: 0.5,
-                first: 1.5,
-                last: 0.5,
+          sort: [...DEFAULT_WORD_SORT],
+          gap: 3,
+          word: {
+            animation: {
+              float: {
+                enabled: true,
+                from: 0,
+                to: -2,
               },
-            },
-            emphasize: {
-              enabled: true,
-              minDuration: 1000,
-              disablePlaybackRate: 4,
-              effects: {
-                main: {
-                  enabled: true,
-                  scale: 0.1,
-                  offsetHorizontal: 1,
-                  offsetVertical: 1,
-                  easingRise: 'cubic-bezier(0.2, 0.4, 0.58, 1)',
-                  easingFall: 'cubic-bezier(0.3, 0, 0.58, 1)',
+              mask: {
+                enabled: true,
+                feather: {
+                  normal: 0.5,
+                  first: 1.5,
+                  last: 0.5,
                 },
-                glow: {
-                  enabled: true,
-                  color: '#000000',
-                  easingRise: 'cubic-bezier(0.2, 0.4, 0.58, 1)',
-                  easingFall: 'cubic-bezier(0.3, 0, 0.58, 1)',
-                  maxRadius: 9,
-                  maxAlpha: 1,
-                },
-                float: {
-                  enabled: true,
-                  duration: {
-                    scale: 1.4,
-                    lead: 400,
-                  },
-                  amplitude: 2,
-                  easing: 'cubic-bezier(0.45, 0, 0.55, 1)',
-                  background: {
+              },
+              emphasize: {
+                enabled: true,
+                minDuration: 1000,
+                disablePlaybackRate: 4,
+                effects: {
+                  main: {
                     enabled: true,
-                    scale: 2,
+                    scale: 0.1,
+                    offsetHorizontal: 1,
+                    offsetVertical: 1,
+                    easingRise: 'cubic-bezier(0.2, 0.4, 0.58, 1)',
+                    easingFall: 'cubic-bezier(0.3, 0, 0.58, 1)',
+                  },
+                  glow: {
+                    enabled: true,
+                    color: '#000000',
+                    easingRise: 'cubic-bezier(0.2, 0.4, 0.58, 1)',
+                    easingFall: 'cubic-bezier(0.3, 0, 0.58, 1)',
+                    maxRadius: 9,
+                    maxAlpha: 1,
+                  },
+                  float: {
+                    enabled: true,
+                    duration: {
+                      scale: 1.4,
+                      lead: 400,
+                    },
+                    amplitude: 2,
+                    easing: 'cubic-bezier(0.45, 0, 0.55, 1)',
+                    background: {
+                      enabled: true,
+                      scale: 2,
+                    },
                   },
                 },
               },
             },
+          },
+          roman: {
+            visible: true,
           },
         },
       },
@@ -238,7 +245,7 @@ export const DEFAULT: Root = freezeObjectDeep({
           visible: true,
         },
         roman: {
-          visible: false,
+          visible: true,
         },
       },
     },

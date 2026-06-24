@@ -1,0 +1,13 @@
+@use '../../../common.scss' as *;
+
+.word-roman {
+  display: inline-block;
+  transition: opacity 0.8s ease;
+
+  @include apply-line-font('main-syllable-roman');
+  @include apply-line-style('main-syllable-roman');
+
+  [active] & {
+    transition-duration: 0s;
+  }
+}

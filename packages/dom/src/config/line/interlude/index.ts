@@ -1,4 +1,4 @@
-import type { StyleConfig } from '../common'
+import type { StyleConfig } from '../../common'
 
 /**
  * Style configuration for the inactive (idle) state of an interlude indicator,

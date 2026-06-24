@@ -37,7 +37,7 @@ export class SyllableElement {
   }
 
   private updateMaskWord = (index: number, image: string, size: string, frames?: Keyframe[]) => {
-    this.words[index]?.animtion.mask.updateInfo(image, size, frames)
+    this.words[index]?.animation.mask.updateInfo(image, size, frames)
   }
 
   private updateMaskInfo() {
@@ -108,11 +108,18 @@ export class SyllableElement {
       return
     }
 
-    if (keys.has('line.normal.main.syllable.animation.mask')) {
+    if (keys.has('line.normal.main.syllable.word.animation.mask')) {
       this.updateMaskInfo()
     }
 
-    if (keys.has('line.normal.main.syllable.animation.float') || keys.has('line.normal.main.syllable.animation.emphasize')) {
+    // Per-word changes go to each word; a roman toggle resizes cells, so the mask regenerates on the next scheduled measure.
+    if (
+      keys.has('line.normal.main.syllable.word.animation.float') ||
+      keys.has('line.normal.main.syllable.word.animation.emphasize') ||
+      keys.has('line.normal.main.syllable.roman') ||
+      keys.has('line.normal.main.syllable.sort') ||
+      keys.has('line.normal.main.syllable.gap')
+    ) {
       for (const word of this.words) {
         word.updateConfig(keys)
       }
