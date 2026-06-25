@@ -23,6 +23,13 @@ export interface Root {
    */
   animationWindow?: number
   /**
+   * Minimum number of lines on each side of the active line whose heavy content (words, per-word annotations, masks) is built.
+   * Lines outside this band keep no DOM at all, cutting memory and CPU on long songs; it is widened automatically to at least cover the viewport.
+   * @default 6
+   * @min 0
+   */
+  contentWindow?: number
+  /**
    * Vocal line configuration.
    */
   normal?: Normal.Root

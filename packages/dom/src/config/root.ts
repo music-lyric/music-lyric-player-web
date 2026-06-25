@@ -142,6 +142,7 @@ export const DEFAULT: Root = freezeObjectDeep({
   line: {
     className: '',
     animationWindow: 2,
+    contentWindow: 6,
     normal: {
       sort: [...DEFAULT_SORT],
       base: {

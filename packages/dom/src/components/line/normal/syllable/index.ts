@@ -18,6 +18,9 @@ export class SyllableElement {
 
   private words: WordElement[]
 
+  // Mask keyframes are generated lazily on first activation.
+  private maskReady = false
+
   constructor(
     private readonly context: ComponentContext,
     private readonly info: Lyric.LineNormal,
@@ -100,6 +103,7 @@ export class SyllableElement {
       word.dispose()
     }
     this.words = []
+    this.maskReady = false
     this.dom.replaceChildren()
   }
 
@@ -111,7 +115,7 @@ export class SyllableElement {
       return
     }
 
-    if (keys.has('line.normal.main.syllable.word.animation.mask')) {
+    if (this.maskReady && keys.has('line.normal.main.syllable.word.animation.mask')) {
       this.updateMaskInfo()
     }
 
@@ -135,6 +139,7 @@ export class SyllableElement {
 
   updateSize() {
     // Measure all words, then pad each by the line's tallest upper rows so they share one baseline.
+    // Alignment runs for every attached line; the mask is only regenerated once it has been built.
     let maxUpperHeight = 0
     for (const word of this.words) {
       word.updateSize()
@@ -146,10 +151,18 @@ export class SyllableElement {
     for (const word of this.words) {
       word.applyAlignment(maxUpperHeight)
     }
-    this.updateMaskInfo()
+
+    if (this.maskReady) {
+      this.updateMaskInfo()
+    }
   }
 
   updateActive(active: boolean) {
+    // Generate the wipe keyframes the first time the line activates (deferred from updateSize to keep entry cheap).
+    if (active && !this.maskReady) {
+      this.maskReady = true
+      this.updateMaskInfo()
+    }
     for (const word of this.words) {
       word.updateActive(active)
     }

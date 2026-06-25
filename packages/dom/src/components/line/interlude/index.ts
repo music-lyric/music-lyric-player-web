@@ -96,8 +96,8 @@ export class InterludeLineElement extends BaseLineElement {
     this.buildAnimations()
   }
 
-  override updateStyle(current: LineElementStyle) {
-    super.updateStyle(current)
+  override updateStyle(current: LineElementStyle, immediate = false) {
+    super.updateStyle(current, immediate)
     this.updateAnimations(this.animatable)
   }
 

@@ -130,6 +130,11 @@ export class DomLyricPlayer {
       hasKeyContaining(keys, 'line.normal.annotation.roman.visible') ||
       hasKeyContaining(keys, 'language')
 
+    if (needUpdateSize) {
+      // Heights may change, so drop the off-window estimates; they refill as built lines re-measure.
+      this.lineManager.invalidateHeightEstimates()
+    }
+
     this.scheduleLayoutUpdate({ updateSize: needUpdateSize })
   }
 

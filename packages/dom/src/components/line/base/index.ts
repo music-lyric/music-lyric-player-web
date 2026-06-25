@@ -30,6 +30,15 @@ export interface LineElementStyle {
 export abstract class BaseLineElement {
   abstract get type(): LineElementType
 
+  // Whether the heavy content is currently built. Light shells (interlude) stay true; windowed lines toggle it.
+  protected contentBuilt = true
+
+  // Whether the cached height reflects a real measurement; until then layout falls back to an estimate.
+  private contentMeasured = false
+
+  // Whether the inline `transition: none` override is currently applied; toggled by updateStyle's immediate seeding.
+  private transitionSuppressed = false
+
   private readonly wrapper: {
     dom: HTMLDivElement
     width: number
@@ -69,9 +78,25 @@ export abstract class BaseLineElement {
     this.context.event.emit('lineContextMenu', this.wrapper.index, event)
   }
 
+  /**
+   * Build the heavy content for the content window; overridden by lines that carry it.
+   * No-op for light shells.
+   */
+  buildContent() {}
+
+  /**
+   * Drop the heavy content while keeping the light shell and the cached height.
+   */
+  disposeContent() {}
+
   updateSize() {
+    // Released lines keep their last measured height (the absolute wrapper is empty), so skip to avoid overwriting it with 0.
+    if (!this.contentBuilt) {
+      return
+    }
     this.wrapper.width = this.wrapper.dom.clientWidth
     this.wrapper.height = this.wrapper.dom.clientHeight
+    this.contentMeasured = true
   }
 
   updateConfig(keys?: DomLyricPlayerConfig.RootKeySet) {
@@ -80,10 +105,16 @@ export abstract class BaseLineElement {
     }
   }
 
-  updateStyle(current: LineElementStyle) {
+  updateStyle(current: LineElementStyle, immediate = false) {
     const prev = this.wrapper.style
 
     const style = this.wrapper.dom.style
+
+    // Toggle the inline transition override only on change: `none` applies a seed instantly, `''` restores the scss transition so the next update animates.
+    if (immediate !== this.transitionSuppressed) {
+      style.transition = immediate ? 'none' : ''
+      this.transitionSuppressed = immediate
+    }
 
     // `transform` aggregates left / top / scale; rebuild only if any of them changed.
     if (current.top !== prev.top || current.left !== prev.left || current.scale !== prev.scale) {
@@ -201,6 +232,13 @@ export abstract class BaseLineElement {
   }
   get width() {
     return this.wrapper.width
+  }
+
+  get built() {
+    return this.contentBuilt
+  }
+  get measured() {
+    return this.contentMeasured
   }
 
   get element() {

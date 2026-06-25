@@ -10,6 +10,12 @@ const GAUSSIAN_SIGMA = 2.2
 // Beyond this offset the gaussian falls below ~0.02% and is visually indistinguishable from its limit, so far lines skip the exp entirely.
 const GAUSSIAN_CUTOFF = 4 * GAUSSIAN_SIGMA
 
+// Assumed line height before any line is measured, used to size the content window on the first pass.
+const ESTIMATED_LINE_HEIGHT = 40
+
+// Lower bound on the per-line height used for window sizing, so a pathologically small line can't blow up the window.
+const MIN_COVERAGE_UNIT = 16
+
 export interface TransitionResult {
   duration: number
   delay: number
@@ -17,6 +23,8 @@ export interface TransitionResult {
 
 export class LayoutManager {
   private previousLineIndex = -1
+  // Last applied scroll offset; entrants seed from here so a seek slides in instead of snapping.
+  private previousOffset: number | undefined = undefined
 
   constructor(
     private readonly context: CoreContext,
@@ -178,6 +186,21 @@ export class LayoutManager {
       firstActiveElementIndex = fallback[0] ?? 0
     }
 
+    // Scroll-aware active index, also used to center the content window; clamped so it can't index out of range.
+    const rawFirstActiveIndex = isInScroll
+      ? (this.lineManager.queryElementIndexes(scroll.activeIndex)?.[0] ?? firstActiveElementIndex)
+      : firstActiveElementIndex
+    const firstActiveIndex = Math.min(Math.max(rawFirstActiveIndex, 0), elementCount - 1)
+
+    // Build enough lines to cover half the viewport each side (the active line is centered) plus a small lead-in buffer.
+    // Coverage uses the smallest measured line height so short lines (small font) don't leave on-screen gaps.
+    const coverageUnit = Math.max(MIN_COVERAGE_UNIT, this.lineManager.minMeasuredHeight(ESTIMATED_LINE_HEIGHT))
+    const dynamicFloor = Math.ceil(currentContainerHeight / 2 / coverageUnit) + 2
+
+    const contentWindow = Math.max(0, Math.floor(config.current.line.contentWindow))
+    const contentRadius = Math.max(contentWindow, animationWindow, dynamicFloor)
+    const entrants = this.lineManager.updateWindow(firstActiveIndex, contentRadius, activeElementSet)
+
     const topPositions: number[] = new Array(elementCount)
 
     for (let i = 0; i < elementCount; i++) {
@@ -195,13 +218,13 @@ export class LayoutManager {
 
       const lastTop = topPositions[i - 1]
       const lastElement = elements[i - 1]
-      const lastHeight = lastElement?.height ?? 0
+      const lastHeight = lastElement ? this.lineManager.getHeight(lastElement) : 0
       const baseTop = lastTop + lastHeight
 
       if (element.type === LineElementType.Normal && element.isBackground) {
         const isActiveElement = activeElementSet.has(i)
         if (!isInScroll && !isActiveElement) {
-          topPositions[i] = baseTop - element.height
+          topPositions[i] = baseTop - this.lineManager.getHeight(element)
         } else {
           // Keep the first background line clear of the main line; tuck stacked ones in tighter.
           const afterBackground = lastElement?.type === LineElementType.Normal && lastElement.isBackground
@@ -213,7 +236,7 @@ export class LayoutManager {
       if (element.type === LineElementType.Interlude && isHideInterlude) {
         const isActiveElement = activeElementSet.has(i)
         if (!isInScroll && !isActiveElement) {
-          topPositions[i] = baseTop - element.height
+          topPositions[i] = baseTop - this.lineManager.getHeight(element)
           continue
         }
       }
@@ -221,18 +244,23 @@ export class LayoutManager {
       topPositions[i] = baseTop + currentSpace
     }
 
-    const rawFirstActiveIndex = isInScroll
-      ? (this.lineManager.queryElementIndexes(scroll.activeIndex)?.[0] ?? firstActiveElementIndex)
-      : firstActiveElementIndex
-    // Clamp to a valid element index so an out-of-range value can't turn the offset into NaN and propagate to every line.
-    const firstActiveIndex = Math.min(Math.max(rawFirstActiveIndex, 0), elementCount - 1)
-
     const firstElement = elements[firstActiveIndex]
-    const firstElementHeight = firstElement?.height ?? 0
+    const firstElementHeight = firstElement ? this.lineManager.getHeight(firstElement) : 0
 
     const currentActiveOffset = topPositions[firstActiveIndex] + firstElementHeight / 2
     const currentOffset = activePosition - currentActiveOffset
     const currentTime = player.currentTime
+
+    // Seed entrants at the previous offset (or the current one on first layout) so they transition in from there.
+    // Apply the seed with transitions off, then the style loop below animates them from there to target.
+    if (entrants.length > 0) {
+      const seedOffset = this.previousOffset ?? currentOffset
+      for (const i of entrants) {
+        elements[i]?.updateStyle({ top: topPositions[i] + seedOffset, left: 0, scale: 1 }, true)
+      }
+      // Reading `offsetHeight` forces one synchronous reflow that commits the seed writes above; `void` just discards the value.
+      void this.context.component.container.element.offsetHeight
+    }
 
     const activeIndex = firstActiveElementIndex
 
@@ -248,7 +276,8 @@ export class LayoutManager {
     // below to avoid allocating a fresh one per line on every layout pass.
     const currentStyle: LineElementStyle = {}
 
-    for (let i = 0; i < elementCount; i++) {
+    // Style and drive only attached (windowed) elements — off-window lines are detached and need no per-frame work.
+    for (const i of this.lineManager.attachedIndexes) {
       const element = elements[i]
       if (!element) {
         continue
@@ -319,9 +348,11 @@ export class LayoutManager {
     }
 
     this.previousLineIndex = currentLineIndex
+    this.previousOffset = currentOffset
   }
 
   reset() {
     this.previousLineIndex = -1
+    this.previousOffset = undefined
   }
 }

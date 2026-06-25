@@ -45,6 +45,9 @@ export class NormalLineElement extends BaseLineElement {
     applyRole(this.container, PlayerRole.line.normal.self)
     this.element.appendChild(this.container)
 
+    // Heavy content (main + annotations) is built lazily by the content window via buildContent().
+    this.contentBuilt = false
+
     this.updateConfig()
   }
 
@@ -167,9 +170,11 @@ export class NormalLineElement extends BaseLineElement {
 
     if (!keys) {
       this.applyClassName()
-      this.buildMain()
-      this.buildAnnotations()
-      this.applyOrder()
+      return
+    }
+
+    // Released lines carry no content; they rebuild fresh from the current config on the next buildContent().
+    if (!this.built) {
       return
     }
 
@@ -198,6 +203,27 @@ export class NormalLineElement extends BaseLineElement {
     this.main?.updateConfig(keys)
   }
 
+  override buildContent(): void {
+    if (this.built) {
+      return
+    }
+    this.contentBuilt = true
+
+    this.buildMain()
+    this.buildAnnotations()
+    this.applyOrder()
+  }
+
+  override disposeContent(): void {
+    if (!this.built) {
+      return
+    }
+    // Keep the cached height (the absolute wrapper just goes empty) so layout positioning stays exact.
+    this.disposeMain()
+    this.disposeAnnotations()
+    this.contentBuilt = false
+  }
+
   override updateSize(): void {
     super.updateSize()
     this.main?.updateSize()
@@ -215,8 +241,8 @@ export class NormalLineElement extends BaseLineElement {
     this.main?.reset(time)
   }
 
-  override updateStyle(current: LineElementStyle) {
-    super.updateStyle(current)
+  override updateStyle(current: LineElementStyle, immediate = false) {
+    super.updateStyle(current, immediate)
     this.main?.updateActive(this.animatable)
   }
 
