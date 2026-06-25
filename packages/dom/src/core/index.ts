@@ -118,13 +118,16 @@ export class DomLyricPlayer {
     this.styleManager.updateConfig(keys)
     this.lineManager.updateConfig(keys)
 
-    // A render-mode swap, the per-word roman / ruby rows, their order, or a language change resizes the cells and shifts the baseline, so re-measure and force a play / pause pass.
+    // A render-mode swap, the per-word roman / ruby rows, their order, a language change, or a line-level annotation toggle resizes the cells and shifts the baseline, so re-measure and force a play / pause pass.
     const needUpdateSize =
       hasKeyContaining(keys, 'font') ||
       hasKeyContaining(keys, 'line.normal.main.use') ||
       hasKeyContaining(keys, 'line.normal.main.syllable.annotation.roman') ||
       hasKeyContaining(keys, 'line.normal.main.syllable.annotation.ruby') ||
       hasKeyContaining(keys, 'line.normal.main.syllable.sort') ||
+      hasKeyContaining(keys, 'line.normal.annotation.visible') ||
+      hasKeyContaining(keys, 'line.normal.annotation.translate.visible') ||
+      hasKeyContaining(keys, 'line.normal.annotation.roman.visible') ||
       hasKeyContaining(keys, 'language')
 
     this.scheduleLayoutUpdate({ updateSize: needUpdateSize })
