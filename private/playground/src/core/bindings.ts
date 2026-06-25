@@ -275,7 +275,15 @@ export const DOM_SECTIONS: SectionBinding[] = [
   {
     id: 'dom.line',
     titleKey: 'settings.section.line',
-    groups: [{ fields: [classNameField('dom.line')] }],
+    groups: [
+      {
+        fields: [
+          classNameField('dom.line'),
+          { path: 'dom.line.animationWindow', labelKey: 'settings.field.animationWindow', type: 'number', min: 0, max: 10, step: 1 },
+          { path: 'dom.line.contentWindow', labelKey: 'settings.field.contentWindow', type: 'number', min: 0, max: 30, step: 1 },
+        ],
+      },
+    ],
     children: [
       {
         id: 'dom.line.normal',

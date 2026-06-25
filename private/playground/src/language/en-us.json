@@ -106,6 +106,8 @@
   "settings.group.emphasizeGlow": "Emphasize · Glow",
   "settings.group.emphasizeFloat": "Emphasize · Float",
   "settings.field.className": "CSS Class",
+  "settings.field.animationWindow": "Animation Window (lines)",
+  "settings.field.contentWindow": "Content Window (lines)",
   "settings.field.lineSort": "Row Order",
   "settings.field.syllableSort": "Word Order",
   "settings.field.syllableGap": "Word Gap (px)",

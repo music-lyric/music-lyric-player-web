@@ -106,6 +106,8 @@
   "settings.group.emphasizeGlow": "强调 · 辉光",
   "settings.group.emphasizeFloat": "强调 · 浮动",
   "settings.field.className": "CSS 类名",
+  "settings.field.animationWindow": "动画窗口 (行)",
+  "settings.field.contentWindow": "内容窗口 (行)",
   "settings.field.lineSort": "行顺序",
   "settings.field.syllableSort": "单词顺序",
   "settings.field.syllableGap": "单词间距 (px)",
