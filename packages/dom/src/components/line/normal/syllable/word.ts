@@ -186,7 +186,7 @@ export class WordElement {
 
   updateConfig(keys?: DomLyricPlayerConfig.RootKeySet) {
     if (!keys) {
-      applyClassName(this.cell, [styles.wordCell])
+      applyClassName(this.cell, [styles.cell])
       applyRole(this.cell, PlayerRole.line.normal.text.word.self)
       applyClassName(this.word, [styles.word])
     }

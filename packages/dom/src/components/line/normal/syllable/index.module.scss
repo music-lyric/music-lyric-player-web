@@ -4,7 +4,7 @@
   @include apply-line-font('main-syllable');
 }
 
-.word-cell {
+.cell {
   // The two mask stops multiply the word's own opacity, resolved from the configured syllable opacities:
   // - unsung side defaults to 1 and is pulled down to normal/active on the active line below.
   // - sung side carries the active opacity.
@@ -23,7 +23,7 @@
   // Stack the upper annotation rows, the word, then the lower rows in one column so the cell mask wipes them together.
   display: inline-flex;
   flex-direction: column;
-  // Align the word and its rows to the line's edge so the main text follows the configured alignment.
+  // Always center the word and its ruby/roman rows relative to each other, regardless of the line's alignment.
   align-items: center;
   // Top-align the cells and reserve each word's upper-rows shortfall so every word shares one baseline.
   vertical-align: top;
@@ -34,13 +34,6 @@
 
   mask-mode: alpha;
   mask-repeat: no-repeat;
-
-  :is([position='left']) & {
-    align-items: flex-start;
-  }
-  :is([position='right']) & {
-    align-items: flex-end;
-  }
 
   // On the singing line the base opacity is the active opacity, so pull the unsung side back down to normal brightness.
   [active] & {
