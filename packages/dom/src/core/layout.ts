@@ -35,37 +35,34 @@ export class LayoutManager {
     return Math.round(value * factor) / factor
   }
 
-  private calcScale(offset: number): number | undefined {
-    const scaleConfig = this.context.config.current.effect.scale
-
-    if (!scaleConfig.enabled) {
+  private calcScale(config: DomLyricPlayerConfig.RootRequired['effect']['scale'], gaussian: number): number | undefined {
+    if (!config.enabled) {
       return undefined
     }
 
-    const min = Math.max(scaleConfig.min, 0)
-    const max = Math.max(scaleConfig.max, min)
-    const gaussian = this.gaussian(offset)
+    const min = Math.max(config.min, 0)
+    const max = Math.max(config.max, min)
 
     return this.round(min + (max - min) * gaussian)
   }
 
-  private calcBlur(offset: number): number {
-    const blurConfig = this.context.config.current.effect.blur
-
-    if (!blurConfig.enabled) {
+  private calcBlur(config: DomLyricPlayerConfig.RootRequired['effect']['blur'], gaussian: number): number {
+    if (!config.enabled) {
       return 0
     }
 
-    const min = Math.max(blurConfig.min, 0)
-    const max = Math.max(blurConfig.max, min)
-    const gaussian = this.gaussian(offset)
+    const min = Math.max(config.min, 0)
+    const max = Math.max(config.max, min)
 
     return this.round(min + (max - min) * (1 - gaussian))
   }
 
-  private calcTransition(offset: number, played: boolean, direction: number): TransitionResult {
-    const config = this.context.config.current.scroll.animation
-
+  private calcTransition(
+    config: DomLyricPlayerConfig.RootRequired['scroll']['animation'],
+    offset: number,
+    played: boolean,
+    direction: number,
+  ): TransitionResult {
     const duration = Math.max(config.duration, 0)
 
     switch (config.mode) {
@@ -147,6 +144,11 @@ export class LayoutManager {
 
     const isInPlay = player.currentPlaying
     const isInScroll = scroll.active
+
+    const effectConfig = config.current.effect
+    const scaleConfig = effectConfig.scale
+    const blurConfig = effectConfig.blur
+    const transitionConfig = config.current.scroll.animation
 
     const currentSpace = Math.max(0, config.current.layout.gap)
     const currentContainerHeight = Math.max(0, component.container.height)
@@ -256,7 +258,7 @@ export class LayoutManager {
       const isActiveLine = activeElementSet.has(i)
       const isAlreadyActive = element.active
 
-      if (this.context.player.currentPlaying) {
+      if (isInPlay) {
         element.active = isActiveLine
         element.played = isPlayedLine
       }
@@ -275,14 +277,15 @@ export class LayoutManager {
         currentStyle.transitionDelay = 0
         currentStyle.transitionDuration = 200
       } else {
-        const transition = this.calcTransition(indexOffset, isPlayedLine, currentDirection)
+        const transition = this.calcTransition(transitionConfig, indexOffset, isPlayedLine, currentDirection)
 
         currentStyle.transitionDuration = transition.duration
         currentStyle.transitionDelay = transition.delay
 
         if (!isActiveLine) {
-          currentStyle.scale = this.calcScale(indexOffset)
-          currentStyle.blur = this.calcBlur(indexOffset)
+          const gaussian = this.gaussian(indexOffset)
+          currentStyle.scale = this.calcScale(scaleConfig, gaussian)
+          currentStyle.blur = this.calcBlur(blurConfig, gaussian)
           if (element.type === LineElementType.Interlude && isHideInterlude) {
             currentStyle.hide = true
           }
