@@ -1,5 +1,6 @@
 import type { Lyric } from '@music-lyric-kit/lyric'
-import type { WordAnnotationBaseElement } from './base'
+import type { ComponentContext } from '@root/components/context'
+import type { WordAnnotationElement } from './base'
 
 import { DomLyricPlayerConfig } from '@root/config'
 import { WordRomanElement } from './roman'
@@ -8,41 +9,46 @@ import { WordRubyElement } from './ruby'
 import { resolveLanguage } from '@root/utils'
 
 export interface WordAnnotationDescriptor {
-  /**
-   * Word slot this annotation occupies within a word cell.
-   */
-  readonly slot: DomLyricPlayerConfig.Line.Normal.Syllable.WordSlot
+  readonly type: DomLyricPlayerConfig.Line.Normal.Syllable.WordSlot
+
   /**
    * Whether the annotation is turned on for the given syllable config.
    */
   isEnabled(syllable: DomLyricPlayerConfig.RootRequired['line']['normal']['main']['syllable']): boolean
+
   /**
    * Resolve the preferred language for this row, or `undefined` when the row has no language choice (ruby).
    */
-  language(normal: DomLyricPlayerConfig.RootRequired['line']['normal']): Lyric.LanguageTag | undefined
+  buildLanguage(normal: DomLyricPlayerConfig.RootRequired['line']['normal']): Lyric.LanguageTag | undefined
+
   /**
    * Build the row element for a word.
    */
-  create(info: Lyric.WordNormal, language: Lyric.LanguageTag | undefined): WordAnnotationBaseElement
+  buildElement(
+    context: ComponentContext,
+    wordInfo: Lyric.WordNormal,
+    lineInfo: Lyric.LineNormal,
+    language: Lyric.LanguageTag | undefined,
+  ): WordAnnotationElement
 }
 
 export const WORD_ANNOTATION_DESCRIPTORS: readonly WordAnnotationDescriptor[] = [
   {
-    slot: DomLyricPlayerConfig.Line.Normal.Syllable.WordSlot.AnnotationRoman,
+    type: DomLyricPlayerConfig.Line.Normal.Syllable.WordSlot.AnnotationRoman,
     isEnabled: (syllable) => syllable.annotation.roman.visible,
-    language: (normal) => resolveLanguage(normal.main.syllable.annotation.roman.language, normal.annotation.roman.language, normal.base.language),
-    create: (info, language) => new WordRomanElement(info, language),
+    buildLanguage: (cfg) => resolveLanguage(cfg.main.syllable.annotation.roman.language, cfg.annotation.roman.language, cfg.base.language),
+    buildElement: (context, info, lineInfo, language) => new WordRomanElement(context, info, lineInfo, language),
   },
   {
-    slot: DomLyricPlayerConfig.Line.Normal.Syllable.WordSlot.AnnotationRuby,
+    type: DomLyricPlayerConfig.Line.Normal.Syllable.WordSlot.AnnotationRuby,
     isEnabled: (syllable) => syllable.annotation.ruby.visible,
-    language: () => undefined,
-    create: (info) => new WordRubyElement(info),
+    buildLanguage: () => undefined,
+    buildElement: (context, info, lineInfo) => new WordRubyElement(context, info, lineInfo),
   },
 ]
 
-export { WordAnnotationBaseElement } from './base'
+export * from './base'
 
-export { WordRomanElement } from './roman'
+export * from './roman'
 
-export { WordRubyElement } from './ruby'
+export * from './ruby'

@@ -1,34 +1,42 @@
 import type { Lyric } from '@music-lyric-kit/lyric'
 import type { ComponentContext } from '@root/components/context'
 import type { DomLyricPlayerConfig } from '@root/config'
-import type { WordAnnotationBaseElement } from './annotation'
+import type { WordAnnotationElement } from './annotation'
+
+import { WORD_ANNOTATION_DESCRIPTORS } from './annotation'
+import { PlayerRole } from '@root/constants'
 
 import { WordSlot } from '@root/config/line/normal/syllable'
-
 import { EmphasizeAnimation, FloatAnimation, MaskAnimation } from './animation'
-import { WORD_ANNOTATION_DESCRIPTORS } from './annotation'
-
-import { PlayerRole } from '@root/constants'
 
 import { applyClassName, applyRole, resolveWordSort } from '@root/utils'
 
 import styles from './index.module.scss'
 
 export class WordElement {
-  // Outer cell hosts the mask + float and stacks the word with its annotation rows; the inner word holds the text / emphasize.
+  // Outer cell stacks the word-mask wipe group with any independent-timeline rows; the inner `.wipe` hosts the word mask and the word plus the rows that ride it.
   private readonly cell: HTMLDivElement
+  private readonly wipe: HTMLDivElement
+
   private readonly word: HTMLDivElement
   private readonly size: {
     width: number
     height: number
-    // Cached height of the upper rows from the last layout pass.
+    // Height of the upper rows from the last layout pass.
     upper: number
   }
 
-  private annotations: Map<WordSlot, WordAnnotationBaseElement> = new Map()
+  // Annotation rows that drive their own wipe, kept apart so the word can push size / play state to them.
+  private driven: WordAnnotationElement[] = []
+
+  private annotations: Map<WordSlot, WordAnnotationElement> = new Map()
   private chars: HTMLSpanElement[] = []
+
   // Annotation rows above the word; only these drive the baseline padding, so rows below the word keep no separate reference.
   private upperRows: HTMLElement[] = []
+
+  // Latest active state, so a live annotation rebuild can re-arm its wipe for the current line.
+  private active = false
 
   public readonly animation: {
     float: FloatAnimation
@@ -46,11 +54,14 @@ export class WordElement {
     this.size = { width: 0, height: 0, upper: 0 }
 
     this.cell = document.createElement('div')
+    this.wipe = document.createElement('div')
 
     this.animation = {
-      // Float hosts on the word so it lifts alone; the per-word annotation rows stay put. Mask hosts on the cell so the wipe covers word + annotations together.
+      // Float hosts on the word so it lifts alone.
       float: new FloatAnimation(this.word, this.context, this.wordInfo, this.lineInfo),
-      mask: new MaskAnimation(this.cell, this.context, this.wordInfo, this.lineInfo),
+      // Mask hosts on the wipe so it covers the word plus the rows riding it, while independent rows mask themselves
+      mask: new MaskAnimation(this.wipe, this.lineInfo.time.duration),
+      // Emphasize only in main word.
       emphasize: new EmphasizeAnimation(this.context, this.wordInfo, this.lineInfo, this.chars, this.isBackground),
     }
 
@@ -77,13 +88,14 @@ export class WordElement {
     const fragment = document.createDocumentFragment()
     for (const char of this.wordInfo.content) {
       const span = document.createElement('span')
-      span.classList.add(styles.char)
-      applyRole(span, PlayerRole.line.normal.text.word.char)
       span.textContent = char
+
+      applyClassName(span, [styles.char])
+      applyRole(span, PlayerRole.line.normal.text.word.char)
+
       fragment.appendChild(span)
       this.chars.push(span)
     }
-
     this.word.appendChild(fragment)
 
     // The emphasize padding lives on the cell so the inner word inherits it and the cell's negative margin cancels it.
@@ -103,12 +115,22 @@ export class WordElement {
       if (!descriptor.isEnabled(normal.main.syllable)) {
         continue
       }
-      const element = descriptor.create(this.wordInfo, descriptor.language(normal))
+
+      const element = descriptor.buildElement(this.context, this.wordInfo, this.lineInfo, descriptor.buildLanguage(normal))
       if (!element.hasContent) {
         element.dispose()
         continue
       }
-      this.annotations.set(descriptor.slot, element)
+
+      this.annotations.set(descriptor.type, element)
+      if (element.independent) {
+        this.driven.push(element)
+      }
+    }
+
+    // A rebuild on the live line drops the old wipes, so re-arm the new ones for the current active state.
+    for (const element of this.driven) {
+      element.updateActive(this.active)
     }
 
     this.applyGap()
@@ -118,6 +140,7 @@ export class WordElement {
       element.dispose()
     }
     this.annotations.clear()
+    this.driven = []
   }
 
   private applyGap() {
@@ -132,28 +155,44 @@ export class WordElement {
 
   private applyOrder() {
     const order = resolveWordSort(this.context.config.line.normal.main.syllable.sort)
+    const wordIndex = order.indexOf(WordSlot.Word)
 
-    const nodes: HTMLElement[] = []
+    // Word and the rows riding its mask share the `.wipe` box; independent rows sit in the cell above or below it.
+    const wipeNodes: HTMLElement[] = []
+    const above: HTMLElement[] = []
+    const below: HTMLElement[] = []
     const upper: HTMLElement[] = []
 
-    let passedWord = false
-    for (const slot of order) {
+    order.forEach((slot, index) => {
       if (slot === WordSlot.Word) {
-        passedWord = true
-        nodes.push(this.word)
-        continue
+        wipeNodes.push(this.word)
+        return
       }
+
       const element = this.annotations.get(slot)
       if (!element) {
-        continue
+        return
       }
-      nodes.push(element.element)
-      if (!passedWord) {
+
+      // An independent row owns its wipe, so it cannot live inside the word's mask; it collapses to the nearer side of the word.
+      if (element.independent) {
+        if (index < wordIndex) {
+          above.push(element.element)
+          upper.push(element.element)
+        } else {
+          below.push(element.element)
+        }
+        return
+      }
+
+      wipeNodes.push(element.element)
+      if (index < wordIndex) {
         upper.push(element.element)
       }
-    }
+    })
 
-    this.cell.replaceChildren(...nodes)
+    this.wipe.replaceChildren(...wipeNodes)
+    this.cell.replaceChildren(...above, this.wipe, ...below)
     this.upperRows = upper
   }
 
@@ -170,11 +209,14 @@ export class WordElement {
     this.animation.float.updateStyle(isPlay, isActive, currentTime, relativeTime)
     this.animation.mask.updateStyle(isPlay, isActive, currentTime, relativeTime)
     this.animation.emphasize.updateStyle(isPlay, isActive, currentTime, relativeTime)
+    for (const element of this.driven) {
+      element.updateStyle(isPlay, isActive, currentTime, relativeTime)
+    }
   }
 
   updateSize() {
-    // Cell width feeds the wipe prefix sum; the word height feeds the mask feather; the upper rows feed the baseline alignment.
-    this.size.width = this.cell.clientWidth
+    // Wipe width feeds the word's line prefix sum; the word height feeds the mask feather; the upper rows feed the baseline alignment.
+    this.size.width = this.wipe.clientWidth
     this.size.height = this.word.clientHeight
 
     let height = 0
@@ -182,17 +224,22 @@ export class WordElement {
       height += row.offsetHeight
     }
     this.size.upper = height
+
+    // Each independent row's wipe is intra-word, so it re-measures off its own tokens with no line-level coordination.
+    for (const element of this.driven) {
+      element.updateSize()
+    }
   }
 
   updateConfig(keys?: DomLyricPlayerConfig.RootKeySet) {
     if (!keys) {
-      applyClassName(this.cell, [styles.cell])
       applyRole(this.cell, PlayerRole.line.normal.text.word.self)
+      applyClassName(this.cell, [styles.cell])
+      applyClassName(this.wipe, [styles.wipe])
       applyClassName(this.word, [styles.word])
     }
 
     this.animation.float.updateConfig(keys)
-    this.animation.mask.updateConfig(keys)
 
     const annotationsChanged =
       !keys ||
@@ -227,9 +274,13 @@ export class WordElement {
   }
 
   updateActive(active: boolean) {
+    this.active = active
     this.animation.float.updateActive(active)
     this.animation.mask.updateActive(active)
     this.animation.emphasize.updateActive(active)
+    for (const element of this.driven) {
+      element.updateActive(active)
+    }
   }
 
   dispose() {

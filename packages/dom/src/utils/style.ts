@@ -8,7 +8,7 @@ export const createCssText = (styles: Partial<CSSStyleDeclaration>) => {
     .join(';')
 }
 
-export const applyClassName = (element: HTMLDivElement, names: string[]) => {
+export const applyClassName = (element: HTMLElement, names: string[]) => {
   for (const item of element.classList.values()) {
     element.classList.remove(item)
   }

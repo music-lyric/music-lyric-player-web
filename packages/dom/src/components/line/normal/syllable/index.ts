@@ -2,11 +2,11 @@ import type { ComponentContext } from '@root/components/context'
 import type { DomLyricPlayerConfig } from '@root/config'
 import type { MaskGenerateInput } from './animation'
 
+import { PlayerRole } from '@root/constants'
+
 import { Lyric } from '@music-lyric-kit/lyric'
 import { WordElement } from './word'
 import { MaskAnimationHost } from './animation'
-
-import { PlayerRole } from '@root/constants'
 
 import { applyClassName, applyRole } from '@root/utils'
 
@@ -29,7 +29,7 @@ export class SyllableElement {
     for (const item of info.words) {
       if (item.type === Lyric.WordType.Normal) wordCount++
     }
-    this.maskHost = new MaskAnimationHost(context, info, wordCount)
+    this.maskHost = new MaskAnimationHost(context, info.time.duration, wordCount)
 
     this.words = []
 
@@ -47,10 +47,13 @@ export class SyllableElement {
     }
 
     const inputs: MaskGenerateInput[] = new Array(count)
+    const lineStart = this.info.time.start
     for (let i = 0; i < count; i++) {
       const word = this.words[i]
+      const time = word.info.time!
       inputs[i] = {
-        info: word.info,
+        start: time.start - lineStart,
+        duration: time.duration,
         width: word.width,
         height: word.height,
       }
@@ -112,8 +115,8 @@ export class SyllableElement {
       this.updateMaskInfo()
     }
 
-    // Per-word changes go to each word; a roman toggle resizes cells, so the mask regenerates on the next scheduled measure.
-    // Line-roman and base language changes reach here too, since per-word roman inherits them.
+    // Per-word changes go to each word; an annotation toggle resizes cells, so the mask regenerates on the next scheduled measure.
+    // Line-roman and base language changes reach here too, since per-word annotations inherit them.
     if (
       keys.has('line.normal.main.syllable.word.animation.float') ||
       keys.has('line.normal.main.syllable.word.animation.emphasize') ||

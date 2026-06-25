@@ -1,25 +1,36 @@
 @use '../../../common.scss' as *;
 
-.word-roman {
+@mixin annotation-row($element) {
+  --mask-normal-opacity: 1;
+  --mask-active-opacity: #{build-line-variable('normal', '#{$element}-active', 'opacity')};
+
   display: inline-block;
   transition: opacity 0.8s ease;
 
-  @include apply-line-font('main-syllable-roman');
-  @include apply-line-style('main-syllable-roman');
+  @include apply-line-font($element);
+  @include apply-line-style($element);
 
+  // On the singing line the base opacity is the active opacity, so pull the unsung side back down to normal brightness.
   [active] & {
+    --mask-normal-opacity: calc(
+      #{build-line-variable('normal', $element, 'opacity')} / #{build-line-variable('normal', '#{$element}-active', 'opacity')}
+    );
+
     transition-duration: 0s;
   }
 }
 
+.word-roman {
+  @include annotation-row('main-syllable-roman');
+}
+
 .word-ruby {
+  @include annotation-row('main-syllable-ruby');
+}
+
+.token {
   display: inline-block;
-  transition: opacity 0.8s ease;
 
-  @include apply-line-font('main-syllable-ruby');
-  @include apply-line-style('main-syllable-ruby');
-
-  [active] & {
-    transition-duration: 0s;
-  }
+  mask-mode: alpha;
+  mask-repeat: no-repeat;
 }

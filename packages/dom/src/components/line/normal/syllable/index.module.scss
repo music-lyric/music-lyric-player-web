@@ -5,12 +5,6 @@
 }
 
 .cell {
-  // The two mask stops multiply the word's own opacity, resolved from the configured syllable opacities:
-  // - unsung side defaults to 1 and is pulled down to normal/active on the active line below.
-  // - sung side carries the active opacity.
-  --mask-normal-opacity: 1;
-  --mask-active-opacity: #{build-line-variable('normal', 'main-syllable-active', 'opacity')};
-
   --emphasize-padding-horizontal: 0px;
   --emphasize-padding-vertical: 0px;
 
@@ -20,17 +14,29 @@
   // Top pad that lifts a word with shorter upper rows onto the shared baseline; set inline by WordElement.
   --word-align-top: 0px;
 
-  // Stack the upper annotation rows, the word, then the lower rows in one column so the cell mask wipes them together.
+  // Stack the word-mask wipe group and any independent-timeline rows in one column, always centered.
   display: inline-flex;
   flex-direction: column;
-  // Always center the word and its ruby/roman rows relative to each other, regardless of the line's alignment.
   align-items: center;
   // Top-align the cells and reserve each word's upper-rows shortfall so every word shares one baseline.
   vertical-align: top;
   padding-top: var(--word-align-top);
 
-  // Cancel the inner word's emphasize padding (keeps layout put), then add the per-word gap when annotation rows are present.
+  // Cancel the inner word's emphasize padding at the line footprint (keeps layout put), then add the per-word gap when annotation rows are present.
   margin: calc(-1 * var(--emphasize-padding-vertical)) calc(var(--word-gap) - var(--emphasize-padding-horizontal));
+}
+
+.wipe {
+  // The two mask stops multiply the word's own opacity, resolved from the configured syllable opacities:
+  // - unsung side defaults to 1 and is pulled down to normal/active on the active line below.
+  // - sung side carries the active opacity.
+  --mask-normal-opacity: 1;
+  --mask-active-opacity: #{build-line-variable('normal', 'main-syllable-active', 'opacity')};
+
+  // The word and the rows riding its mask share one wipe, stacked and centered relative to each other.
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
 
   mask-mode: alpha;
   mask-repeat: no-repeat;
@@ -47,7 +53,7 @@
   display: inline-block;
   transition: opacity 0.8s ease;
 
-  // Padded room for the emphasize scale / glow; the emphasize padding vars are inherited from `.word-cell`, whose negative margin keeps the layout box unchanged.
+  // Padded room for the emphasize scale / glow; the emphasize padding vars are inherited from `.cell`, whose negative margin keeps the layout box unchanged.
   padding: var(--emphasize-padding-vertical) var(--emphasize-padding-horizontal);
 
   @include apply-line-style('main-syllable');

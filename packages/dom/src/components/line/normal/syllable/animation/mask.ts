@@ -1,9 +1,14 @@
-import type { Lyric } from '@music-lyric-kit/lyric'
 import type { ComponentContext } from '@root/components/context'
-import type { DomLyricPlayerConfig } from '@root/config'
 
 export interface MaskGenerateInput {
-  info: Lyric.WordNormal
+  /**
+   * Segment start, relative to the line start, in milliseconds.
+   */
+  start: number
+  /**
+   * Segment duration in milliseconds.
+   */
+  duration: number
   width: number
   height: number
 }
@@ -13,7 +18,7 @@ const MASK_NORMAL_OPACITY = 'var(--mask-normal-opacity)'
 const MASK_ACTIVE_OPACITY = 'var(--mask-active-opacity)'
 
 export class MaskAnimationHost {
-  // Word info buffers
+  // Segment info buffers
   private wordStartTimes!: Float64Array
   private wordDurations!: Float64Array
   private wordFrontWidths!: Float64Array
@@ -28,7 +33,7 @@ export class MaskAnimationHost {
 
   constructor(
     private readonly context: ComponentContext,
-    private readonly lineInfo: Lyric.LineNormal,
+    private readonly lineDuration: number,
     private readonly wordCount: number,
   ) {
     this.init()
@@ -61,7 +66,7 @@ export class MaskAnimationHost {
 
   generate(wordInfos: ReadonlyArray<MaskGenerateInput>, callback: (index: number, image: string, size: string, frames?: Keyframe[]) => void): void {
     const wordCount = this.wordCount
-    const lineDuration = this.lineInfo.time.duration
+    const lineDuration = this.lineDuration
     if (lineDuration <= 0 || wordCount === 0) {
       return
     }
@@ -85,7 +90,6 @@ export class MaskAnimationHost {
     const featherFirst = Math.max(0, Math.min(5, featherConfig.first))
     const featherLast = Math.max(0, Math.min(5, featherConfig.last))
 
-    const lineStart = this.lineInfo.time.start
     const invLineDuration = 1 / lineDuration
     const lastIndex = wordCount - 1
 
@@ -101,8 +105,8 @@ export class MaskAnimationHost {
 
     for (let i = 0; i < wordCount; i++) {
       const word = wordInfos[i]
-      wordStartTimes[i] = word.info.time!.start - lineStart
-      wordDurations[i] = word.info.time!.duration
+      wordStartTimes[i] = word.start
+      wordDurations[i] = word.duration
       wordWidths[i] = word.width
       wordHeights[i] = word.height
       wordFrontWidths[i + 1] = wordFrontWidths[i] + word.width
@@ -255,10 +259,8 @@ export class MaskAnimation {
   private appliedSize = ''
 
   constructor(
-    private readonly host: HTMLDivElement,
-    private readonly context: ComponentContext,
-    private readonly wordInfo: Lyric.WordNormal,
-    private readonly lineInfo: Lyric.LineNormal,
+    private readonly host: HTMLElement,
+    private readonly lineDuration: number,
   ) {}
 
   private applyMaskStyle() {
@@ -277,7 +279,7 @@ export class MaskAnimation {
     this.dispose()
     if (this.cachedFrames) {
       const animation = this.host.animate(this.cachedFrames, {
-        duration: this.lineInfo.time.duration,
+        duration: this.lineDuration,
         fill: 'both',
       })
       animation.pause()
@@ -310,7 +312,7 @@ export class MaskAnimation {
     }
 
     // Past effect end: use `.finish()` instead of `.play()` to avoid WAAPI's auto-rewind for animations whose `currentTime` lies past the effect end.
-    if (relativeTime >= this.lineInfo.time.duration) {
+    if (relativeTime >= this.lineDuration) {
       if (this.animation.playState !== 'finished') {
         this.animation.finish()
       }
@@ -324,10 +326,6 @@ export class MaskAnimation {
     } else {
       this.animation.pause()
     }
-  }
-
-  updateConfig(keys?: DomLyricPlayerConfig.RootKeySet) {
-    // pass
   }
 
   updateInfo(image: string, size: string, frames?: Keyframe[]) {
