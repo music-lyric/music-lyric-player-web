@@ -1,3 +1,22 @@
+## v0.17.0 (2026-06-25)
+
+### Feature
+
+- `dom`
+  - virtualize off-screen line rendering ([8fbf309](https://github.com/music-lyric/music-lyric-player-web/commit/8fbf309))
+  - add timeline-adaptive word annotation wipe ([0da6367](https://github.com/music-lyric/music-lyric-player-web/commit/0da6367))
+  - center syllable word annotation rows ([c6b1f8f](https://github.com/music-lyric/music-lyric-player-web/commit/c6b1f8f))
+
+### Fix
+
+- `dom`
+  - re-measure line height on annotation visibility toggle ([7cb4529](https://github.com/music-lyric/music-lyric-player-web/commit/7cb4529))
+
+### Performance
+
+- `dom`
+  - hoist layout config reads out of the per-line loop ([10cf1e8](https://github.com/music-lyric/music-lyric-player-web/commit/10cf1e8))
+
 ## v0.16.0 (2026-06-25)
 
 ### Feature
