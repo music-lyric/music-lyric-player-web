@@ -47,7 +47,7 @@ export default buildConfig({
       minify: false,
     },
     server: {
-      port: 9090,
+      port: 9091,
       strictPort: false,
     },
     plugins: [VuePlugin(), Alias(), PathPlugin()],
