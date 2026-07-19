@@ -29,7 +29,11 @@
 }
 
 .token {
+  // Extend the mask painting box beyond the glyph ink while cancelling the added layout width.
+  // This prevents italic and antialiased edges from being clipped at token boundaries.
   display: inline-block;
+  padding: 0.08em 0.12em;
+  margin: -0.08em -0.12em;
 
   mask-mode: alpha;
   mask-repeat: no-repeat;
