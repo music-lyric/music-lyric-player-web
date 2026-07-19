@@ -31,13 +31,13 @@ $positions: left, center, right;
   color: build-line-variable('normal', $element, 'color');
   opacity: build-line-variable('normal', $element, 'opacity');
 
+  [played]:not([scrolling] [played]) & {
+    color: build-line-variable('normal', '#{$element}-played', 'color');
+    opacity: build-line-variable('normal', '#{$element}-played', 'opacity');
+  }
+
   [active] & {
     color: build-line-variable('normal', '#{$element}-active', 'color');
     opacity: build-line-variable('normal', '#{$element}-active', 'opacity');
-  }
-
-  [played] & {
-    color: build-line-variable('normal', '#{$element}-played', 'color');
-    opacity: build-line-variable('normal', '#{$element}-played', 'opacity');
   }
 }
