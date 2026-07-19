@@ -1,3 +1,10 @@
+## v0.18.1 (2026-07-19)
+
+### Fix
+
+- `dom`
+  - preserve staggered group exit delay ([139be65](https://github.com/music-lyric/music-lyric-player-web/commit/139be65))
+
 ## v0.18.0 (2026-07-19)
 
 ### Document
