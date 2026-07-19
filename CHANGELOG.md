@@ -1,3 +1,28 @@
+## v0.18.0 (2026-07-19)
+
+### Document
+
+- update readme ([5b4764e](https://github.com/music-lyric/music-lyric-player-web/commit/5b4764e))
+
+### Feature
+
+- bump lyric model version ([d96ed68](https://github.com/music-lyric/music-lyric-player-web/commit/d96ed68))
+- `dom`
+  - group merged line exit animation ([287cdbe](https://github.com/music-lyric/music-lyric-player-web/commit/287cdbe))
+
+### Fix
+
+- `dom`
+  - prevent word annotation clipping ([03dad11](https://github.com/music-lyric/music-lyric-player-web/commit/03dad11))
+  - align word annotation rows ([544d779](https://github.com/music-lyric/music-lyric-player-web/commit/544d779))
+  - prevent virtualized line flash ([7416453](https://github.com/music-lyric/music-lyric-player-web/commit/7416453))
+  - restore played line style while scrolling ([4c2415d](https://github.com/music-lyric/music-lyric-player-web/commit/4c2415d))
+
+### Refactor
+
+- `utils`
+  - simplify config manager interface ([0850950](https://github.com/music-lyric/music-lyric-player-web/commit/0850950))
+
 ## v0.17.0 (2026-06-25)
 
 ### Feature
