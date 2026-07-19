@@ -29,6 +29,7 @@ export interface WordAnnotationDescriptor {
     wordInfo: Lyric.Common.WordNormal,
     lineInfo: Lyric.Parsed.ParsedLineContent,
     language: Lyric.LanguageTag | undefined,
+    forceOwnWipe?: boolean,
   ): WordAnnotationElement
 }
 
@@ -37,13 +38,13 @@ export const WORD_ANNOTATION_DESCRIPTORS: readonly WordAnnotationDescriptor[] = 
     type: DomLyricPlayerConfig.Line.Normal.Syllable.WordSlot.AnnotationRoman,
     isEnabled: (syllable) => syllable.annotation.roman.visible,
     buildLanguage: (cfg) => resolveLanguage(cfg.main.syllable.annotation.roman.language, cfg.annotation.roman.language, cfg.base.language),
-    buildElement: (context, info, lineInfo, language) => new WordRomanElement(context, info, lineInfo, language),
+    buildElement: (context, info, lineInfo, language, forceOwnWipe) => new WordRomanElement(context, info, lineInfo, language, forceOwnWipe),
   },
   {
     type: DomLyricPlayerConfig.Line.Normal.Syllable.WordSlot.AnnotationRuby,
     isEnabled: (syllable) => syllable.annotation.ruby.visible,
     buildLanguage: () => undefined,
-    buildElement: (context, info, lineInfo) => new WordRubyElement(context, info, lineInfo),
+    buildElement: (context, info, lineInfo, _language, forceOwnWipe) => new WordRubyElement(context, info, lineInfo, forceOwnWipe),
   },
 ]
 

@@ -2,9 +2,9 @@ import type { ComponentContext } from '@root/components/context'
 import type { DomLyricPlayerConfig } from '@root/config'
 import type { MaskGenerateInput } from './animation'
 
-import { PlayerRole } from '@root/constants'
-
 import { Lyric } from '@music-lyric-kit/lyric'
+import { PlayerRole } from '@root/constants'
+import { WordSlot } from '@root/config/line/normal/syllable'
 import { WordElement } from './word'
 import { MaskAnimationHost } from './animation'
 
@@ -67,6 +67,17 @@ export class SyllableElement {
     this.maskHost.generate(inputs, this.updateMaskWord)
   }
 
+  private alignAnnotationRows() {
+    for (const slot of [WordSlot.AnnotationRoman, WordSlot.AnnotationRuby]) {
+      if (!this.words.some((word) => word.hasAnnotation(slot))) {
+        continue
+      }
+      for (const word of this.words) {
+        word.ensureAnnotationRow(slot)
+      }
+    }
+  }
+
   private init() {
     this.clear()
 
@@ -94,6 +105,8 @@ export class SyllableElement {
         isInSpace = true
       }
     }
+
+    this.alignAnnotationRows()
 
     this.dom.appendChild(frag)
   }
@@ -133,6 +146,14 @@ export class SyllableElement {
     ) {
       for (const word of this.words) {
         word.updateConfig(keys)
+      }
+      if (
+        keys.has('line.normal.main.syllable.annotation.roman') ||
+        keys.has('line.normal.main.syllable.annotation.ruby') ||
+        keys.has('line.normal.annotation.roman.language') ||
+        keys.has('line.normal.base.language')
+      ) {
+        this.alignAnnotationRows()
       }
     }
   }

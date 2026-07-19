@@ -30,6 +30,7 @@ export class WordElement {
   private driven: WordAnnotationElement[] = []
 
   private annotations: Map<WordSlot, WordAnnotationElement> = new Map()
+  private annotationRows: Map<WordSlot, HTMLDivElement> = new Map()
   private chars: HTMLSpanElement[] = []
 
   // Annotation rows above the word; only these drive the baseline padding, so rows below the word keep no separate reference.
@@ -107,6 +108,12 @@ export class WordElement {
     }
   }
 
+  private createAnnotationRow() {
+    const row = document.createElement('div')
+    applyClassName(row, [styles.annotationRow])
+    return row
+  }
+
   private buildAnnotations() {
     this.disposeAnnotations()
 
@@ -116,13 +123,17 @@ export class WordElement {
         continue
       }
 
-      const element = descriptor.buildElement(this.context, this.wordInfo, this.lineInfo, descriptor.buildLanguage(normal))
+      const element = descriptor.buildElement(this.context, this.wordInfo, this.lineInfo, descriptor.buildLanguage(normal), true)
       if (!element.hasContent) {
         element.dispose()
         continue
       }
 
+      const row = this.createAnnotationRow()
+      row.appendChild(element.element)
+
       this.annotations.set(descriptor.type, element)
+      this.annotationRows.set(descriptor.type, row)
       if (element.independent) {
         this.driven.push(element)
       }
@@ -140,6 +151,7 @@ export class WordElement {
       element.dispose()
     }
     this.annotations.clear()
+    this.annotationRows.clear()
     this.driven = []
   }
 
@@ -157,7 +169,7 @@ export class WordElement {
     const order = resolveWordSort(this.context.config.line.normal.main.syllable.sort)
     const wordIndex = order.indexOf(WordSlot.Word)
 
-    // Word and the rows riding its mask share the `.wipe` box; independent rows sit in the cell above or below it.
+    // Annotation rows own their wipes and remain direct cell children so timeline differences cannot alter their configured order.
     const wipeNodes: HTMLElement[] = []
     const above: HTMLElement[] = []
     const below: HTMLElement[] = []
@@ -169,25 +181,16 @@ export class WordElement {
         return
       }
 
-      const element = this.annotations.get(slot)
-      if (!element) {
+      const row = this.annotationRows.get(slot)
+      if (!row) {
         return
       }
 
-      // An independent row owns its wipe, so it cannot live inside the word's mask; it collapses to the nearer side of the word.
-      if (element.independent) {
-        if (index < wordIndex) {
-          above.push(element.element)
-          upper.push(element.element)
-        } else {
-          below.push(element.element)
-        }
-        return
-      }
-
-      wipeNodes.push(element.element)
       if (index < wordIndex) {
-        upper.push(element.element)
+        above.push(row)
+        upper.push(row)
+      } else {
+        below.push(row)
       }
     })
 
@@ -203,6 +206,18 @@ export class WordElement {
     } else {
       this.cell.style.removeProperty('--word-align-top')
     }
+  }
+
+  hasAnnotation(slot: WordSlot) {
+    return this.annotations.has(slot)
+  }
+
+  ensureAnnotationRow(slot: WordSlot) {
+    if (this.annotationRows.has(slot)) {
+      return
+    }
+    this.annotationRows.set(slot, this.createAnnotationRow())
+    this.applyOrder()
   }
 
   updateStyle(isPlay: boolean, isActive: boolean, currentTime: number, relativeTime: number) {

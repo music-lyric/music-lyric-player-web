@@ -26,6 +26,14 @@
   margin: calc(-1 * var(--emphasize-padding-vertical)) calc(var(--word-gap) - var(--emphasize-padding-horizontal));
 }
 
+.annotation-row {
+  display: flex;
+  width: 100%;
+  min-height: 1em;
+  align-items: center;
+  justify-content: center;
+}
+
 .wipe {
   // The two mask stops multiply the word's own opacity, resolved from the configured syllable opacities:
   // - unsung side defaults to 1 and is pulled down to normal/active on the active line below.

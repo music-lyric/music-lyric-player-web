@@ -73,6 +73,7 @@ export abstract class WordAnnotationBaseElement implements WordAnnotationElement
     language: Lyric.LanguageTag | undefined,
     role: string,
     style: string,
+    forceOwnWipe = false,
   ) {
     const item = this.resolve(wordInfo, language)
     this.text = item ? Lyric.Common.getWordAnnotationText(item) : ''
@@ -81,7 +82,7 @@ export abstract class WordAnnotationBaseElement implements WordAnnotationElement
     applyClassName(this.content, [style])
     applyRole(this.content, role)
 
-    this.ownsWipe = !!item && this.text.length > 0 && isIndependentTimeline(item, wordInfo)
+    this.ownsWipe = !!item && this.text.length > 0 && (forceOwnWipe || isIndependentTimeline(item, wordInfo))
 
     if (!this.ownsWipe || !item) {
       this.content.innerText = this.text
@@ -122,7 +123,10 @@ export abstract class WordAnnotationBaseElement implements WordAnnotationElement
   /**
    * Resolve the annotation item this row renders, or `undefined` when the word has none.
    */
-  protected abstract resolve(info: Lyric.Common.WordNormal, language: Lyric.LanguageTag | undefined): Lyric.Common.WordAnnotationRoman | Lyric.Common.WordAnnotationRuby | undefined
+  protected abstract resolve(
+    info: Lyric.Common.WordNormal,
+    language: Lyric.LanguageTag | undefined,
+  ): Lyric.Common.WordAnnotationRoman | Lyric.Common.WordAnnotationRuby | undefined
 
   updateSize() {
     const host = this.host
