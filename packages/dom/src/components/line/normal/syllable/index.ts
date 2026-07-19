@@ -23,16 +23,18 @@ export class SyllableElement {
 
   constructor(
     private readonly context: ComponentContext,
-    private readonly info: Lyric.LineNormal,
+    private readonly info: Lyric.Parsed.ParsedLineContent,
     private readonly isBackground: boolean,
   ) {
     this.dom = document.createElement('div')
 
     let wordCount = 0
     for (const item of info.words) {
-      if (item.type === Lyric.WordType.Normal) wordCount++
+      if (Lyric.Common.isWordNormal(item)) {
+        wordCount++
+      }
     }
-    this.maskHost = new MaskAnimationHost(context, info.time.duration, wordCount)
+    this.maskHost = new MaskAnimationHost(context, Lyric.Common.getTimeDuration(info.time), wordCount)
 
     this.words = []
 
@@ -50,13 +52,13 @@ export class SyllableElement {
     }
 
     const inputs: MaskGenerateInput[] = new Array(count)
-    const lineStart = this.info.time.start
+    const lineStart = this.info.time?.start ?? 0
     for (let i = 0; i < count; i++) {
       const word = this.words[i]
       const time = word.info.time!
       inputs[i] = {
         start: time.start - lineStart,
-        duration: time.duration,
+        duration: Lyric.Common.getTimeDuration(time),
         width: word.width,
         height: word.height,
       }
@@ -71,27 +73,25 @@ export class SyllableElement {
     let isInSpace = false
     const frag = document.createDocumentFragment()
     for (const item of this.info.words) {
-      switch (item.type) {
-        case Lyric.WordType.Normal: {
-          const node = new WordElement(this.context, item, this.info, this.isBackground)
+      if (Lyric.Common.isWordNormal(item)) {
+        const node = new WordElement(this.context, item.body.value, this.info, this.isBackground)
 
-          if (isInSpace) {
-            node.element.classList.add(styles.spaceStart)
-            isInSpace = false
-          }
+        if (isInSpace) {
+          node.element.classList.add(styles.spaceStart)
+          isInSpace = false
+        }
 
-          this.words.push(node)
-          frag.appendChild(node.element)
-          break
+        this.words.push(node)
+        frag.appendChild(node.element)
+        continue
+      }
+
+      if (Lyric.Common.isWordSpace(item)) {
+        const prev = this.words[this.words.length - 1]
+        if (prev) {
+          prev.element.classList.add(styles.spaceEnd)
         }
-        case Lyric.WordType.Space: {
-          const prev = this.words[this.words.length - 1]
-          if (prev) {
-            prev.element.classList.add(styles.spaceEnd)
-          }
-          isInSpace = true
-          break
-        }
+        isInSpace = true
       }
     }
 
@@ -169,21 +169,21 @@ export class SyllableElement {
   }
 
   play(currentTime: number, isActive: boolean) {
-    const relativeTime = currentTime - this.info.time.start
+    const relativeTime = currentTime - (this.info.time?.start ?? 0)
     for (const word of this.words) {
       word.updateStyle(true, isActive, currentTime, relativeTime)
     }
   }
 
   pause(currentTime: number, isActive: boolean) {
-    const relativeTime = currentTime - this.info.time.start
+    const relativeTime = currentTime - (this.info.time?.start ?? 0)
     for (const word of this.words) {
       word.updateStyle(false, isActive, currentTime, relativeTime)
     }
   }
 
   reset(currentTime: number) {
-    const relativeTime = currentTime - this.info.time.start
+    const relativeTime = currentTime - (this.info.time?.start ?? 0)
     for (const word of this.words) {
       word.updateStyle(false, false, currentTime, relativeTime)
     }

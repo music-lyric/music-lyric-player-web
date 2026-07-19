@@ -8,12 +8,12 @@ import { WordAnnotationBaseElement } from './base'
 import styles from './index.module.scss'
 
 export class WordRubyElement extends WordAnnotationBaseElement {
-  constructor(context: ComponentContext, wordInfo: Lyric.WordNormal, lineInfo: Lyric.LineNormal) {
+  constructor(context: ComponentContext, wordInfo: Lyric.Common.WordNormal, lineInfo: Lyric.Parsed.ParsedLineContent) {
     // Ruby has a single furigana set per word, so it carries no language choice.
     super(context, wordInfo, lineInfo, undefined, PlayerRole.line.normal.text.word.ruby, styles.wordRuby)
   }
 
-  protected override resolve(info: Lyric.WordNormal) {
-    return info.annotation?.ruby
+  protected override resolve(info: Lyric.Common.WordNormal) {
+    return info.annotation?.rubies[0]
   }
 }

@@ -8,11 +8,11 @@ import { WordAnnotationBaseElement } from './base'
 import styles from './index.module.scss'
 
 export class WordRomanElement extends WordAnnotationBaseElement {
-  constructor(context: ComponentContext, wordInfo: Lyric.WordNormal, lineInfo: Lyric.LineNormal, language: Lyric.LanguageTag | undefined) {
+  constructor(context: ComponentContext, wordInfo: Lyric.Common.WordNormal, lineInfo: Lyric.Parsed.ParsedLineContent, language: Lyric.LanguageTag | undefined) {
     super(context, wordInfo, lineInfo, language, PlayerRole.line.normal.text.word.roman, styles.wordRoman)
   }
 
-  protected override resolve(info: Lyric.WordNormal, language: Lyric.LanguageTag | undefined) {
+  protected override resolve(info: Lyric.Common.WordNormal, language: Lyric.LanguageTag | undefined) {
     const romans = info.annotation?.romans
     if (!romans || romans.length === 0) {
       return undefined

@@ -1,4 +1,4 @@
-import type { Lyric } from '@music-lyric-kit/lyric'
+import { Lyric } from '@music-lyric-kit/lyric'
 import type { ComponentContext } from '@root/components/context'
 import type { DomLyricPlayerConfig } from '@root/config'
 import type { WordAnnotationElement } from './annotation'
@@ -46,8 +46,8 @@ export class WordElement {
 
   constructor(
     private readonly context: ComponentContext,
-    private readonly wordInfo: Lyric.WordNormal,
-    private readonly lineInfo: Lyric.LineNormal,
+    private readonly wordInfo: Lyric.Common.WordNormal,
+    private readonly lineInfo: Lyric.Parsed.ParsedLineContent,
     private readonly isBackground: boolean,
   ) {
     this.word = document.createElement('div')
@@ -60,7 +60,7 @@ export class WordElement {
       // Float hosts on the word so it lifts alone.
       float: new FloatAnimation(this.word, this.context, this.wordInfo, this.lineInfo),
       // Mask hosts on the wipe so it covers the word plus the rows riding it, while independent rows mask themselves
-      mask: new MaskAnimation(this.wipe, this.lineInfo.time.duration),
+      mask: new MaskAnimation(this.wipe, Lyric.Common.getTimeDuration(this.lineInfo.time)),
       // Emphasize only in main word.
       emphasize: new EmphasizeAnimation(this.context, this.wordInfo, this.lineInfo, this.chars, this.isBackground),
     }

@@ -7,7 +7,7 @@ export interface DomLyricPlayerEventMap {
    * @param index The clicked line's index in the current lyric info.
    * @param event The original DOM mouse event.
    */
-  lineClick: (line: Lyric.Line, index: number, event: MouseEvent) => void
+  lineClick: (line: Lyric.Parsed.ParsedLine, index: number, event: MouseEvent) => void
 
   /**
    * When a lyric line is right-clicked by the user.
@@ -15,5 +15,5 @@ export interface DomLyricPlayerEventMap {
    * @param index The right-clicked line's index in the current lyric info.
    * @param event The original DOM mouse event.
    */
-  lineContextMenu: (line: Lyric.Line, index: number, event: MouseEvent) => void
+  lineContextMenu: (line: Lyric.Parsed.ParsedLine, index: number, event: MouseEvent) => void
 }

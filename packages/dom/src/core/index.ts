@@ -150,7 +150,7 @@ export class DomLyricPlayer {
     }
   }
 
-  private onLyricUpdate = (_info: Lyric.Info) => {
+  private onLyricUpdate = (_info: Lyric.Parsed.Info) => {
     this.scrollManager.clear()
     this.lineManager.updateLines(this.player.currentInfo)
     this.layoutManager.reset()
@@ -159,7 +159,7 @@ export class DomLyricPlayer {
     })
   }
 
-  private onLinesUpdate = (_lines: Lyric.Line[], _indexes: number[], _index: number, isSeek: boolean) => {
+  private onLinesUpdate = (_lines: Lyric.Parsed.ParsedLine[], _indexes: number[], _index: number, isSeek: boolean) => {
     this.scheduleLayoutUpdate({
       isSeek,
     })
@@ -179,7 +179,7 @@ export class DomLyricPlayer {
     this.layoutManager.update()
   }
 
-  private resolveLine(index: number): Lyric.Line | null {
+  private resolveLine(index: number): Lyric.Parsed.ParsedLine | null {
     if (this.context.destroyed) {
       return null
     }

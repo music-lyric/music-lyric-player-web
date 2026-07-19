@@ -1,4 +1,4 @@
-import type { Lyric } from '@music-lyric-kit/lyric'
+import { Lyric } from '@music-lyric-kit/lyric'
 import type { DomLyricPlayerConfig } from '@root/config'
 
 import { PlayerRole } from '@root/constants'
@@ -10,7 +10,7 @@ import styles from './index.module.scss'
 export class PlainElement {
   private readonly dom: HTMLDivElement
 
-  constructor(private readonly info: Lyric.LineNormal) {
+  constructor(private readonly info: Lyric.Parsed.ParsedLineContent) {
     this.dom = document.createElement('div')
     this.updateConfig()
   }
@@ -19,7 +19,7 @@ export class PlainElement {
     if (!keys) {
       applyClassName(this.dom, [styles.plain])
       applyRole(this.dom, PlayerRole.line.normal.text.self)
-      this.dom.innerText = this.info.original
+      this.dom.innerText = Lyric.Parsed.getParsedLineText(this.info)
     }
   }
 

@@ -113,10 +113,10 @@ export class LineManager {
     return this.currentIndexMap.get(lineIndex)
   }
 
-  updateLines(info: Lyric.Info) {
+  updateLines(info: Lyric.Parsed.Info) {
     const { component } = this.context
 
-    const isSyllable = info.timing === Lyric.InfoTiming.Syllable
+    const isSyllable = info.timing === Lyric.Common.Timing.WORD
 
     const newElementMap = new Map<number, LineElement>()
     const newIndexMap = new Map<number, number[]>()
@@ -132,33 +132,31 @@ export class LineManager {
       lineIndex++
       elementIndex++
 
-      switch (line.type) {
-        case Lyric.LineType.Interlude: {
-          const element = new InterludeLineElement(component.context, line)
-          newElementMap.set(currentElementIndex, element)
-          indexes.push(currentElementIndex)
-          break
-        }
+      if (Lyric.Parsed.isParsedLineInterlude(line)) {
+        const element = new InterludeLineElement(component.context, line.body.value)
+        newElementMap.set(currentElementIndex, element)
+        indexes.push(currentElementIndex)
 
-        case Lyric.LineType.Normal: {
-          const element = new NormalLineElement(component.context, line, false, isSyllable)
-          element.index = currentLineIndex
-          newElementMap.set(currentElementIndex, element)
-          indexes.push(currentElementIndex)
-
-          for (const background of line.background ?? []) {
-            const backgroundElement = new NormalLineElement(component.context, background, true, isSyllable)
-            backgroundElement.index = currentLineIndex
-            newElementMap.set(elementIndex, backgroundElement)
-            indexes.push(elementIndex)
-            elementIndex++
-          }
-
-          break
-        }
+        newIndexMap.set(currentLineIndex, indexes)
+        continue
       }
 
-      newIndexMap.set(currentLineIndex, indexes)
+      if (Lyric.Parsed.isParsedLineNormal(line)) {
+        const element = new NormalLineElement(component.context, line.body.value, false, isSyllable)
+        element.index = currentLineIndex
+        newElementMap.set(currentElementIndex, element)
+        indexes.push(currentElementIndex)
+
+        for (const background of line.body.value.backgrounds ?? []) {
+          const backgroundElement = new NormalLineElement(component.context, background, true, isSyllable)
+          backgroundElement.index = currentLineIndex
+          newElementMap.set(elementIndex, backgroundElement)
+          indexes.push(elementIndex)
+          elementIndex++
+        }
+
+        newIndexMap.set(currentLineIndex, indexes)
+      }
     }
 
     this.clear()
@@ -191,7 +189,7 @@ export class LineManager {
       }
 
       if (!element.isBackground) {
-        const agentId = element.info.agent?.id
+        const agentId = element.info.agents[0]
         if (agentId !== undefined) {
           if (lastId !== undefined && agentId !== lastId) {
             current = current === 'left' ? 'right' : current === 'right' ? 'left' : current

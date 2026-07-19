@@ -1,4 +1,4 @@
-import type { Lyric } from '@music-lyric-kit/lyric'
+import { Lyric } from '@music-lyric-kit/lyric'
 import type { ComponentContext } from '@root/components/context'
 import type { DomLyricPlayerConfig } from '@root/config'
 
@@ -11,8 +11,8 @@ export class FloatAnimation {
   constructor(
     private readonly host: HTMLDivElement,
     private readonly context: ComponentContext,
-    private readonly wordInfo: Lyric.WordNormal,
-    private readonly lineInfo: Lyric.LineNormal,
+    private readonly wordInfo: Lyric.Common.WordNormal,
+    private readonly lineInfo: Lyric.Parsed.ParsedLineContent,
   ) {}
 
   // Built lazily on activate so off-window words don't hold a compositor layer.
@@ -25,11 +25,11 @@ export class FloatAnimation {
     }
 
     // Guard against a non-finite lyric duration so WAAPI timing stays valid.
-    const rawDuration = this.wordInfo.time!.duration
+    const rawDuration = Lyric.Common.getWordDuration(this.wordInfo)
     const duration = Number.isFinite(rawDuration) ? Math.max(1000, rawDuration) : 1000
     this.duration = duration
 
-    const delay = this.wordInfo.time!.start - this.lineInfo.time.start
+    const delay = this.wordInfo.time!.start - (this.lineInfo.time?.start ?? 0)
     this.delay = delay
 
     this.animation = this.host.animate([{ transform: `translateY(${config.from ?? 0}px)` }, { transform: `translateY(${config.to ?? 2}px)` }], {
@@ -64,7 +64,7 @@ export class FloatAnimation {
 
     // When the line is active but `currentTime` is still before its start (e.g. before-song fallback / seek)
     // pad the effect's delay so the float does not advance during the catch-up window.
-    const initDelay = this.wordInfo.time!.start - this.lineInfo.time.start
+    const initDelay = this.wordInfo.time!.start - (this.lineInfo.time?.start ?? 0)
     const delay = relativeTime < 0 ? initDelay - relativeTime : initDelay
     if (this.delay !== delay) {
       this.delay = delay

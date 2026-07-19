@@ -116,7 +116,7 @@ export const usePlayer = ({ defaults }: UsePlayerOptions) => {
   }
 
   const clearLyric = () => {
-    base.updateLyric(new Lyric.Info())
+    base.updateLyric(Lyric.Parsed.makeParsedInfo())
     hasLyric.value = false
     lyricInfo.value = undefined
     persistState()
@@ -192,7 +192,11 @@ export const usePlayer = ({ defaults }: UsePlayerOptions) => {
 
   // Clicking a lyric line seeks playback to that line's start time.
   dom.event.add('lineClick', (line) => {
-    seekToTime(base.convertContentTime(line.time.start))
+    const time = Lyric.Parsed.getParsedLineTime(line)?.start
+    if (time === undefined) {
+      return
+    }
+    seekToTime(base.convertContentTime(time))
   })
 
   const applyBasePatch = (patch: Partial<BaseLyricPlayerConfig.Root>) => {

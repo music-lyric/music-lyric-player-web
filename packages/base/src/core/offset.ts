@@ -12,13 +12,13 @@ export class Offset {
     this.temp = 0
   }
 
-  refreshFromMeta(info: Lyric.Info, useMeta: boolean) {
+  refreshFromMeta(info: Lyric.Parsed.Info, useMeta: boolean) {
     if (!useMeta) {
       this.meta = 0
       return
     }
 
-    const value = info.meta.first(Lyric.MetaType.Offset)?.value
+    const value = info.meta?.offset
     this.meta = typeof value === 'number' && Number.isFinite(value) ? value : 0
   }
 

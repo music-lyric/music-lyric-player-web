@@ -1,4 +1,4 @@
-import type { Lyric } from '@music-lyric-kit/lyric'
+import { Lyric } from '@music-lyric-kit/lyric'
 import type { ComponentContext } from '@root/components/context'
 import type { MaskGenerateInput } from '../animation'
 
@@ -30,14 +30,14 @@ export interface WordAnnotationElement {
   dispose(): void
 }
 
-const isSameWindow = (a: Lyric.Time | undefined, b: Lyric.Time | undefined) => {
+const isSameWindow = (a: Lyric.Common.Time | undefined, b: Lyric.Common.Time | undefined) => {
   return !!a && !!b && a.start === b.start && a.end === b.end
 }
 
 /**
  * Multiple tokens always own their timeline; a single token only when its window differs from the word.
  */
-const isIndependentTimeline = (item: Lyric.WordAnnotationItem, wordInfo: Lyric.WordNormal) => {
+const isIndependentTimeline = (item: Lyric.Common.WordAnnotationRoman | Lyric.Common.WordAnnotationRuby, wordInfo: Lyric.Common.WordNormal) => {
   const tokens = item.words ?? []
   if (tokens.length > 1) {
     return true
@@ -68,14 +68,14 @@ export abstract class WordAnnotationBaseElement implements WordAnnotationElement
 
   constructor(
     context: ComponentContext,
-    wordInfo: Lyric.WordNormal,
-    lineInfo: Lyric.LineNormal,
+    wordInfo: Lyric.Common.WordNormal,
+    lineInfo: Lyric.Parsed.ParsedLineContent,
     language: Lyric.LanguageTag | undefined,
     role: string,
     style: string,
   ) {
     const item = this.resolve(wordInfo, language)
-    this.text = item?.content ?? ''
+    this.text = item ? Lyric.Common.getWordAnnotationText(item) : ''
 
     this.content = document.createElement('div')
     applyClassName(this.content, [style])
@@ -89,11 +89,10 @@ export abstract class WordAnnotationBaseElement implements WordAnnotationElement
     }
 
     // Distinct timeline: render each token as its own masked span and drive a token-scoped wipe.
-    const lineStart = lineInfo.time.start
+    const lineStart = lineInfo.time?.start ?? 0
     const fallback = item.time ?? wordInfo.time
     const fallbackStart = fallback ? fallback.start - lineStart : 0
-    const fallbackDuration = fallback ? fallback.duration : 0
-
+    const fallbackDuration = Lyric.Common.getTimeDuration(fallback)
     const fragment = document.createDocumentFragment()
     for (const token of item.words) {
       if (!token.content) {
@@ -109,11 +108,11 @@ export abstract class WordAnnotationBaseElement implements WordAnnotationElement
 
       const time = token.time
       this.starts.push(time ? time.start - lineStart : fallbackStart)
-      this.durations.push(time ? time.duration : fallbackDuration)
+      this.durations.push(Lyric.Common.getTimeDuration(time ?? fallback))
     }
     this.content.appendChild(fragment)
 
-    const lineDuration = lineInfo.time.duration
+    const lineDuration = Lyric.Common.getTimeDuration(lineInfo.time)
     this.host = new MaskAnimationHost(context, lineDuration, this.spans.length)
     for (const span of this.spans) {
       this.masks.push(new MaskAnimation(span, lineDuration))
@@ -123,7 +122,7 @@ export abstract class WordAnnotationBaseElement implements WordAnnotationElement
   /**
    * Resolve the annotation item this row renders, or `undefined` when the word has none.
    */
-  protected abstract resolve(info: Lyric.WordNormal, language: Lyric.LanguageTag | undefined): Lyric.WordAnnotationItem | undefined
+  protected abstract resolve(info: Lyric.Common.WordNormal, language: Lyric.LanguageTag | undefined): Lyric.Common.WordAnnotationRoman | Lyric.Common.WordAnnotationRuby | undefined
 
   updateSize() {
     const host = this.host

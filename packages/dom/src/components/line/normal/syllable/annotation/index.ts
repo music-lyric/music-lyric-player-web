@@ -26,8 +26,8 @@ export interface WordAnnotationDescriptor {
    */
   buildElement(
     context: ComponentContext,
-    wordInfo: Lyric.WordNormal,
-    lineInfo: Lyric.LineNormal,
+    wordInfo: Lyric.Common.WordNormal,
+    lineInfo: Lyric.Parsed.ParsedLineContent,
     language: Lyric.LanguageTag | undefined,
   ): WordAnnotationElement
 }

@@ -23,7 +23,7 @@ export class NormalLineElement extends BaseLineElement {
     return LineElementType.Normal as const
   }
 
-  private readonly content: Lyric.LineNormal
+  private readonly content: Lyric.Parsed.ParsedLineContent
 
   private container: HTMLDivElement
   private main: SyllableElement | PlainElement | null = null
@@ -34,7 +34,7 @@ export class NormalLineElement extends BaseLineElement {
   private backgroundEnterDelay: number = 0
   private backgroundRetractDelay: number = 0
 
-  constructor(context: ComponentContext, info: Lyric.LineNormal, isBackground: boolean, isSyllable: boolean) {
+  constructor(context: ComponentContext, info: Lyric.Parsed.ParsedLineContent, isBackground: boolean, isSyllable: boolean) {
     super(context)
 
     this.content = info
@@ -92,7 +92,7 @@ export class NormalLineElement extends BaseLineElement {
       return false
     }
     for (const word of this.content.words) {
-      if (word.type === Lyric.WordType.Normal && (word.annotation?.romans?.[0]?.content?.length ?? 0) > 0) {
+      if (Lyric.Common.isWordNormal(word) && (word.body.value.annotation?.romans?.[0]?.words.length ?? 0) > 0) {
         return true
       }
     }

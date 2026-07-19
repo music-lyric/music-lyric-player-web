@@ -17,7 +17,7 @@ export interface BaseLyricPlayerEventMap {
    * When the entire lyric information is updated (e.g., loading a new lyric/song).
    * @param info The newly loaded lyric information object.
    */
-  lyricUpdate: (info: Lyric.Info) => void
+  lyricUpdate: (info: Lyric.Parsed.Info) => void
 
   /**
    * When the currently active lyric lines change during playback.
@@ -26,5 +26,5 @@ export interface BaseLyricPlayerEventMap {
    * @param firstIndex The index of the first currently active lyric line (-1 if none).
    * @param isSeek Is seek.
    */
-  linesUpdate: (lines: Lyric.Line[], indexs: number[], index: number, isSeek: boolean) => void
+  linesUpdate: (lines: Lyric.Parsed.ParsedLine[], indexs: number[], index: number, isSeek: boolean) => void
 }

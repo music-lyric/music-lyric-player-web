@@ -1,4 +1,4 @@
-import type { Lyric } from '@music-lyric-kit/lyric'
+import { Lyric } from '@music-lyric-kit/lyric'
 import type { ComponentContext } from '@root/components/context'
 import type { DomLyricPlayerConfig } from '@root/config'
 
@@ -314,8 +314,8 @@ export class EmphasizeAnimation {
 
   constructor(
     private readonly context: ComponentContext,
-    private readonly wordInfo: Lyric.WordNormal,
-    private readonly lineInfo: Lyric.LineNormal,
+    private readonly wordInfo: Lyric.Common.WordNormal,
+    private readonly lineInfo: Lyric.Parsed.ParsedLineContent,
     private readonly chars: HTMLSpanElement[],
     private readonly isBackground: boolean,
   ) {
@@ -345,7 +345,7 @@ export class EmphasizeAnimation {
   private get params() {
     // Short syllables get a much softer treatment (cubic); long ones less than linear (sqrt).
     const min = Math.max(0, this.config.minDuration)
-    const raw = Math.max(min, this.wordInfo.time!.duration)
+    const raw = Math.max(min, Lyric.Common.getWordDuration(this.wordInfo))
 
     let mainIntensity = raw / 2000
     mainIntensity = mainIntensity > 1 ? Math.sqrt(mainIntensity) : mainIntensity ** 3
@@ -356,7 +356,7 @@ export class EmphasizeAnimation {
     glowIntensity = clamp(glowIntensity * 0.5, 0, 0.8)
 
     const duration = Number.isFinite(raw) ? raw : 0
-    const delay = this.wordInfo.time!.start - this.lineInfo.time.start
+    const delay = this.wordInfo.time!.start - (this.lineInfo.time?.start ?? 0)
     const stagger = duration / 2.5 / this.chars.length
 
     return { mainIntensity, glowIntensity, duration, delay, stagger }

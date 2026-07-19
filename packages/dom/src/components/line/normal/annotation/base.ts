@@ -6,7 +6,7 @@ export abstract class AnnotationBaseElement {
   protected readonly content: HTMLDivElement
   private readonly text: string
 
-  constructor(info: Lyric.LineNormal, language: Lyric.LanguageTag | undefined, role: string, style: string) {
+  constructor(info: Lyric.Parsed.ParsedLineContent, language: Lyric.LanguageTag | undefined, role: string, style: string) {
     this.text = this.resolve(info, language) ?? ''
 
     this.content = document.createElement('div')
@@ -16,7 +16,7 @@ export abstract class AnnotationBaseElement {
     applyRole(this.content, role)
   }
 
-  protected abstract resolve(info: Lyric.LineNormal, language: Lyric.LanguageTag | undefined): string | undefined
+  protected abstract resolve(info: Lyric.Parsed.ParsedLineContent, language: Lyric.LanguageTag | undefined): string | undefined
 
   dispose() {
     this.content.remove()

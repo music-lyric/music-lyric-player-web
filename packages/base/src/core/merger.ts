@@ -1,7 +1,7 @@
-import type { Lyric } from '@music-lyric-kit/lyric'
+import { Lyric } from '@music-lyric-kit/lyric'
 
 export class Merger {
-  private lines: Lyric.Line[] = []
+  private lines: Lyric.Parsed.ParsedLine[] = []
   private mergedEnd: number[] = []
 
   /**
@@ -19,13 +19,13 @@ export class Merger {
       return Infinity
     }
 
-    return Math.max(lines[index].time.end, lines[index + 1].time.start)
+    return Math.max(Lyric.Parsed.getParsedLineTime(lines[index])!.end, Lyric.Parsed.getParsedLineTime(lines[index + 1])!.start)
   }
 
   /**
    * Rebuild the merged end-time table from the given lines and merge settings.
    */
-  build(lines: Lyric.Line[], mergeWindow: number, mergeLimit: number) {
+  build(lines: Lyric.Parsed.ParsedLine[], mergeWindow: number, mergeLimit: number) {
     this.lines = lines
 
     const count = lines.length

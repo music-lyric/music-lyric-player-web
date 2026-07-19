@@ -1,4 +1,4 @@
-import type { Lyric } from '@music-lyric-kit/lyric'
+import { Lyric } from '@music-lyric-kit/lyric'
 import type { ComponentContext } from '@root/components/context'
 import type { DomLyricPlayerConfig } from '@root/config'
 import type { LineElementStyle } from '../base'
@@ -25,7 +25,7 @@ export class InterludeLineElement extends BaseLineElement {
 
   constructor(
     context: ComponentContext,
-    private readonly info: Lyric.LineInterlude,
+    private readonly info: Lyric.Parsed.ParsedLineInterlude,
   ) {
     super(context)
 
@@ -48,7 +48,7 @@ export class InterludeLineElement extends BaseLineElement {
   }
 
   private buildAnimations() {
-    const raw = this.info.time.duration
+    const raw = Lyric.Parsed.getParsedLineDuration(this.info)
     const slice = Number.isFinite(raw) ? Math.max(0, Math.floor(raw / DOT_COUNT)) : 0
     for (const dot of this.dots) {
       dot.build(slice)
@@ -102,15 +102,18 @@ export class InterludeLineElement extends BaseLineElement {
   }
 
   override play(time: number, isActive: boolean) {
-    this.driveAnimations(true, isActive, time - this.info.time.start)
+    const relativeTime = time - (Lyric.Parsed.getParsedLineTime(this.info)?.start || 0)
+    this.driveAnimations(true, isActive, relativeTime)
   }
 
   override pause(time: number, isActive: boolean) {
-    this.driveAnimations(false, isActive, time - this.info.time.start)
+    const relativeTime = time - (Lyric.Parsed.getParsedLineTime(this.info)?.start || 0)
+    this.driveAnimations(false, isActive, relativeTime)
   }
 
   override reset(time: number) {
-    this.driveAnimations(false, false, time - this.info.time.start)
+    const relativeTime = time - (Lyric.Parsed.getParsedLineTime(this.info)?.start || 0)
+    this.driveAnimations(false, false, relativeTime)
   }
 
   override destroy() {

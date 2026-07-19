@@ -47,9 +47,6 @@ importers:
 
   packages/base:
     dependencies:
-      '@music-lyric-kit/lyric':
-        specifier: ^0.14.0
-        version: 0.14.0
       '@music-lyric-player/utils':
         specifier: workspace:^
         version: link:../utils
@@ -57,15 +54,15 @@ importers:
         specifier: ^7.7.4
         version: 7.7.4
     devDependencies:
+      '@music-lyric-kit/lyric':
+        specifier: ^0.18.0
+        version: 0.18.0
       '@types/semver':
         specifier: ^7.7.1
         version: 7.7.1
 
   packages/dom:
     dependencies:
-      '@music-lyric-kit/lyric':
-        specifier: ^0.14.0
-        version: 0.14.0
       '@music-lyric-player/base':
         specifier: workspace:^
         version: link:../base
@@ -73,6 +70,9 @@ importers:
         specifier: workspace:^
         version: link:../utils
     devDependencies:
+      '@music-lyric-kit/lyric':
+        specifier: ^0.18.0
+        version: 0.18.0
       sass:
         specifier: ^1.86.0
         version: 1.99.0
@@ -90,24 +90,24 @@ importers:
   private/playground:
     dependencies:
       music-lyric-kit:
-        specifier: ^0.14.1
-        version: 0.14.1
+        specifier: ^0.18.0
+        version: 0.18.0
       music-lyric-player:
         specifier: workspace:*
         version: link:../../main
       vue:
         specifier: ^3.5.34
-        version: 3.5.34(typescript@5.9.3)
+        version: 3.5.34(typescript@5.8.2)
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^6.0.6
-        version: 6.0.6(vite@7.3.1(@types/node@25.5.2)(sass@1.99.0)(tsx@4.21.0))(vue@3.5.34(typescript@5.9.3))
+        version: 6.0.6(vite@7.3.1(@types/node@25.5.2)(sass@1.99.0)(tsx@4.21.0))(vue@3.5.34(typescript@5.8.2))
       sass:
         specifier: ^1.86.0
         version: 1.99.0
       vue-tsc:
         specifier: ^3.2.8
-        version: 3.2.8(typescript@5.9.3)
+        version: 3.2.8(typescript@5.8.2)
 
 packages:
 
@@ -132,6 +132,9 @@ packages:
   '@babel/types@7.29.0':
     resolution: {integrity: sha512-LwdZHpScM4Qz8Xw2iKSzS+cfglZzJGvofQICy7W7v4caru4EaAmyUuO6BGrbyQ2mYV11W0U8j5mBhd14dd3B0A==}
     engines: {node: '>=6.9.0'}
+
+  '@bufbuild/protobuf@2.12.1':
+    resolution: {integrity: sha512-BvAMfS6LrgZiryOAZ4pBYucu4wG/Ei/9o9DZ9akbREnMLbPJiom2i8b9C8IsKErQoiKqVhrerzt3kOT/RrzLHg==}
 
   '@esbuild/aix-ppc64@0.27.7':
     resolution: {integrity: sha512-EKX3Qwmhz1eMdEJokhALr0YiD0lhQNwDqkPYyPhiSwKrh7/4KRjQc04sZ8db+5DVVnZ1LmbNDI1uAMPEUBnQPg==}
@@ -305,47 +308,41 @@ packages:
   '@microsoft/tsdoc@0.16.0':
     resolution: {integrity: sha512-xgAyonlVVS+q7Vc7qLW0UrJU7rSFcETRWsqdXZtjzRU8dF+6CkozTK4V4y1LwOX7j8r/vHphjDeMeGI4tNGeGA==}
 
-  '@music-lyric-kit/core@0.14.1':
-    resolution: {integrity: sha512-3RRiUkoFhKjhaDMOMUIiInMCKApYixX95wvXiGFrSFM+DB4mNk3Uhj3ubV9gM64qYbJ26vhl+tSAkFFoIOnEsg==}
+  '@music-lyric-kit/core@0.18.0':
+    resolution: {integrity: sha512-N9NHZLoRZkUkJwCiyZuJJyMubHneHVAhpIABcVwV/SPBnIIDsSqykvpbDUTqBY189B8lDkxDjTA5nAGWObavIQ==}
 
-  '@music-lyric-kit/lyric@0.14.0':
-    resolution: {integrity: sha512-KPd4VpTHqhjdzJYi5T0dS6ZDlTPAEmv13ds0flfkdpyD1MrVZyT8QLVAJ780ePYT8EjUFj0AIkJdQRdVQLRu0A==}
+  '@music-lyric-kit/lyric@0.18.0':
+    resolution: {integrity: sha512-iQAk8YNYfbwLSiWdGEEkhKhH0DvdTP/Pj07f03HH6bOYkpaapAh8bln8Fl5aQwV3lhCNPpkXAsjdkHAOvoaRYA==}
 
-  '@music-lyric-kit/lyric@0.14.1':
-    resolution: {integrity: sha512-oz+2GRPZk4ax3zfgCZx6h6mZJ/7Xck12KLDyVAZYBsxC6tGVD2ahRZmESPnWYy2PGWo8u5dCHYcdNpio2CmsIg==}
+  '@music-lyric-kit/plugin-format-lrc@0.18.0':
+    resolution: {integrity: sha512-ffaVkAC72cHS+zaFDT6EJeFAUqddKlS+dbEkK9pBpCEnwe9ax9zWfoK87ZtPvFiK7pwSa8HmUFgdfB45IabvNQ==}
 
-  '@music-lyric-kit/plugin-format-lrc@0.14.1':
-    resolution: {integrity: sha512-Mf85Z39OEyu3fN5XlvhbOuio1U+M//eJR82ozWBw/c8AMj0x2skgCIzsWRF/bCieBaSFd6tP9NS7fzN0/A65uA==}
+  '@music-lyric-kit/plugin-format-ttml@0.18.0':
+    resolution: {integrity: sha512-VsQBkrzg/VVVNkAlrTt4rRTgPfvJX+N2TB9eQpM1Hdpja4YF1A/ZKbMvuFHhQmTik7s7zqRvyZyHJutd73nKaQ==}
 
-  '@music-lyric-kit/plugin-format-ttml@0.14.1':
-    resolution: {integrity: sha512-JlSOGJAjanuhc51utrQHy3i0UdLxLCTN67l3bTL+iv07XPGki0RcfxFmAdxYVg3pu52Yjh/OYMm7EBh16YXIng==}
+  '@music-lyric-kit/plugin-transform-agent@0.18.0':
+    resolution: {integrity: sha512-k0wf4aC3qTWL0aOgVgJMh0iqXG12r8TaSvxk1I5vU98qXdyPu+HHelboTSttpB2CsdFGKLnPKdh+IrCwrLVaJQ==}
 
-  '@music-lyric-kit/plugin-transform-agent@0.14.1':
-    resolution: {integrity: sha512-16uynINH4M6DKYOwCf2wI/Qo4eulr96ktTw/4s+AVWGXsqh1j/8ecUC7gCFdl6t0Jp24rB/mh8FYt2AJt1nUxg==}
+  '@music-lyric-kit/plugin-transform-background@0.18.0':
+    resolution: {integrity: sha512-k4CSBsWlksCNxX83KGCzwpfEmDztxQxRUIuHQBJcwwE+HLu6rU5YHYPiv/ArXVNay/SSS4QWI6OgldDBk8aOxg==}
 
-  '@music-lyric-kit/plugin-transform-background@0.14.1':
-    resolution: {integrity: sha512-BdRbP1VNCNYkyfM9sPrxuL336dUNqogVhytiRj/ST93E99fR0LmPamBCGn9xOGqcgOkjXnmiyyfQe6IcQ/lzlg==}
+  '@music-lyric-kit/plugin-transform-interlude@0.18.0':
+    resolution: {integrity: sha512-3ZCBnnJ2bZcq3ddDHGwDXaxc/kL4yQzP8yG5+e3A3rT8eyCeK9ES9Bf9M7cwM4T7Z33eb/o2TBw+L/a/d9dEXg==}
 
-  '@music-lyric-kit/plugin-transform-interlude@0.14.1':
-    resolution: {integrity: sha512-tQiuc65N1PBDL78xoCZyeiB9jblax9kW8148QV2ybgrQlmkb4NhlXd+Mtepb5qsDE2Jy5WHOdsaHGHsU6FCFKg==}
+  '@music-lyric-kit/plugin-transform-language@0.18.0':
+    resolution: {integrity: sha512-ZOB58TRvf3D8E8fQ48wyw/9/0qMSQ5wW7le+9m+D1NnYNRqzqzdvfO854ven7cu/H3j6PAsyYAOp0GO0UnOqqQ==}
 
-  '@music-lyric-kit/plugin-transform-language@0.14.1':
-    resolution: {integrity: sha512-IHtHCOq/HVVH20PMmiRJWGidzcnTVySZ9VFF94IXVas3iz3cRegjbxyMUhCIli5sSFfZM9H/Topg0oCrV5uC7A==}
+  '@music-lyric-kit/plugin-transform-pure@0.18.0':
+    resolution: {integrity: sha512-VniQZJRl2MzxSBZ1NLtRHwZnI2qQD1MAR206yFzaJbAgRb1gKgF9I5ie3HSCsDSBOWHTj/T3UClDsBVODTsxcA==}
 
-  '@music-lyric-kit/plugin-transform-pure@0.14.1':
-    resolution: {integrity: sha512-yUOIEr0vYj6faiE8yl/TOYAd+oni2/sQdi5PLI4oDr+SySrPtsU6SyKlP9/RkYl1xWWXC4BYx6uf54Y3S6wjuw==}
+  '@music-lyric-kit/plugin-transform-space@0.18.0':
+    resolution: {integrity: sha512-Cosk7xg+gdUAynr1Nfdom1f6eE8Zr7Dtp8kLny4+MnQp5NOuf9lpvvw94ilanxCDFqYYXEEUjEuOqj2oV7ACWw==}
 
-  '@music-lyric-kit/plugin-transform-space@0.14.1':
-    resolution: {integrity: sha512-/uFR7JjeECegeX7PTzuGUsinV3EjRVFrFjDfwkY/lcRBK64oHHpoRH4N82EX9nDKOhDbuRXf4ADfz4ec2B+YMA==}
+  '@music-lyric-kit/plugin-transform-stress@0.18.0':
+    resolution: {integrity: sha512-SdlnTjaoyyuOxYJJrIRTQaNtsB76pfOdqQhRtL7eetjIkfU3r35H32ZTq2cfh1dglCUbdbNEBRbNbo8vDmynvw==}
 
-  '@music-lyric-kit/plugin-transform-stress@0.14.1':
-    resolution: {integrity: sha512-VFYP/KN85/w0XTJKtZk8hXdgu8uqqWjGP6ZsMmcooefxs2R9oxSASiLgVzILr7O0c49xQwYOTmC7lOOF/jpPxw==}
-
-  '@music-lyric-kit/utils@0.14.0':
-    resolution: {integrity: sha512-bFetWBr0ro4bWC32zi8gZ03Ig3heCugBk8lCxQIDj4OPkjYYxkkJaWzvK4u6hj+rcvzuuyMLdW6oOUsMu02vwg==}
-
-  '@music-lyric-kit/utils@0.14.1':
-    resolution: {integrity: sha512-mdq5k9MT9LkAg6ZpQryylkIXNjAUEWdjQbfHY9wDHa2OSbfNqXURWBQIJcCoQyYemt4Wg7e/ksKbc3BA5kThJA==}
+  '@music-lyric-kit/utils@0.18.0':
+    resolution: {integrity: sha512-xq2R91LH+X8OeTuCzvFTAVueTBeR0xrEottrr9DUpbSbc0gy+nXZzxOmLvMDxr6GI4yJRmDFkPgbISxMC7SK2A==}
 
   '@parcel/watcher-android-arm64@2.5.6':
     resolution: {integrity: sha512-YQxSS34tPF/6ZG7r/Ih9xy+kP/WwediEUsqmtf0cuCV5TPPKw/PQHRhueUo6JdeFJaqV3pyjm0GdYjZotbRt/A==}
@@ -923,8 +920,11 @@ packages:
   muggle-string@0.4.1:
     resolution: {integrity: sha512-VNTrAak/KhO2i8dqqnqnAHOa3cYBwXEZe9h+D5h/1ZqFSTEFHdM65lR7RoIqq3tBBYavsOXV84NoHXZ0AkPyqQ==}
 
-  music-lyric-kit@0.14.1:
-    resolution: {integrity: sha512-YaNdkQVJc0M2A3rl/484Z8mHGrj08Mhgpt/682lIahJZRej1JyOnKlOtw/MiHi05fuMVS6Kc7DZZE2CQVxPCMg==}
+  music-lyric-kit@0.18.0:
+    resolution: {integrity: sha512-ybdOpZBRAtbUiXyRO8orf13X1upsMy26AdtZBRwb+tWKf7LiVBeYOQbheZV6O65lYKPiRwcVHcDat/QtFuK60w==}
+
+  music-lyric-model@5.0.0:
+    resolution: {integrity: sha512-CZv0UzYGJISXwokgQJfCceF0O9+dNeY1lddKjGf7f3JUQBRTLyGJyRgR1gdaGpp4/LI9AYrVIcwNXCdiZO6FWw==}
 
   nanoid@3.3.11:
     resolution: {integrity: sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==}
@@ -1037,6 +1037,7 @@ packages:
   tsconfck@3.1.6:
     resolution: {integrity: sha512-ks6Vjr/jEw0P1gmOVwutM3B7fWxoWBL2KRDb1JfqGVawBmO5UsvmWOQFGHBPl5yxYz4eERr19E6L7NMv+Fej4w==}
     engines: {node: ^18 || >=20}
+    deprecated: unmaintained
     hasBin: true
     peerDependencies:
       typescript: ^5.0.0
@@ -1166,6 +1167,8 @@ snapshots:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
 
+  '@bufbuild/protobuf@2.12.1': {}
+
   '@esbuild/aix-ppc64@0.27.7':
     optional: true
 
@@ -1282,78 +1285,71 @@ snapshots:
 
   '@microsoft/tsdoc@0.16.0': {}
 
-  '@music-lyric-kit/core@0.14.1':
+  '@music-lyric-kit/core@0.18.0':
     dependencies:
-      '@music-lyric-kit/lyric': 0.14.1
-      '@music-lyric-kit/utils': 0.14.1
+      '@music-lyric-kit/lyric': 0.18.0
+      '@music-lyric-kit/utils': 0.18.0
 
-  '@music-lyric-kit/lyric@0.14.0':
+  '@music-lyric-kit/lyric@0.18.0':
     dependencies:
-      '@music-lyric-kit/utils': 0.14.0
+      '@bufbuild/protobuf': 2.12.1
+      music-lyric-model: 5.0.0
 
-  '@music-lyric-kit/lyric@0.14.1':
+  '@music-lyric-kit/plugin-format-lrc@0.18.0':
     dependencies:
-      '@music-lyric-kit/utils': 0.14.1
+      '@music-lyric-kit/core': 0.18.0
+      '@music-lyric-kit/lyric': 0.18.0
+      '@music-lyric-kit/utils': 0.18.0
 
-  '@music-lyric-kit/plugin-format-lrc@0.14.1':
+  '@music-lyric-kit/plugin-format-ttml@0.18.0':
     dependencies:
-      '@music-lyric-kit/core': 0.14.1
-      '@music-lyric-kit/lyric': 0.14.1
-      '@music-lyric-kit/utils': 0.14.1
+      '@music-lyric-kit/core': 0.18.0
+      '@music-lyric-kit/lyric': 0.18.0
+      '@music-lyric-kit/utils': 0.18.0
 
-  '@music-lyric-kit/plugin-format-ttml@0.14.1':
+  '@music-lyric-kit/plugin-transform-agent@0.18.0':
     dependencies:
-      '@music-lyric-kit/core': 0.14.1
-      '@music-lyric-kit/lyric': 0.14.1
-      '@music-lyric-kit/utils': 0.14.1
+      '@music-lyric-kit/core': 0.18.0
+      '@music-lyric-kit/lyric': 0.18.0
+      '@music-lyric-kit/utils': 0.18.0
 
-  '@music-lyric-kit/plugin-transform-agent@0.14.1':
+  '@music-lyric-kit/plugin-transform-background@0.18.0':
     dependencies:
-      '@music-lyric-kit/core': 0.14.1
-      '@music-lyric-kit/lyric': 0.14.1
-      '@music-lyric-kit/utils': 0.14.1
+      '@music-lyric-kit/core': 0.18.0
+      '@music-lyric-kit/lyric': 0.18.0
+      '@music-lyric-kit/utils': 0.18.0
 
-  '@music-lyric-kit/plugin-transform-background@0.14.1':
+  '@music-lyric-kit/plugin-transform-interlude@0.18.0':
     dependencies:
-      '@music-lyric-kit/core': 0.14.1
-      '@music-lyric-kit/lyric': 0.14.1
-      '@music-lyric-kit/utils': 0.14.1
+      '@music-lyric-kit/core': 0.18.0
+      '@music-lyric-kit/lyric': 0.18.0
+      '@music-lyric-kit/utils': 0.18.0
 
-  '@music-lyric-kit/plugin-transform-interlude@0.14.1':
+  '@music-lyric-kit/plugin-transform-language@0.18.0':
     dependencies:
-      '@music-lyric-kit/core': 0.14.1
-      '@music-lyric-kit/lyric': 0.14.1
-      '@music-lyric-kit/utils': 0.14.1
+      '@music-lyric-kit/core': 0.18.0
+      '@music-lyric-kit/lyric': 0.18.0
+      '@music-lyric-kit/utils': 0.18.0
 
-  '@music-lyric-kit/plugin-transform-language@0.14.1':
+  '@music-lyric-kit/plugin-transform-pure@0.18.0':
     dependencies:
-      '@music-lyric-kit/core': 0.14.1
-      '@music-lyric-kit/lyric': 0.14.1
-      '@music-lyric-kit/utils': 0.14.1
+      '@music-lyric-kit/core': 0.18.0
+      '@music-lyric-kit/lyric': 0.18.0
+      '@music-lyric-kit/utils': 0.18.0
 
-  '@music-lyric-kit/plugin-transform-pure@0.14.1':
+  '@music-lyric-kit/plugin-transform-space@0.18.0':
     dependencies:
-      '@music-lyric-kit/core': 0.14.1
-      '@music-lyric-kit/lyric': 0.14.1
-      '@music-lyric-kit/utils': 0.14.1
+      '@music-lyric-kit/core': 0.18.0
+      '@music-lyric-kit/lyric': 0.18.0
+      '@music-lyric-kit/utils': 0.18.0
 
-  '@music-lyric-kit/plugin-transform-space@0.14.1':
+  '@music-lyric-kit/plugin-transform-stress@0.18.0':
     dependencies:
-      '@music-lyric-kit/core': 0.14.1
-      '@music-lyric-kit/lyric': 0.14.1
-      '@music-lyric-kit/utils': 0.14.1
+      '@music-lyric-kit/core': 0.18.0
+      '@music-lyric-kit/lyric': 0.18.0
+      '@music-lyric-kit/utils': 0.18.0
 
-  '@music-lyric-kit/plugin-transform-stress@0.14.1':
-    dependencies:
-      '@music-lyric-kit/core': 0.14.1
-      '@music-lyric-kit/lyric': 0.14.1
-      '@music-lyric-kit/utils': 0.14.1
-
-  '@music-lyric-kit/utils@0.14.0':
-    dependencies:
-      lodash-es: 4.18.1
-
-  '@music-lyric-kit/utils@0.14.1':
+  '@music-lyric-kit/utils@0.18.0':
     dependencies:
       lodash-es: 4.18.1
 
@@ -1576,11 +1572,11 @@ snapshots:
 
   '@types/semver@7.7.1': {}
 
-  '@vitejs/plugin-vue@6.0.6(vite@7.3.1(@types/node@25.5.2)(sass@1.99.0)(tsx@4.21.0))(vue@3.5.34(typescript@5.9.3))':
+  '@vitejs/plugin-vue@6.0.6(vite@7.3.1(@types/node@25.5.2)(sass@1.99.0)(tsx@4.21.0))(vue@3.5.34(typescript@5.8.2))':
     dependencies:
       '@rolldown/pluginutils': 1.0.0-rc.13
       vite: 7.3.1(@types/node@25.5.2)(sass@1.99.0)(tsx@4.21.0)
-      vue: 3.5.34(typescript@5.9.3)
+      vue: 3.5.34(typescript@5.8.2)
 
   '@volar/language-core@2.4.28':
     dependencies:
@@ -1681,11 +1677,11 @@ snapshots:
       '@vue/shared': 3.5.34
       csstype: 3.2.3
 
-  '@vue/server-renderer@3.5.34(vue@3.5.34(typescript@5.9.3))':
+  '@vue/server-renderer@3.5.34(vue@3.5.34(typescript@5.8.2))':
     dependencies:
       '@vue/compiler-ssr': 3.5.34
       '@vue/shared': 3.5.34
-      vue: 3.5.34(typescript@5.9.3)
+      vue: 3.5.34(typescript@5.8.2)
 
   '@vue/shared@3.5.32': {}
 
@@ -1886,20 +1882,24 @@ snapshots:
 
   muggle-string@0.4.1: {}
 
-  music-lyric-kit@0.14.1:
+  music-lyric-kit@0.18.0:
     dependencies:
-      '@music-lyric-kit/core': 0.14.1
-      '@music-lyric-kit/lyric': 0.14.1
-      '@music-lyric-kit/plugin-format-lrc': 0.14.1
-      '@music-lyric-kit/plugin-format-ttml': 0.14.1
-      '@music-lyric-kit/plugin-transform-agent': 0.14.1
-      '@music-lyric-kit/plugin-transform-background': 0.14.1
-      '@music-lyric-kit/plugin-transform-interlude': 0.14.1
-      '@music-lyric-kit/plugin-transform-language': 0.14.1
-      '@music-lyric-kit/plugin-transform-pure': 0.14.1
-      '@music-lyric-kit/plugin-transform-space': 0.14.1
-      '@music-lyric-kit/plugin-transform-stress': 0.14.1
-      '@music-lyric-kit/utils': 0.14.1
+      '@music-lyric-kit/core': 0.18.0
+      '@music-lyric-kit/lyric': 0.18.0
+      '@music-lyric-kit/plugin-format-lrc': 0.18.0
+      '@music-lyric-kit/plugin-format-ttml': 0.18.0
+      '@music-lyric-kit/plugin-transform-agent': 0.18.0
+      '@music-lyric-kit/plugin-transform-background': 0.18.0
+      '@music-lyric-kit/plugin-transform-interlude': 0.18.0
+      '@music-lyric-kit/plugin-transform-language': 0.18.0
+      '@music-lyric-kit/plugin-transform-pure': 0.18.0
+      '@music-lyric-kit/plugin-transform-space': 0.18.0
+      '@music-lyric-kit/plugin-transform-stress': 0.18.0
+      '@music-lyric-kit/utils': 0.18.0
+
+  music-lyric-model@5.0.0:
+    dependencies:
+      '@bufbuild/protobuf': 2.12.1
 
   nanoid@3.3.11: {}
 
@@ -2095,20 +2095,20 @@ snapshots:
 
   vscode-uri@3.1.0: {}
 
-  vue-tsc@3.2.8(typescript@5.9.3):
+  vue-tsc@3.2.8(typescript@5.8.2):
     dependencies:
       '@volar/typescript': 2.4.28
       '@vue/language-core': 3.2.8
-      typescript: 5.9.3
+      typescript: 5.8.2
 
-  vue@3.5.34(typescript@5.9.3):
+  vue@3.5.34(typescript@5.8.2):
     dependencies:
       '@vue/compiler-dom': 3.5.34
       '@vue/compiler-sfc': 3.5.34
       '@vue/runtime-dom': 3.5.34
-      '@vue/server-renderer': 3.5.34(vue@3.5.34(typescript@5.9.3))
+      '@vue/server-renderer': 3.5.34(vue@3.5.34(typescript@5.8.2))
       '@vue/shared': 3.5.34
     optionalDependencies:
-      typescript: 5.9.3
+      typescript: 5.8.2
 
   yallist@4.0.0: {}

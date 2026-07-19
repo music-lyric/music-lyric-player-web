@@ -23,7 +23,7 @@ export interface AnnotationDescriptor {
   /**
    * Build the row element for a line.
    */
-  create(info: Lyric.LineNormal, language: Lyric.LanguageTag): AnnotationBaseElement
+  create(info: Lyric.Parsed.ParsedLineContent, language: Lyric.LanguageTag): AnnotationBaseElement
 }
 
 export const ANNOTATION_DESCRIPTORS: readonly AnnotationDescriptor[] = [

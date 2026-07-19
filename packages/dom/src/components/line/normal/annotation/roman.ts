@@ -7,11 +7,11 @@ import { AnnotationBaseElement } from './base'
 import styles from './index.module.scss'
 
 export class AnnotationRomanElement extends AnnotationBaseElement {
-  constructor(info: Lyric.LineNormal, language: Lyric.LanguageTag | undefined) {
+  constructor(info: Lyric.Parsed.ParsedLineContent, language: Lyric.LanguageTag | undefined) {
     super(info, language, PlayerRole.line.normal.annotation.romanization, styles.roman)
   }
 
-  protected override resolve(info: Lyric.LineNormal, language: Lyric.LanguageTag | undefined) {
-    return info.annotation.first(Lyric.LineAnnotationKind.Roman, language)?.content
+  protected override resolve(info: Lyric.Parsed.ParsedLineContent, language: Lyric.LanguageTag | undefined) {
+    return Lyric.Parsed.getParsedLineRoman(info, language)
   }
 }

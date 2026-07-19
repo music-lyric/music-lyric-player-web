@@ -11,7 +11,7 @@ import { Driver } from './driver'
 import { satisfies } from 'semver'
 
 // Parse results must satisfy this caret range of the supported lyric format version, else they are rejected.
-const SUPPORTED_VERSION_RANGE = `^${Lyric.Version}`
+const SUPPORTED_VERSION_RANGE = `^${Lyric.SCHEMA_VERSION}`
 
 export class BaseLyricPlayer {
   readonly config: BaseLyricPlayerConfig.RootManager = new ConfigManager(BaseLyricPlayerConfig.DEFAULT as BaseLyricPlayerConfig.RootRequired)
@@ -23,14 +23,14 @@ export class BaseLyricPlayer {
     scanIndex: number
   }
   private active: {
-    lines: Lyric.Line[]
+    lines: Lyric.Parsed.ParsedLine[]
     index: number[]
   }
   private time: {
     start: number
     seek: number
   }
-  private info: Lyric.Info
+  private info: Lyric.Parsed.Info
 
   private merger: Merger = new Merger()
   private offset: Offset = new Offset()
@@ -49,7 +49,7 @@ export class BaseLyricPlayer {
       start: 0,
       seek: 0,
     }
-    this.info = new Lyric.Info()
+    this.info = Lyric.Parsed.makeParsedInfo()
 
     this.config.event.add('update', this.onConfigUpdate)
   }
@@ -95,7 +95,7 @@ export class BaseLyricPlayer {
     return this.active.index.length > 0 ? this.active.index[0] : -1
   }
 
-  private handleBridgeActive(lines: Lyric.Line[], index: number[]): { lines: Lyric.Line[]; index: number[] } {
+  private handleBridgeActive(lines: Lyric.Parsed.ParsedLine[], index: number[]): { lines: Lyric.Parsed.ParsedLine[]; index: number[] } {
     if (!this.config.current.bridgeActive || index.length < 2) {
       return { lines, index }
     }
@@ -104,11 +104,11 @@ export class BaseLyricPlayer {
     if (max - min + 1 === index.length) {
       return { lines, index }
     }
-    const existing = new Map<number, Lyric.Line>()
+    const existing = new Map<number, Lyric.Parsed.ParsedLine>()
     for (let i = 0; i < index.length; i++) {
       existing.set(index[i], lines[i])
     }
-    const bridgedLines: Lyric.Line[] = []
+    const bridgedLines: Lyric.Parsed.ParsedLine[] = []
     const bridgedIndex: number[] = []
     for (let i = min; i <= max; i++) {
       const line = existing.get(i) ?? this.info.lines[i]
@@ -137,14 +137,14 @@ export class BaseLyricPlayer {
       return
     }
 
-    const lines: Lyric.Line[] = []
+    const lines: Lyric.Parsed.ParsedLine[] = []
     const index: number[] = []
 
     let firstIndex = this.info.lines.length
     for (let i = 0; i < this.info.lines.length; i++) {
       const line = this.info.lines[i]
       // Lines are assumed sorted by time.start ascending, so the first line starting after `time` ends the scan.
-      if (line.time.start > time) {
+      if (Lyric.Parsed.getParsedLineTime(line)!.start > time) {
         firstIndex = i
         break
       }
@@ -166,7 +166,7 @@ export class BaseLyricPlayer {
   private handleUpdateActiveLines(now: number) {
     let hasChanged = false
 
-    const newActiveLines: Lyric.Line[] = []
+    const newActiveLines: Lyric.Parsed.ParsedLine[] = []
     const newActiveIndex: number[] = []
 
     for (let i = 0; i < this.active.lines.length; i++) {
@@ -183,7 +183,8 @@ export class BaseLyricPlayer {
 
     while (this.state.scanIndex < this.info.lines.length) {
       const nextLine = this.info.lines[this.state.scanIndex]
-      if (now >= nextLine.time.start) {
+      const nextTime = Lyric.Parsed.getParsedLineTime(nextLine)
+      if (now >= nextTime!.start) {
         if (now < this.merger.getMergedTime(this.state.scanIndex)) {
           newActiveLines.push(nextLine)
           newActiveIndex.push(this.state.scanIndex)
@@ -215,7 +216,7 @@ export class BaseLyricPlayer {
     this.driver.schedule(this.config.current.driver, this.onTick)
   }
 
-  updateLyric(info: Lyric.Info) {
+  updateLyric(info: Lyric.Parsed.Info) {
     if (!info) {
       return
     }
@@ -224,7 +225,7 @@ export class BaseLyricPlayer {
     let target = info
     if (!satisfies(info.version, SUPPORTED_VERSION_RANGE)) {
       console.warn(`[music-lyric-player] ignored lyric with incompatible version "${info.version}", expected "${SUPPORTED_VERSION_RANGE}"`)
-      target = new Lyric.Info()
+      target = Lyric.Parsed.makeParsedInfo()
     }
 
     this.pause()
@@ -290,7 +291,7 @@ export class BaseLyricPlayer {
     this.active.lines = []
     this.active.index = []
 
-    this.info = new Lyric.Info()
+    this.info = Lyric.Parsed.makeParsedInfo()
   }
 
   /**
@@ -312,14 +313,15 @@ export class BaseLyricPlayer {
    *
    * @param time time in ms to find active lines for.
    */
-  matchLinesWithTime(time: number): { lines: Lyric.Line[]; index: number[] } {
+  matchLinesWithTime(time: number): { lines: Lyric.Parsed.ParsedLine[]; index: number[] } {
     const effective = time + this.currentOffset
-    const lines: Lyric.Line[] = []
+    const lines: Lyric.Parsed.ParsedLine[] = []
     const index: number[] = []
     for (let i = 0; i < this.info.lines.length; i++) {
       const line = this.info.lines[i]
+      const time = Lyric.Parsed.getParsedLineTime(line)
       // Lines are assumed sorted by time.start ascending, so the first line starting after `time` ends the scan.
-      if (line.time.start > effective) {
+      if (time!.start > effective) {
         break
       }
       if (this.merger.getMergedTime(i) > effective) {
@@ -351,7 +353,7 @@ export class BaseLyricPlayer {
   /**
    * Current active lines.
    */
-  get currentLines() {
+  get currentLines(): Lyric.Parsed.ParsedLine[] {
     return this.handleBridgeActive(this.active.lines, this.active.index).lines
   }
 
@@ -372,7 +374,7 @@ export class BaseLyricPlayer {
   /**
    * The current lyric info object.
    */
-  get currentInfo() {
+  get currentInfo(): Lyric.Parsed.Info {
     return this.info
   }
 

@@ -32,13 +32,14 @@
     "dist"
   ],
   "peerDependencies": {
-    "@music-lyric-kit/lyric": "^0.14.0"
+    "@music-lyric-kit/lyric": "^0.18.0"
   },
   "dependencies": {
     "@music-lyric-player/utils": "workspace:^",
     "semver": "^7.7.4"
   },
   "devDependencies": {
+    "@music-lyric-kit/lyric": "^0.18.0",
     "@types/semver": "^7.7.1"
   }
 }
