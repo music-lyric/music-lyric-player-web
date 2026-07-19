@@ -237,11 +237,16 @@ export class LineManager {
       if (!element) {
         return
       }
+
+      // Keep a newly attached shell hidden until layout seeds its transform.
+      element.element.style.visibility = 'hidden'
+
       this.context.component.container.appendChild(element.element)
       element.buildContent()
       element.updateSize()
-      this.attachedSet.add(index)
+
       this.recordHeight(element)
+      this.attachedSet.add(index)
       entrants.push(index)
     }
 

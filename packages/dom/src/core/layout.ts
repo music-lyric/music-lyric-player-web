@@ -258,8 +258,14 @@ export class LayoutManager {
       for (const i of entrants) {
         elements[i]?.updateStyle({ top: topPositions[i] + seedOffset, left: 0, scale: 1 }, true)
       }
-      // Reading `offsetHeight` forces one synchronous reflow that commits the seed writes above; `void` just discards the value.
+      // Reading `offsetHeight` forces one synchronous reflow that commits the hidden seed writes above.
       void this.context.component.container.element.offsetHeight
+      for (const i of entrants) {
+        const element = elements[i]
+        if (element) {
+          element.element.style.visibility = ''
+        }
+      }
     }
 
     const activeIndex = firstActiveElementIndex
