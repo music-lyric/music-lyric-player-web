@@ -23,6 +23,7 @@ export interface TransitionResult {
 
 export class LayoutManager {
   private previousLineIndex = -1
+  private previousActiveLineIndexes: number[] = []
   // Last applied scroll offset; entrants seed from here so a seek slides in instead of snapping.
   private previousOffset: number | undefined = undefined
 
@@ -278,6 +279,23 @@ export class LayoutManager {
           : -1
         : 0
 
+    const currentLineIndexSet = new Set(player.currentIndex)
+    const exitingLineIndexes = this.previousActiveLineIndexes.filter((index) => !currentLineIndexSet.has(index))
+    const isExitingGroup =
+      !isInScroll &&
+      currentDirection > 0 &&
+      this.previousActiveLineIndexes.length > 1 &&
+      exitingLineIndexes.length === this.previousActiveLineIndexes.length
+    const exitingElementSet = new Set<number>()
+
+    if (isExitingGroup) {
+      for (const lineIndex of exitingLineIndexes) {
+        for (const elementIndex of this.lineManager.queryElementIndexes(lineIndex) ?? []) {
+          exitingElementSet.add(elementIndex)
+        }
+      }
+    }
+
     // Reuse a single style object across iterations of the per-element loop
     // below to avoid allocating a fresh one per line on every layout pass.
     const currentStyle: LineElementStyle = {}
@@ -312,12 +330,20 @@ export class LayoutManager {
         currentStyle.transitionDelay = 0
         currentStyle.transitionDuration = 200
       } else {
-        const transition = this.calcTransition(transitionConfig, indexOffset, isPlayedLine, currentDirection)
+        const transition = exitingElementSet.has(i)
+          ? {
+              duration: Math.max(transitionConfig.duration, 450),
+              delay: 0,
+            }
+          : this.calcTransition(transitionConfig, indexOffset, isPlayedLine, currentDirection)
 
         currentStyle.transitionDuration = transition.duration
         currentStyle.transitionDelay = transition.delay
 
-        if (!isActiveLine) {
+        if (exitingElementSet.has(i)) {
+          currentStyle.scale = 1
+          currentStyle.blur = 0
+        } else if (!isActiveLine) {
           const gaussian = this.gaussian(indexOffset)
           currentStyle.scale = this.calcScale(scaleConfig, gaussian)
           currentStyle.blur = this.calcBlur(blurConfig, gaussian)
@@ -354,11 +380,13 @@ export class LayoutManager {
     }
 
     this.previousLineIndex = currentLineIndex
+    this.previousActiveLineIndexes = player.currentIndex.slice()
     this.previousOffset = currentOffset
   }
 
   reset() {
     this.previousLineIndex = -1
+    this.previousActiveLineIndexes = []
     this.previousOffset = undefined
   }
 }
