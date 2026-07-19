@@ -25,8 +25,8 @@ export const usePlayer = ({ defaults }: UsePlayerOptions) => {
   const savedSettings = loadSettings()
   const mergedBase = deepMerge(deepMerge({}, defaults.base ?? {}), savedSettings.base ?? {})
   const mergedDom = deepMerge(deepMerge({}, defaults.dom ?? {}), savedSettings.dom ?? {})
-  base.config.update(mergedBase)
-  dom.config.update(mergedDom)
+  base.config.merge(mergedBase)
+  dom.config.merge(mergedDom)
 
   const audio = new Audio()
   audio.style.display = 'none'
@@ -200,11 +200,11 @@ export const usePlayer = ({ defaults }: UsePlayerOptions) => {
   })
 
   const applyBasePatch = (patch: Partial<BaseLyricPlayerConfig.Root>) => {
-    base.config.update(patch)
+    base.config.merge(patch)
   }
 
   const applyDomPatch = (patch: Partial<DomLyricPlayerConfig.Root>) => {
-    dom.config.update(patch)
+    dom.config.merge(patch)
   }
 
   onMounted(async () => {

@@ -1,20 +1,13 @@
-import type { NestedKeys, PathValue } from '@root/types'
+import type { NestedKeys } from '@root/types'
 
 import { Event } from '@root/event'
 
-import { mergeObject, cloneObjectDeep, compareObject, getObject, setObject } from '@root/object'
+import { mergeObject, cloneObjectDeep, compareObject } from '@root/object'
 
 export interface ConfigManagerEventMap<Full, Keys> {
   update: (changeKeys: Set<Keys>, config: Full) => void
   reset: (config: Full) => void
 }
-
-/**
- * Flat patch keyed by dot-paths (`a.b.c`); each value is typed to the value living at that path.
- */
-export type ConfigSetPayload<Full, Keys> = Partial<{
-  [K in Extract<Keys, string>]: PathValue<Full, K>
-}>
 
 export class ConfigManager<Full, Init, Keys = NestedKeys<Full>> {
   readonly event = new Event<ConfigManagerEventMap<Full, Keys>>()
@@ -22,6 +15,9 @@ export class ConfigManager<Full, Init, Keys = NestedKeys<Full>> {
   private def: Full
   private now: Full
 
+  /**
+   * Create a config manager from defaults and an optional initial patch.
+   */
   constructor(def: Full, init?: Init) {
     this.def = def
     this.now = cloneObjectDeep(def)
@@ -31,78 +27,49 @@ export class ConfigManager<Full, Init, Keys = NestedKeys<Full>> {
   }
 
   /**
-   * Deep-merge a (partial) config object into the current one. To write by dot-path, use `set` instead.
-   * Emits `update` with the changed paths, only when something actually changed.
+   * Compare the previous config with the current config and emit changed paths.
    */
-  update(target: Init) {
+  private emitChangesFrom(prev: Full) {
+    const changed = compareObject(prev, this.now) as Set<Keys>
+    if (changed.size) {
+      this.event.emit('update', changed, this.now)
+    }
+  }
+
+  /**
+   * Deep-merge a partial config object into the current config.
+   */
+  merge(target: Init) {
     if (!target) {
       return
     }
 
     const prev = this.now
     this.now = mergeObject(cloneObjectDeep(prev), target)
-
-    const changed = compareObject(prev, this.now) as Set<Keys>
-    if (changed.size) {
-      this.event.emit('update', changed, this.now)
-    }
+    this.emitChangesFrom(prev)
   }
 
   /**
-   * Restore every value back to the defaults. Emits `update` (the changed paths) and then `reset`.
+   * Modify the current config through a callback and emit changed paths.
+   */
+  modify(fn: (config: Full) => void) {
+    const prev = cloneObjectDeep(this.now)
+    fn(this.now)
+    this.emitChangesFrom(prev)
+  }
+
+  /**
+   * Restore every value to its default and emit update before reset.
    */
   reset() {
-    const prev = cloneObjectDeep(this.now)
+    const prev = this.now
     this.now = cloneObjectDeep(this.def)
-
-    const changed = compareObject(prev, this.now) as Set<Keys>
-    if (changed.size) {
-      this.event.emit('update', changed, this.now)
-    }
-
+    this.emitChangesFrom(prev)
     this.event.emit('reset', this.now)
   }
 
   /**
-   * Read a single value by dot-path. To read the whole config, use `current`.
-   */
-  get<K extends Extract<Keys, string>>(key: K): PathValue<Full, K> {
-    return getObject(this.now, key) as PathValue<Full, K>
-  }
-
-  /**
-   * Write by dot-path. Accepts a single `key, value` pair or a flat patch of several paths at once.
-   * Mirrors `update`: clone, apply, diff, and only emit `update` when something actually changed.
-   */
-  set<K extends Extract<Keys, string>>(key: K, value: PathValue<Full, K>): void
-  set(values: ConfigSetPayload<Full, Keys>): void
-  set(input: Extract<Keys, string> | ConfigSetPayload<Full, Keys>, value?: unknown) {
-    if (!input) {
-      return
-    }
-
-    const prev = this.now
-    const next = cloneObjectDeep(prev)
-    const target = next as Record<string, unknown>
-
-    if (typeof input === 'string') {
-      setObject(target, input, value)
-    } else {
-      for (const key of Object.keys(input)) {
-        setObject(target, key, (input as Record<string, unknown>)[key])
-      }
-    }
-
-    this.now = next
-
-    const changed = compareObject(prev, this.now) as Set<Keys>
-    if (changed.size) {
-      this.event.emit('update', changed, this.now)
-    }
-  }
-
-  /**
-   * The whole current config. To read a single value, use `get(key)`.
+   * Return the current config.
    */
   get current() {
     return this.now
