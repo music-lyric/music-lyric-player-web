@@ -330,14 +330,11 @@ export class LayoutManager {
         currentStyle.transitionDelay = 0
         currentStyle.transitionDuration = 200
       } else {
-        const transition = exitingElementSet.has(i)
-          ? {
-              duration: Math.max(transitionConfig.duration, 450),
-              delay: 0,
-            }
-          : this.calcTransition(transitionConfig, indexOffset, isPlayedLine, currentDirection)
+        const transition = this.calcTransition(transitionConfig, indexOffset, isPlayedLine, currentDirection)
 
-        currentStyle.transitionDuration = transition.duration
+        currentStyle.transitionDuration = exitingElementSet.has(i)
+          ? Math.max(transition.duration, 450)
+          : transition.duration
         currentStyle.transitionDelay = transition.delay
 
         if (exitingElementSet.has(i)) {
