@@ -29,7 +29,7 @@ The `dom.element` is a regular DOM node — attach it anywhere. The renderer sub
 Pass only the fields you want to override; everything else falls back to the defaults. Updates apply immediately, including mid-playback.
 
 ```js
-dom.config.update({
+dom.config.merge({
   container: { fade: { enabled: true, top: '5%', bottom: '10%' } },
   layout: { align: 'left', gap: 50, duet: { enabled: true } },
   effect: {

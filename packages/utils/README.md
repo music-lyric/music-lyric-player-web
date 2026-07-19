@@ -17,7 +17,7 @@ const config = new ConfigManager({ foo: 1, bar: { baz: 2 } }, {})
 config.event.add('update', (changedKeys) => {
   // changedKeys is a Set of changed key paths, e.g. Set { 'bar.baz' }
 })
-config.update({ bar: { baz: 3 } })
+config.merge({ bar: { baz: 3 } })
 
 const event = new Event()
 event.add('hello', (name) => console.log(`hi ${name}`))

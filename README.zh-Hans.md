@@ -83,7 +83,7 @@ base.pause()
 所有视觉设置都对应一个配置字段。只需传入想修改的字段，其余保持默认即可，且可在任意时刻（包括播放过程中）更新。
 
 ```js
-dom.config.update({
+dom.config.merge({
   layout: { gap: 50 },
   effect: {
     blur: { enabled: true, min: 0.4, max: 4.5 },

@@ -57,5 +57,5 @@ base.play(0)
 | `offset.resetTempOnLyricChange` | `boolean`                | `true`        | Reset the temp offset (set via `updateTempOffset`) to `0` when a new lyric loads                |
 
 ```js
-base.config.update({ driver: 'animation' })
+base.config.merge({ driver: 'animation' })
 ```

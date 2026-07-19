@@ -83,7 +83,7 @@ base.pause()
 Every visual aspect maps to a config field. Pass only the fields you want to change; the rest keep their defaults. Updates apply any time, including mid-playback.
 
 ```js
-dom.config.update({
+dom.config.merge({
   layout: { gap: 50 },
   effect: {
     blur: { enabled: true, min: 0.4, max: 4.5 },
